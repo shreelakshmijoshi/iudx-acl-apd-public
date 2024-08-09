@@ -35,21 +35,12 @@ jobs:
           cp -r docs/* wiki/
           ls -la wiki  # List files to verify copying
 
-      - name: Create New Home Page in Wiki
+      - name: Create or Update _Sidebar.md
         run: |
-          echo "Setting Introduction.md as the home page..."
-          if [ -f "wiki/_Sidebar.md" ]; then
-            echo "Updating _Sidebar.md to include Introduction.md..."
-            if ! grep -q "## Home" wiki/_Sidebar.md; then
-              echo "## Home" >> wiki/_Sidebar.md
-            fi
-            if ! grep -q "* [Home](Introduction.md)" wiki/_Sidebar.md; then
-              echo "* [Home](Introduction.md)" >> wiki/_Sidebar.md
-            fi
-            cat wiki/_Sidebar.md  # Output the updated _Sidebar.md
-          else
-            echo "_Sidebar.md not found. No changes made."
-          fi
+          echo "Creating or updating _Sidebar.md..."
+          echo "# Sidebar" > wiki/_Sidebar.md
+          echo "* [Home](Introduction.md)" >> wiki/_Sidebar.md
+          cat wiki/_Sidebar.md  # Output the updated _Sidebar.md
 
       - name: Commit and Push Changes to Wiki
         run: |
