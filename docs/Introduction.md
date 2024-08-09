@@ -95,7 +95,7 @@ After the access request is created, all the information regarding access reques
 
 # How To Guide
 ## Setup and Installation
-SETUP and installation guide is available [here](./SETUP-and-Installation.md)
+SETUP and installation guide is available [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/docs/SETUP-and-Installation.md)
 
 # Tutorial
 ## Tutorials and Explanations
@@ -107,7 +107,7 @@ SETUP and installation guide is available [here](./SETUP-and-Installation.md)
 API docs are available [here](https://acl-apd.iudx.org.in/apis)
 
 ## FAQ
-FAQs are available [here](./FAQ.md)
+FAQs are available [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/docs/FAQ.md)
 
 ## Contributing
 We follow Git Merge based workflow

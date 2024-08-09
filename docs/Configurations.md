@@ -1,4 +1,8 @@
 # Modules
+This document contains the information of the configurations to setup various services and dependencies in order to bring up the DX ACL APD Server. 
+Please find the example configuration file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/example-config/config-dev.json). While running the server, config-dev.json file could
+be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/all-verticles-configs).
+
 
 ## Api Server Verticle
 
@@ -59,7 +63,7 @@
 | emailSupport      |     Array      | dummy@email.org, test@email.net | An array of emails added as support email                                 |
 | publisherPanelUrl |     String     | https://something.com           | Provider panel in DX                                                      |
 | notifyByEmail     |    boolean     | true                            | Checks if email notification is needed                                    |
-| senderName        |    String      | IUDX                            | Name of the sender                                                        |
+| senderName        |     String     | IUDX                            | Name of the sender                                                        |
 
 
 ## Authentication Verticle
