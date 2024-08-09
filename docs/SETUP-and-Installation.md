@@ -6,7 +6,7 @@ processes of the external modules of each Verticle in Data Exchange ACL-APD Serv
 
 ## Configuration
 In order to setup PostgreSQL, RabbitMQ, Email Service, connect with DX Catalogue Server, DX AAA Server, appropriate information
-could be updated in configs. Please refer [Configurations](Configurations.md)
+could be updated in configs. Please refer [Configurations](https://github.com/datakaveri/iudx-acl-apd/blob/main/docs/Configurations.md)
 
 ## Dependencies
 ### External
@@ -15,8 +15,6 @@ could be updated in configs. Please refer [Configurations](Configurations.md)
 | PostgreSQL    | For storing information related to policy, access Request based CRUD operations, approved access requests, resources and users |
 | RabbitMQ      | To publish auditing related data to auditing server via RMQ exchange                                                           |
 
-Find the installation of the above along with the configurations to modify the database url, port, and associated credentials
-in the appropriate sections [here](SETUP.md)
 
 ### Other Dependencies
 | Software Name                                              | Purpose                                                               | 
@@ -80,7 +78,7 @@ ACL-APD user could have write permission as it publishes audit data
 
 - To setup PostgreSQL refer the docker files available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/postgres)
 - **Note** : PostgreSQL database should be configured with a RBAC user having CRUD privileges
-- Schemas for PostgreSQL tables are present here - [Flyway schema](src/main/resources/db/migration)
+- Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
 
 | Table Name               | Purpose                                                                                                                                                                  | 
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

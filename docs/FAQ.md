@@ -14,7 +14,7 @@
 - Yes, the constraints given to access the resource is defined by resource server and provider could follow the same json structure to add different type of user specific constraints
 
 5. Are there any access restrictions for delegates of the provider or consumer?
-- No, delegates can access all the specific provider or consumer related APIs. Please refer [users and roles](../README.md#users-and-roles)
+- No, delegates can access all the specific provider or consumer related APIs. Please refer [users and roles](https://github.com/datakaveri/iudx-acl-apd/blob/main/README.md)
 
 6. “Given id is invalid - it is group level resource” - Unable to create policies for resource groups
 - From Release [version 1.0.1](https://github.com/datakaveri/iudx-acl-apd/releases/tag/v1.0.1), the policies for new resource groups are restricted to be created
