@@ -5,7 +5,7 @@
 [![Jenkins Build](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.iudx.io%2Fjob%2FACL-APD%2520Server(master)%2F&label=security%20tests)](https://jenkins.iudx.io/job/ACL-APD%20Server(master)/lastBuild/zap/)
 
 
-![IUDX](./docs/iudx.png)
+![IUDX](./iudx.png)
 
 # DX Access Control List (ACL) Access Policy Domain (APD) Server
 
@@ -18,7 +18,7 @@ Policies are verified by Data Exchange (DX) Authentication Authorization and Acc
 allow consumer, consumer delegates to access the resource.
 
 <p align="center">
-<img src="./docs/acl-apd-overview.png">
+<img src="./acl-apd-overview.png">
 </p>
 
 ## Tokens, Users and Roles
