@@ -94,6 +94,9 @@ ACL-APD user could have write permission as it publishes audit data
 - Schema for PostgreSQL table is present [here](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
 - Schema for Immudb table, index for the table is present [here](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
 
+## To Replay Recording
+1. We use [asciinema](https://docs.asciinema.org/) as a tool to share the terminal recordings
+2. To download the tool, please visit asciinema's get started guide : [link](https://docs.asciinema.org/getting-started/)
 
 ## Installation Steps
 ### Maven
@@ -172,7 +175,10 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 1. Run the server through either docker, maven or redeployer
 2. Run the unit tests and generate a surefire report
    `mvn clean test-compile surefire:test surefire-report:report`
-3. Jacoco reports are stored in `./target/
+3. Jacoco reports are stored in `./target/`
+4. A sample recording to execute unit test is available [here](unitTest.cast) and could be replayed using:
+        `asciinema play unitTest.cast`
+
 
 
 ### Integration Testing
@@ -182,6 +188,7 @@ Integration tests are through Postman/Newman whose script can be found from [her
 - [postman](https://www.postman.com/) + [newman](https://www.npmjs.com/package/newman)
 - [newman reporter-htmlextra](https://www.npmjs.com/package/newman-reporter-htmlextra)
 2. Example Postman environment can be found [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/IUDX-ACL-APD-APIs.postman_environment.json)
+- Please find the README to setup postman environment file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/README.md)
 3. Run the server through either docker, maven or redeployer
 4. Run the integration tests and generate the newman report
    `newman run <postman-collection-path> -e <postman-environment> --insecure -r htmlextra --reporter-htmlextra-export .`
