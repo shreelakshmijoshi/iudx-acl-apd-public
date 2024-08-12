@@ -49,7 +49,7 @@ Provider, Consumers and delegates of provider and consumers are allowed to acces
 
 
 <div style="text-align: center;">
-<img src="./docs/users-and-roles.png" alt="Users and Roles" width="600" height="400"/>
+<img src="./users-and-roles.png" alt="Users and Roles" width="600" height="400"/>
 </div>
 
 - How is the user considered as a consumer, provider or delegate?
@@ -75,7 +75,7 @@ Provider, Consumers and delegates of provider and consumers are allowed to acces
 
 ## Solution Architecture
 The following block diagram shows different components/services used in implementing the ACL-APD server.
-![Solution Architecture](./docs/acl-apd-solution-architecture.png)
+![Solution Architecture](./acl-apd-solution-architecture.png)
 The above setup allows specific high load containers/services to scale with ease. Various services of the resource server are detailed in the sections below.
 
 ### API Server
