@@ -187,7 +187,7 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 - Please find the reference to [link](https://logging.apache.org/log4j/2.x/manual/index.html)
 
 ### Micrometer
-- #TODO
+- #Metrics collection
 
 ## Testing
 ### Unit Testing
@@ -196,7 +196,7 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
    `mvn clean test-compile surefire:test surefire-report:report`
 3. Jacoco reports are stored in `./target/`
 4. A sample recording to execute unit test is available [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/unitTest.cast) 
-
+![Sample unit test execution](../example-tutorials/unitTest.svg)
 
 
 ### Integration Testing
