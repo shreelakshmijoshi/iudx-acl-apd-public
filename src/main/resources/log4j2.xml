@@ -13,7 +13,7 @@
         </Console>
 		<!-- <RollingFile name="RollingFile" append="false" ignoreExceptions="false">
             <FileName>/tmp/iudx/rs.log</FileName>
-            <FilePattern>/tmp/iudx/rs.log</FilePattern>
+            <FilePattern>/tmp/iudx/acl-apd.log</FilePattern>
             <JSONLayout compact="true" eventEol="true" stacktraceAsString="true" includeTimeMillis="true">
                 <KeyValuePair key="source" value="rs"/>
                 <KeyValuePair key="sourceURL" value="$${env:RS_URL}"/>

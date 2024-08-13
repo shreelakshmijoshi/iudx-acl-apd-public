@@ -10,10 +10,11 @@ could be updated in configs. Please refer [Configurations](https://github.com/da
 
 ## Dependencies
 ### External
-| Software Name | Purpose                                                                                                                        | 
-|:--------------|:-------------------------------------------------------------------------------------------------------------------------------|
-| PostgreSQL    | For storing information related to policy, access Request based CRUD operations, approved access requests, resources and users |
-| RabbitMQ      | To publish auditing related data to auditing server via RMQ exchange                                                           |
+| Software Name    | Purpose                                                                                                                          | 
+|:-----------------|:---------------------------------------------------------------------------------------------------------------------------------|
+| PostgreSQL       | For storing information related to policy, access Request based CRUD operations, approved access requests, resources and users   |
+| RabbitMQ         | To publish auditing related data to auditing server via RMQ exchange                                                             |
+| SMTP Mail Server | To send email notifications to provider, provider delegates when access requests are created by the consumer, consumer delegates |
 
 
 ### Other Dependencies
@@ -75,10 +76,8 @@ ACL-APD user could have write permission as it publishes audit data
 
 
 #### PostgresQL
-
 - To setup PostgreSQL refer the docker files available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/postgres)
 - **Note** : PostgreSQL database should be configured with a RBAC user having CRUD privileges
-- Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
 
 | Table Name               | Purpose                                                                                                                                                                  | 
 |--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -88,15 +87,28 @@ ACL-APD user could have write permission as it publishes audit data
 | request                  | To store the access request related information whenever an access request is created by a consumer to request provider to create policy for a resource / resource group |
 | approved_access_requests | To store approved notifications when the provider sets the notification status to granted inorder to create policy                                                       |
 
-#### PostgresQL
+#### Auditing
 - Auditing is done using Immudb and Postgres DB
-- To Setup immuclient for immudb please refer [here](https://github.com/datakaveri/iudx-deployment/tree/master/docs/immudb-setup)
-- Schema for PostgreSQL table is present [here](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
-- Schema for Immudb table, index for the table is present [here](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
+- To Setup immuclient for immudb please refer [immudb setup guide](https://github.com/datakaveri/iudx-deployment/tree/master/docs/immudb-setup)
+- Schema for Auditing table in PostgreSQL is present here - [postgres auditing table schema](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
+- Schema for Immudb table, index for the table is present here - [immudb schema in DX Auditing Server](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
 
-## To Replay Recording
-1. We use [asciinema](https://docs.asciinema.org/) as a tool to share the terminal recordings
-2. To download the tool, please visit asciinema's get started guide : [link](https://docs.asciinema.org/getting-started/)
+| Table Name               | Purpose                                                                                                                                             | DB                 | 
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
+| auditing_acl_apd         | To store logged information about endpoint, caller of the endpoint, timestamp when the POST, DELETE, PUT requests respond with 200 success response | Immudb, PostgreSQL |
+
+- User ID, endpoint and epoch time are indexed in Immudb to retrieve the logs faster  
+
+#### Flyway Migrations
+- Database flyway migrations help in updating the schema, permissions, grants, triggers etc., with the latest version
+- Each flyway schema file is versioned with the format `V<number>_<number>__file-name.sql`, ex : `V1_1__init-tables.sql`
+- Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
+- Values like DB URL, database user credentials, user and schema name could be populated in flyway.conf
+- The following commands could be executed
+  - ``` mvn flyway:info -Dflyway.configFiles=flyway.conf``` To get the flyway schema history table
+  - ``` mvn flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema 
+  - ``` mvn flyway:repair ``` To resolve some migration errors during flyway migration
+- Please find the reference to Flyway migration [here](https://documentation.red-gate.com/fd/migrations-184127470.html)
 
 ## Installation Steps
 ### Maven
@@ -169,6 +181,13 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
    `mvn clean compile exec:java@acl-apd-server`
 
 ## Logging and Monitoring
+### Log4j 2
+- For asynchronous logging, logging messages to the console in a specific format, Apache log4j 2 is used
+- For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/main/resources/log4j2.xml) 
+- Please find the reference to [link](https://logging.apache.org/log4j/2.x/manual/index.html)
+
+### Micrometer
+- #Metrics collection
 
 ## Testing
 ### Unit Testing
@@ -176,9 +195,10 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 2. Run the unit tests and generate a surefire report
    `mvn clean test-compile surefire:test surefire-report:report`
 3. Jacoco reports are stored in `./target/`
-4. A sample recording to execute unit test is available [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/unitTest.cast) and could be replayed using:
-        `asciinema play unitTest.cast`
-
+<br>
+Here is a sample recording to execute unit test 
+   ![](../example-tutorials/unitTest.gif)
+   ![](../example-tutorials/unitTest.svg)
 
 
 ### Integration Testing
@@ -196,9 +216,10 @@ Integration tests are through Postman/Newman whose script can be found from [her
 
 
 ### Performance Testing
-
+- JMeter
 Explain how to execute tests. #TODO
 
 ### Security Testing
-
-Explain how to execute tests. #TODO
+- For security testing, Zed Attack Proxy(ZAP) Scanning is done to discover security risks, vulnerabilities to help us address them
+- A report is generated to show vulnerabilities as high risk, medium risk, low risk and false positive 
+- Please find the reference to ZAP : [here](https://www.zaproxy.org/getting-started/)
