@@ -35,18 +35,11 @@ jobs:
           cp -r docs/* wiki/
           ls -la wiki  # List files to verify copying
 
-      - name: Create or Update _Sidebar.md
-        run: |
-          echo "Creating or updating _Sidebar.md..."
-          echo "# Sidebar" > wiki/_Sidebar.md
-          echo "* [Home](Introduction.md)" >> wiki/_Sidebar.md
-          cat wiki/_Sidebar.md  # Output the updated _Sidebar.md
-
       - name: Commit and Push Changes to Wiki
         run: |
           cd wiki
           git add .
-          git commit -m "Update wiki sidebar with link to Introduction.md" || echo "No changes to commit"
+          git commit -m "Update wiki content" || echo "No changes to commit"
           git push
         continue-on-error: true
 
