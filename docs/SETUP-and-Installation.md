@@ -198,7 +198,7 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 <br>
 Here is a sample recording to execute unit test 
    ![](../example-tutorials/unitTest.gif)
-
+   ![](../example-tutorials/unitTest.svg)
 
 
 ### Integration Testing
