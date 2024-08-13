@@ -181,8 +181,10 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
    `mvn clean compile exec:java@acl-apd-server`
 
 ## Logging and Monitoring
-### Log4j
-- #TODO
+### Log4j 2
+- For asynchronous logging, logging messages to the console in a specific format, Apache log4j 2 is used
+- For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/main/resources/log4j2.xml) 
+- Please find the reference to [link](https://logging.apache.org/log4j/2.x/manual/index.html)
 
 ### Micrometer
 - #TODO
@@ -216,5 +218,6 @@ Integration tests are through Postman/Newman whose script can be found from [her
 Explain how to execute tests. #TODO
 
 ### Security Testing
-- ZAP Scan
-Explain how to execute tests. #TODO
+- For security testing, Zed Attack Proxy(ZAP) Scanning is done to discover security risks, vulnerabilities to help us address them
+- A report is generated to show vulnerabilities as high risk, medium risk, low risk and false positive 
+- Please find the reference to ZAP : [here](https://www.zaproxy.org/getting-started/)
