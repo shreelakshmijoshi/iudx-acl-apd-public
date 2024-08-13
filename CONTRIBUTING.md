@@ -8,7 +8,7 @@ We follow Git Merge based workflow
 - To inspect, analyze the code to remove common programming defects,
 inculcate programming best practices PMD is being used : [reference link](https://maven.apache.org/plugins/maven-pmd-plugin/)
 - The following maven command is used to generate PMD, checkstyle and Copy/Paste Detector (CPD) reports in `./target/site` folder
-```mvn checkstyle:checkstyle pmd:pmd pmd:cpd```
+<br> ```mvn checkstyle:checkstyle pmd:pmd pmd:cpd```
 - To resolve checkstyle issues faster please install any of the following plugins in the IDE like IntelliJ 
   - google-java-format : [link](https://github.com/google/google-java-format?tab=readme-ov-file)
   - CheckStyle-IDEA : [link](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
