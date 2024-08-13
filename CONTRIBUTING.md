@@ -4,9 +4,9 @@ We follow Git Merge based workflow
 3. Commit to your fork and raise a Pull Request with upstream
 
 ## Code Style
-- To maintain a consistent code style maven checkstyle plugin is used 
+- To maintain a consistent code style maven checkstyle plugin is used : [reference link](https://maven.apache.org/plugins/maven-checkstyle-plugin/index.html)
 - To inspect, analyze the code to remove common programming defects,
-inculcate programming best practices PMD is being used
+inculcate programming best practices PMD is being used : [reference link](https://maven.apache.org/plugins/maven-pmd-plugin/)
 - The following maven command is used to generate PMD, checkstyle and Copy/Paste Detector (CPD) reports in `./target/site` folder
 ```mvn checkstyle:checkstyle pmd:pmd pmd:cpd```
 - To resolve checkstyle issues faster please install any of the following plugins in the IDE like IntelliJ 
