@@ -87,12 +87,19 @@ ACL-APD user could have write permission as it publishes audit data
 | request                  | To store the access request related information whenever an access request is created by a consumer to request provider to create policy for a resource / resource group |
 | approved_access_requests | To store approved notifications when the provider sets the notification status to granted inorder to create policy                                                       |
 
+#### Auditing
 - Auditing is done using Immudb and Postgres DB
 - To Setup immuclient for immudb please refer [immudb setup guide](https://github.com/datakaveri/iudx-deployment/tree/master/docs/immudb-setup)
 - Schema for Auditing table in PostgreSQL is present here - [postgres auditing table schema](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
 - Schema for Immudb table, index for the table is present here - [immudb schema in DX Auditing Server](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
 
-## Flyway Migrations
+| Table Name               | Purpose                                                                                                                                             | DB                 | 
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
+| auditing_acl_apd         | To store logged information about endpoint, caller of the endpoint, timestamp when the POST, DELETE, PUT requests respond with 200 success response | Immudb, PostgreSQL |
+
+- User ID, endpoint and epoch time are indexed in Immudb to retrieve the logs faster  
+
+#### Flyway Migrations
 - Database flyway migrations help in updating the schema, permissions, grants, triggers etc., with the latest version
 - Each flyway schema file is versioned with the format `V<number>_<number>__file-name.sql`, ex : `V1_1__init-tables.sql`
 - Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
