@@ -19,9 +19,9 @@ jobs:
 
       - name: Clone Target Repository
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} # Use a PAT if needed
         run: |
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git target-repo
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git target-repo
           cd target-repo
           git checkout dev
 
@@ -31,25 +31,14 @@ jobs:
           cp -r docs/* target-repo/docs/
           ls -la target-repo/docs  # List files to verify copying
 
-      - name: Verify Git Configuration
-        run: |
-          cd target-repo
-          git remote -v
-          git status
-          git branch
-
-      - name: Verify Token Access
-        run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user/repos
-
       - name: Commit and Push Changes to Target Repository
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} # Use a PAT if needed
         run: |
           cd target-repo
           git add .
           git commit -m "Update docs folder with new content from main branch" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git dev
+          git push https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git dev
 
       - name: List files in target-repo/docs directory after push
         run: ls -la target-repo/docs
