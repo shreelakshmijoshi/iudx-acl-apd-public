@@ -31,6 +31,13 @@ jobs:
           cp -r docs/* target-repo/docs/
           ls -la target-repo/docs  # List files to verify copying
 
+      - name: Verify Git Configuration
+        run: |
+          cd target-repo
+          git remote -v
+          git status
+          git branch
+
       - name: Commit and Push Changes to Target Repository
         run: |
           cd target-repo
