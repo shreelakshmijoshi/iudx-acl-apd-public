@@ -1,27 +1,28 @@
 ![IUDX](./iudx.png)
 
+
 # Setup and Installation Guide
-This document contains the installation and configuration
-processes of the external modules of each Verticle in Data Exchange ACL-APD Server.
+This document contains the installation and configuration information required to deploy the Data Exchange (DX) ACL APD Server.
 
 ## Configuration
-In order to setup PostgreSQL, RabbitMQ, Email Service, connect with DX Catalogue Server, DX AAA Server, appropriate information
-could be updated in configs. Please refer [Configurations](https://github.com/datakaveri/iudx-acl-apd/blob/main/docs/Configurations.md)
+In order to connect the DX ACL APD Server with PostgreSQL, RabbitMQ, Email Service, DX Catalogue Server, DX AAA Server, etc please refer [Configurations](./Configurations.md). It contains appropriate information which shall be updated as per the deployment. 
 
 ## Dependencies
-### External
+In this section we explain about the dependencies and their scope. It is expected that the dependencies are met before starting the deployment of DX ACL APD Server.
+
+### External Dependencies
 | Software Name    | Purpose                                                                                                                          | 
 |:-----------------|:---------------------------------------------------------------------------------------------------------------------------------|
 | PostgreSQL       | For storing information related to policy, access Request based CRUD operations, approved access requests, resources and users   |
-| RabbitMQ         | To publish auditing related data to auditing server via RMQ exchange                                                             |
+| RabbitMQ         | To publish auditing related data to auditing server via RabbitMQ exchange                                                             |
 | SMTP Mail Server | To send email notifications to provider, provider delegates when access requests are created by the consumer, consumer delegates |
 
 
-### Other Dependencies
+### Internal Dependencies
 | Software Name                                              | Purpose                                                               | 
 |:-----------------------------------------------------------|:----------------------------------------------------------------------|
-| Authentication Authorization and Accounting (AAA) Server   | used to download certificate for JWT token decoding, to get user info |
-| Catalogue Server                                           | used to fetch the list of resource and provider related information   |
+| DX Authentication Authorization and Accounting (AAA) Server   | Used to download certificate for JWT token decoding and to get user info |
+| DX Catalogue Server                                           | Used to fetch the list of resource and provider related information   |
 
 ### Prerequisites
 ### Keycloak registration for DX ACL-APD as trustee and APD
@@ -29,7 +30,7 @@ could be updated in configs. Please refer [Configurations](https://github.com/da
     - This can be done via the keycloak admin panel, or by using Data Exchange (DX) UI
     - The trustee user need not have any roles beforehand
 - The COS admin user must call the create APD API : [Link to the API](https://authorization.iudx.org.in/apis#tag/Access-Policy-Domain-(APD)-APIs/operation/post-auth-v1-apd)
-  with the name as the name of the APD, owner as email address of trustee (same as whatever is registered on Keycloak)
+  with the name as the name of the APD, owner as email address of trustee (as registered on Keycloak)
   and URL as the domain of the APD
 - Once the APD has been successfully registered, the trustee user will gain the trustee role
   scoped to that particular APD.
@@ -38,29 +39,38 @@ could be updated in configs. Please refer [Configurations](https://github.com/da
   get default client credentials API : [Link to the API](https://authorization.iudx.org.in/apis#tag/User-APIs/operation/get-auth-v1-user-clientcredentials)
 
 #### RabbitMQ
-- To setup RMQ refer the docker files available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/databroker)
+- To setup RabbitMQ refer the setup and installation instructions available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/databroker)
+- After deployment of RabbitMQ, we need to ensure that there are certain prerequisites met. Incase if it is not met, please login to RabbitMQ management portal using the RabbitMQ management UI and create a the following
 
-##### vHost table
-| vHost         |  
-|---------------|
-| IUDX-INTERNAL |
+##### Create vHost
 
-##### Exchange table
-
-| Exchange Name | Type of exchange | features |   
-|---------------|------------------|----------|
-| auditing      | direct           | durable  | 
+| Type | Name | Details |   
+|------|----------|----------|
+| vHost| IUDX-INTERNAL  | Create a vHost in RabbitMQ |
 
 
-##### Queue table
+##### Create Exchange
+
+| Exchange Name | Type of exchange | features | Details |   
+|---------------|------------------|----------|----------|
+| auditing      | direct           | durable  | Create an exchange in vHost IUDX-INTERNAL to allow audit information to be published |  
 
 
-| Exchange Name | Queue Name | vHost   | routing key |
-|---------------|------------|---------|-------------|
-| auditing      | direct     | durable | #           |
+##### Create Queue and Bind to Exchange
+| Exchange Name | Queue Name | vHost   | routing key | Details |  
+|---------------|------------|---------|-------------|-------------|
+| auditing      | direct     | durable | #           | Create a queue in vHost IUDX-INTERNAL to allow audit information to be consumed. Ensure that the queue is binded to the auditing exchange |
 
-##### Permissions
-ACL-APD user could have write permission as it publishes audit data
+##### User and Permissions
+Create a DX ACL APD user using the RabbitMQ management UI and set write permission. This user will be used by DX ACL APD server to publish audit data
+
+| API | Body | Details |   
+|------|----------|----------|
+| /api/users/user/permissions | As shown below | Set permission for a user to publish audit information | 
+
+
+Body for the API request
+
 ```
  "permissions": [
         {
@@ -74,9 +84,8 @@ ACL-APD user could have write permission as it publishes audit data
 ]
 ```
 
-
 #### PostgresQL
-- To setup PostgreSQL refer the docker files available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/postgres)
+- To setup PostgreSQL refer setup and installation instructions available [here](https://github.com/datakaveri/iudx-deployment/blob/master/Docker-Swarm-deployment/single-node/postgres)
 - **Note** : PostgreSQL database should be configured with a RBAC user having CRUD privileges
 
 | Table Name               | Purpose                                                                                                                                                                  | 
@@ -88,23 +97,23 @@ ACL-APD user could have write permission as it publishes audit data
 | approved_access_requests | To store approved notifications when the provider sets the notification status to granted inorder to create policy                                                       |
 
 #### Auditing
-- Auditing is done using Immudb and Postgres DB
+- Auditing is done using the DX Auditing Server which uses Immudb and Postgres for storing the audit logs
 - To Setup immuclient for immudb please refer [immudb setup guide](https://github.com/datakaveri/iudx-deployment/tree/master/docs/immudb-setup)
-- Schema for Auditing table in PostgreSQL is present here - [postgres auditing table schema](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
-- Schema for Immudb table, index for the table is present here - [immudb schema in DX Auditing Server](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
+- The schema for Auditing table in PostgreSQL is present here - [postgres auditing table schema](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
+- The schema for Immudb table, index for the table is present here - [immudb schema in DX Auditing Server](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
 
 | Table Name               | Purpose                                                                                                                                             | DB                 | 
 |--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
 | auditing_acl_apd         | To store logged information about endpoint, caller of the endpoint, timestamp when the POST, DELETE, PUT requests respond with 200 success response | Immudb, PostgreSQL |
 
-- User ID, endpoint and epoch time are indexed in Immudb to retrieve the logs faster  
+- **Note** : User ID, endpoint and epoch time are indexed in Immudb to retrieve the logs faster  
 
-#### Flyway Migrations
+### Database Migration using Flyway 
 - Database flyway migrations help in updating the schema, permissions, grants, triggers etc., with the latest version
 - Each flyway schema file is versioned with the format `V<number>_<number>__file-name.sql`, ex : `V1_1__init-tables.sql`
 - Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
-- Values like DB URL, database user credentials, user and schema name could be populated in flyway.conf
-- The following commands could be executed
+- Values like DB URL, database user credentials, user and schema name should be populated in flyway.conf
+- The following commands shall be executed
   - ``` mvn flyway:info -Dflyway.configFiles=flyway.conf``` To get the flyway schema history table
   - ``` mvn flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema 
   - ``` mvn flyway:repair ``` To resolve some migration errors during flyway migration
@@ -113,7 +122,7 @@ ACL-APD user could have write permission as it publishes audit data
 ## Installation Steps
 ### Maven
 1. Install java 11 and maven
-2. Use the maven exec plugin based starter to start the server
+2. Use the maven exec plugin based starter to start the server. Goto the root folder where the pom.xml file is present and run the below command.
    `mvn clean compile exec:java@acl-apd-server`
 
 ### JAR
@@ -123,7 +132,7 @@ ACL-APD user could have write permission as it publishes audit data
 export ACL_APD_URL=https://<acl-apd-domain-name>
 export LOG_LEVEL=INFO
 ```
-3. Use maven to package the application as a JAR
+3. Use maven to package the application as a JAR. Goto the root folder where the pom.xml file is present and run the below command.
    `mvn clean package -Dmaven.test.skip=true`
 4. 2 JAR files would be generated in the `target/` directory
     - `iudx.iudx.apd.acl.server-cluster-0.0.1-SNAPSHOT-fat.jar` - clustered vert.x containing micrometer metrics
@@ -151,7 +160,6 @@ $ java $ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNA
 
 ```
 
-
 #### Running the non-clustered JAR
 The JAR requires 1 runtime argument when running
 
@@ -172,13 +180,9 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 2. Clone this repo
 3. Build the images
    ` ./docker/build.sh`
-4. Modify the `docker-compose.yml` file to map the config file you just created
+4. Modify the `docker-compose.yml` file to map the config file
 5. Start the server in production (prod) or development (dev) mode using docker-compose
    ` docker-compose up prod `
-### Maven based
-1. Install java 11 and maven
-2. Use the maven exec plugin based starter to start the server
-   `mvn clean compile exec:java@acl-apd-server`
 
 ## Logging and Monitoring
 ### Log4j 2
@@ -199,8 +203,6 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 Here is a sample recording to execute unit test 
    ![](../example-tutorials/unitTest.gif)
    <img src="../example-tutorials/unitTest.gif"/>
-
-
 ### Integration Testing
 
 Integration tests are through Postman/Newman whose script can be found from [here](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/test/resources).
