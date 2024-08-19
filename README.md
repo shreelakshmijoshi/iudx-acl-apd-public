@@ -16,7 +16,7 @@ Policies are verified by Data Exchange (DX) Authentication Authorization and Acc
 allow consumer, consumer delegates to access the resource.
 
 <p align="center">
-<img src="./acl-apd-overview.png">
+<img src="./docs/acl-apd-overview.png">
 </p>
 
 ## Features
