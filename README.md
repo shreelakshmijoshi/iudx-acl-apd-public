@@ -30,11 +30,11 @@ The features of the DX ACL APD is as follows:
 
 # Explanation
 ## Understanding ACL APD
-The section available [here](./Solution_Architecture.md) explains the components/services used in implementing the ACL-APD server.
+The section available [here](./docs/Solution_Architecture.md) explains the components/services used in implementing the ACL-APD server.
 
 # How To Guide
 ## Setup and Installation
-Setup and Installation guide is available [here](./SETUP-and-Installation.md)
+Setup and Installation guide is available [here](./docs/SETUP-and-Installation.md)
 
 # Tutorial
 ## Tutorials and Explanations
@@ -46,7 +46,7 @@ Setup and Installation guide is available [here](./SETUP-and-Installation.md)
 API docs are available [here](https://acl-apd.iudx.org.in/apis)
 
 ## FAQ
-FAQs are available [here](./FAQ.md)
+FAQs are available [here](./docs/FAQ.md)
 
 ## Contributing
 Please find information about contributing [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/CONTRIBUTING.md)
