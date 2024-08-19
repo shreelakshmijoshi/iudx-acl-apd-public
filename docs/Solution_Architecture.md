@@ -1,40 +1,28 @@
 ## Solution Architecture
-The following block diagram shows different components/services used in implementing the ACL-APD server.
+The following block diagram shows different components/services used in implementing the DX ACL APD Server.
 ![Solution Architecture](./acl-apd-solution-architecture.png)
-The above setup allows specific high load containers/services to scale with ease. Various services of the resource server are detailed in the sections below.
+The above setup allows specific high load containers/services to scale with ease. Various services of the server are detailed in the sections below.
 
 ### API Server
-An API server is an HTTPS Web Server and serves as an API gateway for actors (consumers, providers, DX AAA Server) to interact with the different services provided by the DX ACL APD Server.
+An API server is an HTTPs Web Server that serves as an API gateway for actors (consumers, providers, DX AAA Server) to interact with the different services provided by the DX ACL APD Server.
 These services (as described below) may be database read/write services. <br>
-It is also responsible for calling the Authorization Server (via the authorization service) to authenticate and authorize access to resources.
+It is also responsible for calling the DX AAA Server (via the authorization service) to authenticate and authorize access to resources based on tokens.
 
 ### Database Module
-Postgres is called by the specific services like Policy service, Notification service, Auth service for policy, access-request related CRUD operations, to store email, first name and last name of the user requesting the APIs. While fetching access requests, policies from the database response are processed and displayed according to the newly created or updated records.
+Postgres database is called by specific services like Policy service, Notification service, Auth service. It is also used to store the access-request related to CRUD operations, to store emails, first name and last name of the user requesting the APIs. 
 
 ### Auditing Service
-The Data Broker is used by the API Server to log information related to successful creation, deletion of policies and successful creation, updation, and deletion of access requests.
+The DX Auditing Server is integrated with the DX ACL APD Server using the Data Broker. The DX ACL APD Server through the API Server connects with the Auditing Server using the Data Broker as a message bus to log information related to successful creation, deletion of policies and successful creation, updation, and deletion of access requests.
 
 ### Authentication Service
-The authentication service interacts with the DX AAA Server to validate tokens provided by a consumer of a protected resource and to fetch information about the user.
+The authentication service interacts with the DX AAA Server to validate tokens provided by a user to fetch information about their role and access restrictions.
 
 ### Policy Service
-The policy service is used to create, delete or list policies, for the resources owned by the provider
-. Delegates of the provider could manage policies on behalf of the provider.
-They could provide user specific constraints while creating a policy for a certain consumer for a given resource.
-While creating a policy, the owner of the resource or provider delegate, provides ID of the resource, consumer email ID, constraints like subscription, file, async etc., along with policy expiry time in `yyyy-MM-dd'T'HH:mm:ss` format for consumer to access the resource.
-By default the policy would expire in 12 days (if the expiry time is not provided).
+The policy service is used to create, delete or list policies, for the resources owned by the provider. Delegates of the provider could manage policies on behalf of the provider. The policy can contain user specific constraints for a given resource. While creating a policy, the provider or provider delegate, provides the ID of the resource, consumer email ID, constraints like subscription, file, async etc., along with policy expiry time in `yyyy-MM-dd'T'HH:mm:ss` format for consumer to access the resource. By default the policy would expire in 12 days (if the expiry time is not provided).
 The provider or delegate of the provider can also withdraw an active policy by providing the policy ID.
-After the policy is successfully created, owner, consumer, delegates can view all the information related to the user policies.
-DX AAA Server checks if any policy is present for the given resource by using the verify policy API.
-Verify policy returns the constraints to access the resource for the active policy.
+After the policy is successfully created, provider, consumer, delegates associated to the policy can view all the information related to it.
+DX AAA Server uses this created policy using the verify policy API before issuing a token to the consumer.
 
 ### Notification Service
-Consumer or consumer delegates could request the provider to access the resource by providing information of the resource like it's ID
-and additional information related to the purpose for which the resource is being accessed.
-Academia, research, non-commercial could be listed down to access the resource to help the provider take an informed decision while approving the request.
-An email is sent to the provider and provider delegates to approve or reject the request by visiting the provider panel.
-While approving the access request, information like access constraints, ID of the access request, expiry time in `yyyy-MM-dd'T'HH:mm:ss` format to access the resource when the policy is created could be provided.  
-If the consumer or consumer delegate no longer wants to create the access request or if an active policy for the given access request is present,
-the consumer could withdraw the pending access request by providing it's ID.
-After the access request is created, all the information regarding access request could be viewed by the user.
-
+The Notification Service is used by a Consumer or consumer delegates to connect with a Provider. A consumer should provide information of the resource like its ID, purpose of access, purpose of usage (Academia, research, non-commercial) to help the provider take an informed decision while approving the request.
+An email will be sent to the provider and provider delegates to approve or reject the request. 
