@@ -19,26 +19,25 @@ jobs:
 
       - name: Clone Target Repository
         env:
-          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} # Use a PAT if needed
+          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} 
         run: |
-          git clone https://x-access-token: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@github.com/datakaveri/iudx-developer-docs.git target-repo
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git target-repo
           cd target-repo
           git checkout dev
 
       - name: Copy Files to Target Repository
         run: |
-          echo "Copying files..."
           cp -r docs/* target-repo/docs/
-          ls -la target-repo/docs  # List files to verify copying
+          ls -la target-repo/docs 
 
       - name: Commit and Push Changes to Target Repository
         env:
-          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} # Use a PAT if needed
+          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} 
         run: |
           cd target-repo
           git add .
           git commit -m "Update docs folder with new content from main branch" || echo "No changes to commit"
-          git push https://x-access-token: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@github.com/datakaveri/iudx-developer-docs.git dev
+          git push https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git dev
 
       - name: List files in target-repo/docs directory after push
         run: ls -la target-repo/docs
