@@ -19,10 +19,10 @@ In this section we explain about the dependencies and their scope. It is expecte
 
 
 ### Internal Dependencies
-| Software Name                                              | Purpose                                                               | 
-|:-----------------------------------------------------------|:----------------------------------------------------------------------|
-| DX Authentication Authorization and Accounting (AAA) Server   | Used to download certificate for JWT token decoding and to get user info |
-| DX Catalogue Server                                           | Used to fetch the list of resource and provider related information   |
+| Software Name                                               | Purpose                                                                  | 
+|:------------------------------------------------------------|:-------------------------------------------------------------------------|
+| DX Authentication Authorization and Accounting (AAA) Server | Used to download certificate for JWT token decoding and to get user info |
+| DX Catalogue Server                                         | Used to fetch the list of resource and provider related information      |
 
 ### Prerequisites
 ### Keycloak registration for DX ACL-APD as trustee and APD
