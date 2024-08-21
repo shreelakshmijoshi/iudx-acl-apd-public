@@ -35,28 +35,22 @@ jobs:
           cp -r docs/* wiki/
           ls -la wiki  # List files to verify copying
 
-      - name: Set Introduction.md as the Landing Page
+      - name: Rename Files for Desired Order
         run: |
-          echo "Setting Introduction.md as the landing page..."
-          mv wiki/Introduction.md wiki/Home.md
+          echo "Renaming files to achieve desired order..."
+          mv wiki/Introduction.md wiki/_Home.md
+          mv wiki/Solution_Architecture.md wiki/_Solution_Architecture.md
+          mv wiki/Configurations.md wiki/_Configurations.md
+          mv wiki/Explanation.md wiki/_Explanation.md
+          mv wiki/SETUP-and-Installation.md wiki/_SETUP_and_Installation.md
+          mv wiki/FAQ.md wiki/_FAQ.md
           ls -la wiki  # List files to verify changes
-
-      - name: Create Custom Sidebar
-        run: |
-          echo "Creating custom sidebar..."
-          echo "* [Home](Home.md)" > wiki/_Sidebar.md
-          echo "* [Solution Architecture](Solution_Architecture.md)" >> wiki/_Sidebar.md
-          echo "* [Configurations](Configurations.md)" >> wiki/_Sidebar.md
-          echo "* [Explanation](Explanation.md)" >> wiki/_Sidebar.md
-          echo "* [SETUP and Installation](SETUP-and-Installation.md)" >> wiki/_Sidebar.md
-          echo "* [FAQ](FAQ.md)" >> wiki/_Sidebar.md
-          cat wiki/_Sidebar.md  # Output the updated _Sidebar.md
 
       - name: Commit and Push Changes to Wiki
         run: |
           cd wiki
           git add .
-          git commit -m "Update wiki content with custom sidebar" || echo "No changes to commit"
+          git commit -m "Update wiki content with ordered filenames" || echo "No changes to commit"
           git push
         continue-on-error: true
 
