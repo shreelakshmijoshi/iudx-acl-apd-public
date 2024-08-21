@@ -5,7 +5,7 @@
 This document contains the installation and configuration information required to deploy the Data Exchange (DX) ACL APD Server.
 
 ## Configuration
-In order to connect the DX ACL APD Server with PostgreSQL, RabbitMQ, Email Service, DX Catalogue Server, DX AAA Server, etc please refer [Configurations](./Configurations.md). It contains appropriate information which shall be updated as per the deployment. 
+In order to connect the DX ACL APD Server with PostgreSQL, RabbitMQ, Email Service, DX Catalogue Server, DX AAA Server, etc please refer [Configurations](./Configurations.md). It contains appropriate information which shall be updated as per the deployment.
 
 ## Dependencies
 In this section we explain about the dependencies and their scope. It is expected that the dependencies are met before starting the deployment of DX ACL APD Server.
@@ -14,15 +14,15 @@ In this section we explain about the dependencies and their scope. It is expecte
 | Software Name    | Purpose                                                                                                                          | 
 |:-----------------|:---------------------------------------------------------------------------------------------------------------------------------|
 | PostgreSQL       | For storing information related to policy, access Request based CRUD operations, approved access requests, resources and users   |
-| RabbitMQ         | To publish auditing related data to auditing server via RabbitMQ exchange                                                             |
+| RabbitMQ         | To publish auditing related data to auditing server via RabbitMQ exchange                                                        |
 | SMTP Mail Server | To send email notifications to provider, provider delegates when access requests are created by the consumer, consumer delegates |
 
 
 ### Internal Dependencies
-| Software Name                                              | Purpose                                                               | 
-|:-----------------------------------------------------------|:----------------------------------------------------------------------|
-| DX Authentication Authorization and Accounting (AAA) Server   | Used to download certificate for JWT token decoding and to get user info |
-| DX Catalogue Server                                           | Used to fetch the list of resource and provider related information   |
+| Software Name                                               | Purpose                                                                  | 
+|:------------------------------------------------------------|:-------------------------------------------------------------------------|
+| DX Authentication Authorization and Accounting (AAA) Server | Used to download certificate for JWT token decoding and to get user info |
+| DX Catalogue Server                                         | Used to fetch the list of resource and provider related information      |
 
 ### Prerequisites
 ### Keycloak registration for DX ACL-APD as trustee and APD
@@ -44,28 +44,28 @@ In this section we explain about the dependencies and their scope. It is expecte
 
 ##### Create vHost
 
-| Type | Name | Details |   
-|------|----------|----------|
-| vHost| IUDX-INTERNAL  | Create a vHost in RabbitMQ |
+| Type  | Name          | Details                    |   
+|-------|---------------|----------------------------|
+| vHost | IUDX-INTERNAL | Create a vHost in RabbitMQ |
 
 
 ##### Create Exchange
 
-| Exchange Name | Type of exchange | features | Details |   
-|---------------|------------------|----------|----------|
+| Exchange Name | Type of exchange | features | Details                                                                              |   
+|---------------|------------------|----------|--------------------------------------------------------------------------------------|
 | auditing      | direct           | durable  | Create an exchange in vHost IUDX-INTERNAL to allow audit information to be published |  
 
 
 ##### Create Queue and Bind to Exchange
-| Exchange Name | Queue Name | vHost   | routing key | Details |  
-|---------------|------------|---------|-------------|-------------|
+| Exchange Name | Queue Name | vHost   | routing key | Details                                                                                                                                   |  
+|---------------|------------|---------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | auditing      | direct     | durable | #           | Create a queue in vHost IUDX-INTERNAL to allow audit information to be consumed. Ensure that the queue is binded to the auditing exchange |
 
 ##### User and Permissions
 Create a DX ACL APD user using the RabbitMQ management UI and set write permission. This user will be used by DX ACL APD server to publish audit data
 
-| API | Body | Details |   
-|------|----------|----------|
+| API                         | Body           | Details                                                |   
+|-----------------------------|----------------|--------------------------------------------------------|
 | /api/users/user/permissions | As shown below | Set permission for a user to publish audit information | 
 
 
@@ -106,17 +106,17 @@ Body for the API request
 |--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
 | auditing_acl_apd         | To store logged information about endpoint, caller of the endpoint, timestamp when the POST, DELETE, PUT requests respond with 200 success response | Immudb, PostgreSQL |
 
-- **Note** : User ID, endpoint and epoch time are indexed in Immudb to retrieve the logs faster  
+- **Note** : User ID, endpoint and epoch time are indexed in Immudb to retrieve the logs faster
 
-### Database Migration using Flyway 
+### Database Migration using Flyway
 - Database flyway migrations help in updating the schema, permissions, grants, triggers etc., with the latest version
 - Each flyway schema file is versioned with the format `V<number>_<number>__file-name.sql`, ex : `V1_1__init-tables.sql`
 - Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
 - Values like DB URL, database user credentials, user and schema name should be populated in flyway.conf
 - The following commands shall be executed
-  - ``` mvn flyway:info -Dflyway.configFiles=flyway.conf``` To get the flyway schema history table
-  - ``` mvn flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema 
-  - ``` mvn flyway:repair ``` To resolve some migration errors during flyway migration
+    - ``` mvn flyway:info -Dflyway.configFiles=flyway.conf``` To get the flyway schema history table
+    - ``` mvn flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema
+    - ``` mvn flyway:repair ``` To resolve some migration errors during flyway migration
 - Please find the reference to Flyway migration [here](https://documentation.red-gate.com/fd/migrations-184127470.html)
 
 ## Installation Steps
@@ -187,11 +187,16 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 ## Logging and Monitoring
 ### Log4j 2
 - For asynchronous logging, logging messages to the console in a specific format, Apache log4j 2 is used
-- For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/main/resources/log4j2.xml) 
+- For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/main/resources/log4j2.xml)
 - Please find the reference to [link](https://logging.apache.org/log4j/2.x/manual/index.html)
 
 ### Micrometer
-- #Metrics collection
+- Micrometer is used for observability of the application
+- Reference link: [vertx-micrometer-metrics](https://vertx.io/docs/vertx-micrometer-metrics/java/)
+- The metrics from micrometer is stored in Prometheus which can be used to alert, observe,
+  take steps towards the current state of the application
+- The data sent to Prometheus can then be visualised in Grafana
+- Reference link: [vertx-prometheus-grafana](https://how-to.vertx.io/metrics-prometheus-grafana-howto/)
 
 ## Testing
 ### Unit Testing
@@ -199,9 +204,8 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 2. Run the unit tests and generate a surefire report
    `mvn clean test-compile surefire:test surefire-report:report`
 3. Jacoco reports are stored in `./target/`
-<br>
-Here is a sample recording to execute unit test 
-   ![](../example-tutorials/unitTest.gif)
+   <br>
+   Here is a sample recording to execute unit test
    <img src="../example-tutorials/unitTest.gif"/>
 ### Integration Testing
 
@@ -218,10 +222,14 @@ Integration tests are through Postman/Newman whose script can be found from [her
 
 
 ### Performance Testing
-- JMeter
-Explain how to execute tests. #TODO
+- JMeter is for used performance testing, load testing the application
+- Please find the reference to JMeter : [here](https://jmeter.apache.org/usermanual/get-started.html)
+- Command to generate HTML report at `target/jmeter`
+```
+rm -r -f target/jmeter && jmeter -n -t jmeter/<file-name>.jmx -l target/jmeter/sample-reports.csv -e -o target/jmeter/
+```
 
 ### Security Testing
 - For security testing, Zed Attack Proxy(ZAP) Scanning is done to discover security risks, vulnerabilities to help us address them
-- A report is generated to show vulnerabilities as high risk, medium risk, low risk and false positive 
+- A report is generated to show vulnerabilities as high risk, medium risk, low risk and false positive
 - Please find the reference to ZAP : [here](https://www.zaproxy.org/getting-started/)
