@@ -39,11 +39,11 @@ jobs:
         run: |
           echo "Renaming files to ensure correct order..."
           mv wiki/Introduction.md wiki/Home.md
-          mv wiki/Solution_Architecture.md wiki/2_Solution_Architecture.md
-          mv wiki/Configurations.md wiki/3_Configurations.md
-          mv wiki/Explanation.md wiki/4_Explanation.md
-          mv wiki/SETUP-and-Installation.md wiki/5_SETUP-and-Installation.md
-          mv wiki/FAQ.md wiki/6_FAQ.md
+          mv wiki/Solution_Architecture.md wiki/-Solution-Architecture.md
+          mv wiki/Configurations.md wiki/--Configurations.md
+          mv wiki/Explanation.md wiki/---Explanation.md
+          mv wiki/SETUP-and-Installation.md wiki/----SETUP-and-Installation.md
+          mv wiki/FAQ.md wiki/------FAQ.md
           ls -la wiki  # List files to verify renaming
 
       - name: Remove Custom Sidebar if Exists
