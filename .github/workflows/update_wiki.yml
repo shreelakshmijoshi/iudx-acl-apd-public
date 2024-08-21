@@ -35,22 +35,30 @@ jobs:
           cp -r docs/* wiki/
           ls -la wiki  # List files to verify copying
 
-      - name: Rename Files for Desired Order
+      - name: Rename Files to Ensure Correct Order
         run: |
-          echo "Renaming files to achieve desired order..."
-          mv wiki/Introduction.md wiki/_Home.md
+          echo "Renaming files to ensure correct order..."
+          mv wiki/Introduction.md wiki/Home.md
           mv wiki/Solution_Architecture.md wiki/_Solution_Architecture.md
-          mv wiki/Configurations.md wiki/_Configurations.md
-          mv wiki/Explanation.md wiki/_Explanation.md
-          mv wiki/SETUP-and-Installation.md wiki/_SETUP_and_Installation.md
-          mv wiki/FAQ.md wiki/_FAQ.md
-          ls -la wiki  # List files to verify changes
+          mv wiki/Configurations.md wiki/03_Configurations.md
+          mv wiki/Explanation.md wiki/04_Explanation.md
+          mv wiki/SETUP-and-Installation.md wiki/05_SETUP-and-Installation.md
+          mv wiki/FAQ.md wiki/06_FAQ.md
+          ls -la wiki  # List files to verify renaming
+
+      - name: Remove Custom Sidebar if Exists
+        run: |
+          echo "Checking for existing sidebar..."
+          if [ -f wiki/_Sidebar.md ]; then
+            echo "Removing existing sidebar..."
+            rm wiki/_Sidebar.md
+          fi
 
       - name: Commit and Push Changes to Wiki
         run: |
           cd wiki
           git add .
-          git commit -m "Update wiki content with ordered filenames" || echo "No changes to commit"
+          git commit -m "Update wiki content with new file order" || echo "No changes to commit"
           git push
         continue-on-error: true
 
