@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "ed50ba0e-6fa7-495a-981b-c0dda5909753",
+		"_postman_id": "bb5d58fd-9df8-46e1-bf19-e16ce66adc7f",
 		"name": "IUDX-ACL-APD",
 		"description": "**IUDX-ACL-APD** **Collection**:  \nThe \"iudx-acl-apd\" collection is a comprehensive set of APIs that encompass three essential aspects of access management within a system:\n\n1. **Token Management (Token)**:\n    - This component of the collection provides the means to acquire an Identity Access Token, which is a fundamental requirement for executing various functionalities within the system, including Policy and Access Request APIs.\n2. **Policy Management (Policy)**:\n    - The \"iudx-acl-apd\" collection includes APIs that streamline the creation, deletion, and retrieval of user-generated policies. These policies define access control rules and permissions, ensuring a structured approach to access management.\n3. **Access Request Management (Access Request)**:\n    - Within this collection, users can initiate policy requests, obtain lists of generated access requests, delete specific requests, and manage requests by approving or rejecting them.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23856712"
 	},
 	"item": [
 		{
@@ -301,7 +302,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"request\": [\n    {\n      \"userEmail\": \"consumer@dummyId.com\",\n      \"itemId\": \"{{item_id}}\",\n      \"itemType\": \"RESOURCE_GROUP\",\n      \"expiryTime\": \"3000-08-04T20:00:19\",\n      \"constraints\": {\n        \"access\": [\n          \"sub\"\n        ]\n      }\n    }\n  ]\n}",
+							"raw": "{\n  \"request\": [\n    {\n      \"userEmail\": \"acl-apd.integration-consumer@datakaveri.org\",\n      \"itemId\": \"{{item_id}}\",\n      \"itemType\": \"RESOURCE\",\n      \"expiryTime\": \"2030-08-04T20:00:19\",\n      \"constraints\": {\n        \"access\": [\n          \"sub\"\n        ]\n      }\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -318,6 +319,79 @@
 							]
 						},
 						"description": "This API allows users to create new policies. Users can define and configure policies based on their specific requirements using this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Get resource access token as consumer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const isPipelineForDev = pm.environment.get('isIntegrationTestBeingRunInCiPipelineForDev') == 'true';",
+									"// Test the response code",
+									"(isPipelineForDev ? pm.test.skip : pm.test)(\"response is 200 (OK)\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Test the response header",
+									"(isPipelineForDev ? pm.test.skip : pm.test)(\"Check response header\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\",\"application/json\");",
+									"});",
+									"",
+									"// Test the response",
+									"(isPipelineForDev ? pm.test.skip : pm.test)(\"Check response body\", function () {    ",
+									"    const body = pm.response.json();",
+									"    pm.expect(body).to.have.property(\"type\", \"urn:dx:as:Success\");",
+									"    pm.expect(body).to.have.property(\"title\", \"Token created\");",
+									"    }",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "clientId",
+								"value": "{{consumerClientId}}",
+								"type": "text",
+								"description": "Client ID (UUID)"
+							},
+							{
+								"key": "clientSecret",
+								"value": "{{consumerClientSecret}}",
+								"type": "text",
+								"description": "Client secret (40 chars in hexadecimal)"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"itemId\": \"{{item_id}}\",\n    \"itemType\": \"resource\",\n    \"role\": \"consumer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{authEndpoint}}/auth/v1/token",
+							"host": [
+								"{{authEndpoint}}"
+							],
+							"path": [
+								"auth",
+								"v1",
+								"token"
+							]
+						},
+						"description": "Get resource access token based on the policy created by the provider"
 					},
 					"response": []
 				},
@@ -518,7 +592,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\"itemId\": \"{{item_id}}\",\n\"itemType\": \"RESOURCE_GROUP\"\n}",
+							"raw": "{\n\"itemId\": \"{{item_id}}\",\n\"itemType\": \"RESOURCE\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -732,7 +806,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\"itemId\": \"{{item_id}}\",\n\"itemType\": \"RESOURCE_GROUP\"\n}",
+							"raw": "{\n\"itemId\": \"{{item_id}}\",\n\"itemType\": \"RESOURCE\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -878,7 +952,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"requestId\": \"{{requestId}}\",\n  \"status\": \"granted\",\n  \"expiryAt\": \"3000-03-05T20:00:19\",\n  \"constraints\": {\n    \"access\": [\n      \"api\",\n      \"sub\",\n      \"file\"\n    ]\n  }\n}",
+							"raw": "{\n  \"requestId\": \"{{requestId}}\",\n  \"status\": \"granted\",\n  \"expiryAt\": \"2030-03-05T20:00:19\",\n  \"constraints\": {\n    \"access\": [\n      \"api\",\n      \"sub\",\n      \"file\"\n    ]\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
