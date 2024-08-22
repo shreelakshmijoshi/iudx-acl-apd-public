@@ -115,7 +115,7 @@ Body for the API request
 - Values like DB URL, database user credentials, user and schema name should be populated in flyway.conf
 - The following commands shall be executed
     - ``` mvn flyway:info -Dflyway.configFiles=flyway.conf``` To get the flyway schema history table
-    - ``` mvn flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema
+    - ``` mvn clean flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema
     - ``` mvn flyway:repair ``` To resolve some migration errors during flyway migration
 - Please find the reference to Flyway migration [here](https://documentation.red-gate.com/fd/migrations-184127470.html)
 
@@ -218,7 +218,7 @@ Integration tests are through Postman/Newman whose script can be found from [her
 3. Run the server through either docker, maven or redeployer
 4. Run the integration tests and generate the newman report
    `newman run <postman-collection-path> -e <postman-environment> --insecure -r htmlextra --reporter-htmlextra-export .`
-5. Reports are stored in `./target/`
+5. Command to store report in `target/newman`:  `newman run <postman-collection-path> -e <postman-environment> --insecure -r htmlextra --reporter-htmlextra-export ./target/newman/report.html`
 
 
 ### Performance Testing
