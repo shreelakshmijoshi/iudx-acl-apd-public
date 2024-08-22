@@ -32,7 +32,12 @@ jobs:
       - name: Copy and Modify README for Wiki
         run: |
           echo "Copying and modifying README.md to wiki/Home.md..."
-          sed 's|./docs/|./|g' README.md > wiki/Home.md
+          sed -e 's|./docs/|./|g' \
+              -e 's|./Solution_Architecture.md|02-Solution-Architecture.md|g' \
+              -e 's|./Configurations.md|03-Configurations.md|g' \
+              -e 's|./Explanation.md|04-Explanation.md|g' \
+              -e 's|./SETUP-and-Installation.md|05-SETUP-and-Installation.md|g' \
+              -e 's|./FAQ.md|06-FAQ.md|g' README.md > wiki/Home.md
           ls -la wiki  # Verify the file creation
 
       - name: Copy Files to Wiki
@@ -44,6 +49,7 @@ jobs:
       - name: Rename Files to Ensure Correct Order
         run: |
           echo "Renaming files to ensure correct order..."
+          mv wiki/Home.md wiki/01-Home.md
           mv wiki/Solution_Architecture.md wiki/02-Solution-Architecture.md
           mv wiki/Configurations.md wiki/03-Configurations.md
           mv wiki/Explanation.md wiki/04-Explanation.md
