@@ -33,11 +33,11 @@ jobs:
         run: |
           echo "Copying and modifying README.md to wiki/Home.md..."
           sed -e 's|./docs/|./|g' \
-              -e 's|./Solution_Architecture.md|./02-Solution-Architecture.md|g' \
-              -e 's|./Configurations.md|./03-Configurations.md|g' \
-              -e 's|./Explanation.md|./04-Explanation.md|g' \
-              -e 's|./SETUP-and-Installation.md|./05-SETUP-and-Installation.md|g' \
-              -e 's|./FAQ.md|06-FAQ.md|g' README.md > wiki/Home.md
+              -e 's|./Solution_Architecture.md|./02-Solution-Architecture|g' \
+              -e 's|./Configurations.md|./03-Configurations|g' \
+              -e 's|./Explanation.md|./04-Explanation|g' \
+              -e 's|./SETUP-and-Installation.md|./05-SETUP-and-Installation|g' \
+              -e 's|./FAQ.md|06-FAQ|g' README.md > wiki/Home.md
           ls -la wiki  # Verify the file creation
 
       - name: Copy Files to Wiki
