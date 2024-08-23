@@ -201,7 +201,7 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 ## Testing
 ### Unit Testing
 
-![](/example-tutorials/0-unit-testing.webm)
+![Unit testing sample video](/example-tutorials/unit-test.mp4)
 
 1. Run the server through either docker, maven or redeployer
 2. Run the unit tests and generate a surefire report
