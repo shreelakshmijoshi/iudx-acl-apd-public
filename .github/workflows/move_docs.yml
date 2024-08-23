@@ -27,14 +27,8 @@ jobs:
 
       - name: Copy Files to Target Repository
         run: |
-          cp -r docs/* target-repo/docs/
-          ls -la target-repo/docs 
-
-      - name: Echo the Git Push URL
-        env:
-          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
-        run: |
-          echo "Git Push URL: https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git"
+          cp -r docs/* target-repo/acl-docs/
+          ls -la target-repo/acl-docs 
 
       - name: Commit and Push Changes to Target Repository
         env:
@@ -46,5 +40,5 @@ jobs:
           echo "Pushing changes to the repository..."
           git push https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/datakaveri/iudx-developer-docs.git dev
 
-      - name: List files in target-repo/docs directory after push
-        run: ls -la target-repo/docs
+      - name: List files in target-repo/acl-docs directory after push
+        run: ls -la target-repo/acl-docs
