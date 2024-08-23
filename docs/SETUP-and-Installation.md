@@ -200,11 +200,8 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 
 ## Testing
 ### Unit Testing
-<!--video-source-element.md-->
-<video style="width:70%" controls>
-  <source src="local-video.mov">
-  Your browser does not support the video tag.
-</video>
+
+![](/example-tutorials/0-unit-testing.webm)
 
 1. Run the server through either docker, maven or redeployer
 2. Run the unit tests and generate a surefire report
