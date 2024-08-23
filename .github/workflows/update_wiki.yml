@@ -37,15 +37,14 @@ jobs:
               -e 's|./Configurations.md|./03-Configurations|g' \
               -e 's|./Explanation.md|./04-Explanation|g' \
               -e 's|./SETUP-and-Installation.md|./05-SETUP-and-Installation|g' \
-              -e 's|./example-tutorials|./07-Tutorials|g' \
-              -e 's|./FAQ.md|06-FAQ|g' README.md > wiki/Home.md
+              -e 's|./example-tutorials|./06-Tutorials|g' \
+              -e 's|./FAQ.md|07-FAQ|g' README.md > wiki/Home.md
           ls -la wiki  # Verify the file creation
 
       - name: Copy Files to Wiki
         run: |
           echo "Copying files..."
           cp -r docs/* wiki/
-          cp -r example-tutorials/* wiki/
           ls -la wiki  # List files to verify copying
 
       - name: Rename Files to Ensure Correct Order
@@ -55,8 +54,8 @@ jobs:
           mv wiki/Configurations.md wiki/03-Configurations.md
           mv wiki/Explanation.md wiki/04-Explanation.md
           mv wiki/SETUP-and-Installation.md wiki/05-SETUP-and-Installation.md
-          mv wiki/Tutorials.md wiki/07-Tutorials.md
-          mv wiki/FAQ.md wiki/06-FAQ.md
+          mv wiki/Tutorials.md wiki/06-Tutorials.md
+          mv wiki/FAQ.md wiki/07-FAQ.md
           ls -la wiki  # List files to verify renaming
 
 
