@@ -200,17 +200,17 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 
 ## Testing
 ### Unit Testing
-<video controls width="400">
-  <source src="/example-tutorials/0-unit-testing.webm" type="video/webm" />
+<!--video-source-element.md-->
+<video style="width:70%" controls>
+  <source src="local-video.mov">
+  Your browser does not support the video tag.
 </video>
 
 1. Run the server through either docker, maven or redeployer
 2. Run the unit tests and generate a surefire report
    `mvn clean test-compile surefire:test surefire-report:report`
 3. Jacoco reports are stored in `./target/`
-   <br>
-   Here is a sample recording to execute unit test
-   <img src="../example-tutorials/unitTest.gif"/>
+
 ### Integration Testing
 
 Integration tests are through Postman/Newman whose script can be found from [here](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/test/resources).
