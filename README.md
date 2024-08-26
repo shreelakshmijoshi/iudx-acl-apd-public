@@ -32,7 +32,13 @@ The features of the DX ACL APD is as follows:
 ## Understanding ACL APD
 - The section available [here](./docs/Solution_Architecture.md) explains the components/services used in implementing the ACL-APD server
 - To try out the APIs, import the API collection, postman collection in postman
-- Reference : [postman-collection](src/main/resources/IUDX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/IUDX ACL-APD.postman_environment.json)
+- Reference : [postman-collection](src/main/resources/IUDX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/IUDX-ACL-APD.postman_collection.json)
+
+<video src="https://github.com/user-attachments/assets/91fe041a-633f-4940-bf43-d20a605a0ae0" controls="controls" style="max-width: 730px;">
+</video>
+
+<video src="https://github.com/user-attachments/assets/be988699-ddaf-4f57-826a-fb775afc4d8e" controls="controls" style="max-width: 730px;">
+</video>
 
 # How To Guide
 ## Setup and Installation
