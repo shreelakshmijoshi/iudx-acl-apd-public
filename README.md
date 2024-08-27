@@ -33,12 +33,11 @@ The features of the DX ACL APD is as follows:
 - The section available [here](./docs/Solution_Architecture.md) explains the components/services used in implementing the ACL-APD server
 - To try out the APIs, import the API collection, postman collection in postman
 - Reference : [postman-collection](src/main/resources/IUDX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/IUDX-ACL-APD.postman_collection.json)
+  <video src="https://github.com/user-attachments/assets/3c142dd7-8596-4bd0-8bf3-49adcb3922fa" controls="controls" style="max-width: 730px;">
+  </video>
 
-<video src="https://github.com/user-attachments/assets/91fe041a-633f-4940-bf43-d20a605a0ae0" controls="controls" style="max-width: 730px;">
-</video>
 
-<video src="https://github.com/user-attachments/assets/be988699-ddaf-4f57-826a-fb775afc4d8e" controls="controls" style="max-width: 730px;">
-</video>
+
 
 # How To Guide
 ## Setup and Installation
@@ -46,7 +45,13 @@ Setup and Installation guide is available [here](./docs/SETUP-and-Installation.m
 
 # Tutorial
 ## Tutorials and Explanations
-- Videos are available [here](./example-tutorials)
+  How to get access token 
+
+   <video src="https://github.com/user-attachments/assets/bc8aa7af-71a6-4623-8624-dae3e4964bd5" controls="controls" style="max-width: 730px;">
+   </video>
+
+   <video src="https://github.com/user-attachments/assets/abc909da-e470-4ce8-a8a1-0c7c11ccbbe1" controls="controls" style="max-width: 730px;">
+   </video>
 
 # Reference
 ## API Docs
