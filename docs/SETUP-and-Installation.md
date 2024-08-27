@@ -110,7 +110,7 @@ Body for the API request
 
 ### Database Migration using Flyway
 - Database flyway migrations help in updating the schema, permissions, grants, triggers etc., with the latest version
-- Each flyway schema file is versioned with the format `V<number>_<number>__file-name.sql`, ex : `V1_1__init-tables.sql`
+- Each flyway schema file is versioned with the format `V<majorVersion>_<minorVersion>__<description>.sql`, ex : `V1_1__init-tables.sql`
 - Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
 - Values like DB URL, database user credentials, user and schema name should be populated in flyway.conf
 - The following commands shall be executed
@@ -118,6 +118,9 @@ Body for the API request
     - ``` mvn clean flyway:migrate -Dflyway.configFiles=flyway.conf ``` To migrate flyway schema
     - ``` mvn flyway:repair ``` To resolve some migration errors during flyway migration
 - Please find the reference to Flyway migration [here](https://documentation.red-gate.com/fd/migrations-184127470.html)
+
+  <video src="https://github.com/user-attachments/assets/c43e2b89-ee51-410d-a90c-286a81733fbe" controls="controls" style="max-width: 730px;">
+  </video>
 
 ## Installation Steps
 ### Maven
@@ -200,14 +203,13 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 
 ## Testing
 ### Unit Testing
-
-<video src="https://github.com/user-attachments/assets/3ea0a206-d4d3-4a2e-82ab-cf0d0e0ea9f1" controls="controls" style="max-width: 730px;">
-</video>
-
 1. Run the server through either docker, maven or redeployer
 2. Run the unit tests and generate a surefire report
    `mvn clean test-compile surefire:test surefire-report:report`
 3. Jacoco reports are stored in `./target/`
+
+   <video src="https://github.com/user-attachments/assets/544c3634-b505-4aa6-9f75-a9ec59b00d99" controls="controls" style="max-width: 730px;">
+   </video>
 
 ### Integration Testing
 
@@ -222,6 +224,10 @@ Integration tests are through Postman/Newman whose script can be found from [her
    `newman run <postman-collection-path> -e <postman-environment> --insecure -r htmlextra --reporter-htmlextra-export .`
 5. Command to store report in `target/newman`:  `newman run <postman-collection-path> -e <postman-environment> --insecure -r htmlextra --reporter-htmlextra-export ./target/newman/report.html`
 
+   <video src="https://github.com/user-attachments/assets/fc050b3f-848f-40ec-a248-246fa0c6dccc" controls="controls" style="max-width: 730px;">
+   </video>
+   <video src="https://github.com/user-attachments/assets/6ab189dc-cb33-4659-bf47-9613c2848c56" controls="controls" style="max-width: 730px;">
+   </video>
 
 ### Performance Testing
 - JMeter is for used performance testing, load testing the application
