@@ -13,7 +13,7 @@ In this section we explain about the dependencies and their scope. It is expecte
 ### External Dependencies
 | Software Name    | Purpose                                                                                                                          | 
 |:-----------------|:---------------------------------------------------------------------------------------------------------------------------------|
-| PostgreSQL       | For storing information related to policy, access Request based CRUD operations, approved access requests, resources and users   |
+| PostgreSQL       | For storing information related to policy, access request based CRUD operations, approved access requests, resources and users   |
 | RabbitMQ         | To publish auditing related data to auditing server via RabbitMQ exchange                                                        |
 | SMTP Mail Server | To send email notifications to provider, provider delegates when access requests are created by the consumer, consumer delegates |
 
@@ -24,7 +24,7 @@ In this section we explain about the dependencies and their scope. It is expecte
 | DX Authentication Authorization and Accounting (AAA) Server | Used to download certificate for JWT token decoding and to get user info |
 | DX Catalogue Server                                         | Used to fetch the list of resource and provider related information      |
 
-### Prerequisites
+## Prerequisites
 ### Keycloak registration for DX ACL-APD as trustee and APD
 - The trustee user must be registered on Keycloak as a user
     - This can be done via the keycloak admin panel, or by using Data Exchange (DX) UI
@@ -98,8 +98,8 @@ Body for the API request
 
 #### Auditing
 - Auditing is done using the DX Auditing Server which uses Immudb and Postgres for storing the audit logs
-- To Setup immuclient for immudb please refer [immudb setup guide](https://github.com/datakaveri/iudx-deployment/tree/master/docs/immudb-setup)
-- The schema for Auditing table in PostgreSQL is present here - [postgres auditing table schema](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
+- To setup immuclient for immudb please refer [immudb setup guide](https://github.com/datakaveri/iudx-deployment/tree/master/docs/immudb-setup)
+- The schema for auditing table in PostgreSQL is present here - [postgres auditing table schema](https://github.com/datakaveri/iudx-resource-server/blob/master/src/main/resources/db/migration/V5_2__create-auditing-acl-apd-table.sql)
 - The schema for Immudb table, index for the table is present here - [immudb schema in DX Auditing Server](https://github.com/datakaveri/auditing-server/tree/main/src/main/resources/immudb/migration)
 
 | Table Name               | Purpose                                                                                                                                             | DB                 | 
@@ -189,9 +189,9 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 
 ## Logging and Monitoring
 ### Log4j 2
-- For asynchronous logging, logging messages to the console in a specific format, Apache log4j 2 is used
+- For asynchronous logging, logging messages to the console in a specific format, Apache's log4j 2 is used
 - For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/main/resources/log4j2.xml)
-- Please find the reference to [link](https://logging.apache.org/log4j/2.x/manual/index.html)
+- Please find the reference to log4j 2 : [here](https://logging.apache.org/log4j/2.x/manual/index.html)
 
 ### Micrometer
 - Micrometer is used for observability of the application
@@ -230,7 +230,7 @@ Integration tests are through Postman/Newman whose script can be found from [her
    </video>
 
 ### Performance Testing
-- JMeter is for used performance testing, load testing the application
+- JMeter is for used performance testing, load testing of the application
 - Please find the reference to JMeter : [here](https://jmeter.apache.org/usermanual/get-started.html)
 - Command to generate HTML report at `target/jmeter`
 ```

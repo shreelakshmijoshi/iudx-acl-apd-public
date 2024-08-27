@@ -31,8 +31,9 @@ The features of the DX ACL APD is as follows:
 # Explanation
 ## Understanding ACL APD
 - The section available [here](./docs/Solution_Architecture.md) explains the components/services used in implementing the ACL-APD server
-- To try out the APIs, import the API collection, postman collection in postman
+- To try out the APIs, import the API collection, postman environment files in postman
 - Reference : [postman-collection](src/main/resources/IUDX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/IUDX-ACL-APD.postman_collection.json)
+
   <video src="https://github.com/user-attachments/assets/3c142dd7-8596-4bd0-8bf3-49adcb3922fa" controls="controls" style="max-width: 730px;">
   </video>
 
@@ -45,13 +46,13 @@ Setup and Installation guide is available [here](./docs/SETUP-and-Installation.m
 
 # Tutorial
 ## Tutorials and Explanations
-  How to get access token 
+How to get access token
 
-   <video src="https://github.com/user-attachments/assets/bc8aa7af-71a6-4623-8624-dae3e4964bd5" controls="controls" style="max-width: 730px;">
-   </video>
+  <video src="https://github.com/user-attachments/assets/bc8aa7af-71a6-4623-8624-dae3e4964bd5" controls="controls" style="max-width: 730px;">
+  </video>
 
-   <video src="https://github.com/user-attachments/assets/abc909da-e470-4ce8-a8a1-0c7c11ccbbe1" controls="controls" style="max-width: 730px;">
-   </video>
+  <video src="https://github.com/user-attachments/assets/abc909da-e470-4ce8-a8a1-0c7c11ccbbe1" controls="controls" style="max-width: 730px;">
+  </video>
 
 # Reference
 ## API Docs
@@ -61,7 +62,7 @@ API docs are available [here](https://acl-apd.iudx.org.in/apis)
 FAQs are available [here](./docs/FAQ.md)
 
 ## Contributing
-Please find information about contributing [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/CONTRIBUTING.md)
+Please find the information about contributing [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/CONTRIBUTING.md)
 
 ## License
 [View License](./LICENSE)
