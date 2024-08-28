@@ -10,10 +10,10 @@ We follow Git Merge based workflow
 ## Code Style
 - To maintain a consistent code style maven checkstyle plugin is used : [reference link](https://maven.apache.org/plugins/maven-checkstyle-plugin/index.html)
 - To inspect, analyze the code to remove common programming defects,
-inculcate programming best practices PMD is being used : [reference link](https://maven.apache.org/plugins/maven-pmd-plugin/)
+  inculcate programming best practices PMD is being used : [reference link](https://maven.apache.org/plugins/maven-pmd-plugin/)
 - The following maven command is used to generate PMD, checkstyle and Copy/Paste Detector (CPD) reports in `./target/site` folder
-<br> ```mvn checkstyle:checkstyle pmd:pmd pmd:cpd```
-- To resolve checkstyle issues faster please install any of the following plugins in the IDE like IntelliJ 
+  <br> ```mvn checkstyle:checkstyle pmd:pmd pmd:cpd```
+- To resolve checkstyle issues faster please install any of the following plugins in the IDE like IntelliJ
   - google-java-format : [link](https://github.com/google/google-java-format?tab=readme-ov-file)
   - CheckStyle-IDEA : [link](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
 
@@ -37,5 +37,5 @@ git commit -m "<subject>" -m "<description>"
 
 ### Commit description
 - Could be detailed to explain the changes made but no more than 72 characters
-- Punctuation could be ommitted at the end of commit description
+- Punctuation could be omitted at the end of commit description
 - Could also reference an issue or pull request
