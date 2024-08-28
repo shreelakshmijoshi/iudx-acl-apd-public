@@ -20,4 +20,4 @@
 - [ ] pmd-checkstyle issues are resolved locally
 - [ ] I have added reviewers for the checking the proposed changes
 
-* Please delete the content that are not relevant.
+* Please delete the content that is not relevant.
