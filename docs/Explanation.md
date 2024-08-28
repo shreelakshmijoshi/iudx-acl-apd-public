@@ -9,19 +9,19 @@
 | Access token      |                                                                    To get access to resource, resource group                                                                    | Provider, provider delegate, consumer, consumer delegate                   |
 
 ## Tokens accepted in DX ACL APD Server
-The DX ACL APD Server are the Identity token and bearer token. Identity token is used for user specific APIs whereas the bearer token is used for the Verify API.
+Tokens accepted by the DX ACL APD Server are the DX Identity token and keycloak token. Identity token is used for user specific APIs whereas the bearer token is used for the Verify API.
 Providers, Consumers and delegates of providers and consumers are allowed to access the following APIs using the mentioned token:
 
-| API                     |                          Users                           | Token           |
-|:------------------------|:--------------------------------------------------------:|:----------------|
-| Create Policy           |               Provider, provider delegate                | Identity token  |
-| Update access request   |               Provider, provider delegate                | Identity token  |
-| Delete Policy           |               Provider, provider delegate                | Identity token  |
-| Create Access Request   |               Consumer, consumer delegate                | Identity token  |
-| Withdraw access request |               Consumer, consumer delegate                | Identity token  |
-| Get Policies            | Consumer, provider, consumer delegate, provider delegate | Identity token  |
-| Get Access Requests     | Consumer, provider, consumer delegate, provider delegate | Identity token  |
-| Verify Policy           |                      DX AAA Server                       | Bearer token    |
+| API                     |                          Users                           | Token             |
+|:------------------------|:--------------------------------------------------------:|:------------------|
+| Create Policy           |               Provider, provider delegate                | DX Identity token |
+| Update access request   |               Provider, provider delegate                | DX Identity token |
+| Delete Policy           |               Provider, provider delegate                | DX Identity token |
+| Create Access Request   |               Consumer, consumer delegate                | DX Identity token |
+| Withdraw access request |               Consumer, consumer delegate                | DX Identity token |
+| Get Policies            | Consumer, provider, consumer delegate, provider delegate | DX Identity token |
+| Get Access Requests     | Consumer, provider, consumer delegate, provider delegate | DX Identity token |
+| Verify Policy           |                      DX AAA Server                       | Keycloak token    |
 
 ## Users and Roles
 All registered users of DX can access the DX ACL APD Server. The DX ACL APD Server identifies the user based on the token information which is provided by DX AAA Server. 
