@@ -4,7 +4,7 @@
 
 # Modules
 This document contains the information of the configurations to setup various services and dependencies in order to bring up the DX ACL APD Server. 
-Please find the example configuration file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/example-config/config-dev.json). While running the server, config-dev.json file could
+Please find the example configuration file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/example-config/config.json). While running the server, config.json file could
 be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/all-verticles-configs).
 
 
