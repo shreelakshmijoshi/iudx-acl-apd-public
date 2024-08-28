@@ -1,3 +1,7 @@
+<p align="center">
+<img src="./cdpg.png" width="300">
+</p>
+
 We follow Git Merge based workflow
 1. Fork this repo
 2. Create a new feature branch in your fork. Multiple features must have a hyphen separated name

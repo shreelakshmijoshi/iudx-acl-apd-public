@@ -1,3 +1,7 @@
+<p align="center">
+<img src="./cdpg.png" width="300">
+</p>
+
 # Tokens, Users and Roles
 ## Tokens used in DX
 - Tokens for a user could be created using DX AAA Server API : [link to the API docs](https://authorization.iudx.org.in/apis#tag/Token-APIs/operation/post-auth-v1-token). The token used in DX are :

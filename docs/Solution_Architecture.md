@@ -1,3 +1,7 @@
+<p align="center">
+<img src="./cdpg.png" width="300">
+</p>
+
 ## Solution Architecture
 The following block diagram shows different components/services used in implementing the DX ACL APD Server.
 ![Solution Architecture](./acl-apd-solution-architecture.png)
