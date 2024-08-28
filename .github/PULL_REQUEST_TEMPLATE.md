@@ -3,13 +3,13 @@
 - [ ] Tests for the changes have been added (for bug fixes/features)
 - [ ] Docs have been added / updated (for bug fixes / features)
 - [ ] A new branch is created for the change(s) and the changes are not committed on main or master branch
-- [ ] No credentials or secrets are committed 
+- [ ] No credentials or secrets are committed
 
 * **What kind of change does this PR introduce?** (Bug fix, feature, docs update, refactor, chore, test, docs) :information_desk_person: :scroll:
 
-    Describe the changes <br>
+  Describe the changes <br>
 
-* **Fixes** :wrench: # (issue) 
+* **Fixes** :wrench: # (issue)
 
 * **Checklist** :page_with_curl:
 - [ ] I have made corresponding changes to the documentation
