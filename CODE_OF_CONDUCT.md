@@ -1,3 +1,7 @@
+<p align="center">
+<img src="./docs/cdpg.png" width="300">
+</p>
+
 # Contributor code of conduct
 
 Trust, respect, collaboration and transparency are core
