@@ -1,3 +1,7 @@
+<p align="center">
+<img src="./cdpg.png" width="300">
+</p>
+
 # Frequently Asked Questions (FAQs)
 
 1. How do I request for a new feature to be added or change in an existing feature?
