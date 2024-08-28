@@ -1,5 +1,6 @@
-![IUDX](./iudx.png)
-
+<p align="center">
+<img src="./cdpg.png" width="300">
+</p>
 
 # Setup and Installation Guide
 This document contains the installation and configuration information required to deploy the Data Exchange (DX) ACL APD Server.
