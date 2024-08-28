@@ -1,4 +1,3 @@
-
 ---
 name: ✨ Feature
 about: a new feature request
