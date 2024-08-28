@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./cdpg.png" width="300">
+<img src="./docs/cdpg.png" width="300">
 </p>
 
 We follow Git Merge based workflow
