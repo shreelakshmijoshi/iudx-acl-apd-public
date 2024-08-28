@@ -68,3 +68,5 @@ Please find the information about contributing [here](https://github.com/datakav
 ## License
 [View License](./LICENSE)
 
+## Code of Conduct
+Please find the code of conduct [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
