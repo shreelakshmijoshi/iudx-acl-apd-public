@@ -22,4 +22,4 @@
 - [ ] I have rebased recently merged pull requests
 
 
-* Please delete the content that are not relevant.
+* Please delete the content that is not relevant.
