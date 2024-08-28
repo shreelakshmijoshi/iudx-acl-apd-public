@@ -5,7 +5,7 @@
 - [ ] A new branch is created for the change(s) and the changes are not committed on main or master branch
 - [ ] No credentials or secrets are committed 
 
-* **What kind of change does this PR introduce?** (Bug fix, feature, docs update, refactor, chore, test, docs) :scroll:
+* **What kind of change does this PR introduce?** (Bug fix, feature, docs update, refactor, chore, test, docs) :information_desk_person: :scroll:
 
     Describe the changes <br>
 
