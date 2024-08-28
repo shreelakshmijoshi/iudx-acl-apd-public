@@ -31,7 +31,7 @@ git commit -m "<subject>" -m "<description>"
 ### Commit subject
 - The commit subject could be no more than 50 characters
 - To maintain consistent commit messages, the subject could be in imperative tone or as a
-  verb. Example : `Change the query` rather than `Changes made in the query`, `Changed the query`
+  verb. Example : `Change query` rather than `Changes made in the query`, `Changed the query`
   <br> This could also reduce the size of subject
 - Could contain one of [feat, fix, style, refactor, test, docs, chore]
 
