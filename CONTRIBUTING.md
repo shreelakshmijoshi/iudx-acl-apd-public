@@ -12,3 +12,26 @@ inculcate programming best practices PMD is being used : [reference link](https:
 - To resolve checkstyle issues faster please install any of the following plugins in the IDE like IntelliJ 
   - google-java-format : [link](https://github.com/google/google-java-format?tab=readme-ov-file)
   - CheckStyle-IDEA : [link](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
+
+## About commit message
+Git commit command is used to save the changes done in the local repository after staging in git.
+To add the files in staging
+```
+git add <file>
+```
+To commit the file
+```
+git commit -m "<subject>" -m "<description>"
+```
+
+### Commit subject
+- The commit subject could be no more than 50 characters
+- To maintain consistent commit messages, the subject could be in imperative tone or as a
+  verb. Example : `Change the query` rather than `Changes made in the query`, `Changed the query`
+  <br> This could also reduce the size of subject
+- Could contain one of [feat, fix, style, refactor, test, docs, chore]
+
+### Commit description
+- Could be detailed to explain the changes made but no more than 72 characters
+- Punctuation could be ommitted at the end of commit description
+- Could also reference an issue or pull request
