@@ -112,7 +112,7 @@ public class AuthenticationVerticle extends AbstractVerticle {
     webClient = createWebClient(vertx, config);
     String authCert = config.getString("dxAuthBasePath") + AUTH_CERTIFICATE_PATH;
     webClient
-        .get(443, config.getString("authServerHost"), authCert)
+        .get(443, config.getString("authHost"), authCert)
         .send(
             handler -> {
               if (handler.succeeded()) {

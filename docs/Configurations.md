@@ -42,6 +42,7 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 | commonConfig.poolSize            |    integer     | 25                                   | Pool size for postgres client                                                                                                |
 | commonConfig.apdURL              |     String     | acl-apd.iudx.io                      | DX ACL-APD URL to validate audience field                                                                                    |
 | host                             |     String     | acl-apd.iudx.io                      | Host URL                                                                                                                     |
+| commonConfig.domain              |     String     | iudx.io                              | Domain under which ACL-APD instance would be brought up                                                                      |
 
 ## Policy Verticle
 
@@ -50,7 +51,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 | isWorkerVerticle  |    boolean     | false         | To check if worker verticle needs to be deployed for blocking operations |
 | verticleInstances |    integer     | 1             | Number of instances required for verticles                               |
 | defaultExpiryDays |    integer     | 12            | Default number of days to expire a policy                                |
-| domain            |     String     | iudx.io       | Domain for which DX ACL-APD Server is deployed                           |
 
 ## Notification Verticle
 
@@ -58,7 +58,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 |:------------------|:--------------:|:--------------------------------|:--------------------------------------------------------------------------|
 | isWorkerVerticle  |    boolean     | false                           | To check if worker verticle needs to be deployed for blocking operations  |
 | verticleInstances |    integer     | 1                               | Number of instances required for verticles                                |
-| domain            |     String     | iudx.io                         | Domain for which DX ACL-APD Server is deployed                            |
 | emailHostName     |     String     | email-smtp-some-service.com     | Host for sending an email whenever an notification is created by consumer |
 | emailPort         |    integer     | 2587                            | Email port number for SMTP Service                                        |
 | emailUserName     |     String     | emailUserName                   | Username                                                                  |
@@ -77,7 +76,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 | isWorkerVerticle  |    boolean     | false             | To check if worker verticle needs to be deployed for blocking operations |
 | verticleInstances |    integer     | 1                 | Number of instances required for verticles                               |
 | issuer            |     String     | cos.iudx.io       | To authenticate the issuer in the token                                  |
-| authServerHost    |     String     | authvertx.iudx.io | DX AAA Server host name                                                  |
 | jwtIgnoreExpiry   |    boolean     | false             | Set to true while using the server locally to allow expired tokens       |
 
 ## Auditing Verticle
