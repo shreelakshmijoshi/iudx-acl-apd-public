@@ -218,7 +218,7 @@ Integration tests are through Postman/Newman whose script can be found from [her
 1. Install prerequisites
 - [postman](https://www.postman.com/) + [newman](https://www.npmjs.com/package/newman)
 - [newman reporter-htmlextra](https://www.npmjs.com/package/newman-reporter-htmlextra)
-2. Example Postman environment can be found [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/IUDX-ACL-APD-APIs.postman_environment.json)
+2. Example Postman environment can be found [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/DX-ACL-APD-APIs.postman_environment.json)
 - Please find the README to setup postman environment file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/README.md)
 3. Run the server through either docker, maven or redeployer
 4. Run the integration tests and generate the newman report
