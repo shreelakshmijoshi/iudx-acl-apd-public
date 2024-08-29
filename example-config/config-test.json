@@ -19,7 +19,8 @@
     "databasePassword": "",
     "clientId": "",
     "clientSecret": "",
-    "poolSize": 25
+    "poolSize": 25,
+    "domain": ""
   },
   "host": "acl-apd.iudx.io",
   "modules": [
@@ -61,7 +62,6 @@
       "verticleInstances": 1,
       "issuer": "",
       "apdURL": "",
-      "authServerHost": "",
       "jwtIgnoreExpiry": false
     },
     {
@@ -79,10 +79,10 @@
       "handshakeTimeout": 6000,
       "requestedChannelMax": 5,
       "networkRecoveryInterval": 500,
-      "automaticRecoveryEnabled": "true",
-      "prodVhost": "",
-      "internalVhost": "",
-      "externalVhost": ""
+      "automaticRecoveryEnabled": "true"
+
+
+
     }
   ]
 }
