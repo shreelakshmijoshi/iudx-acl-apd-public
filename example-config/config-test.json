@@ -19,8 +19,7 @@
     "databasePassword": "",
     "clientId": "",
     "clientSecret": "",
-    "poolSize": 25,
-    "domain": ""
+    "poolSize": 25
   },
   "modules": [
     {
@@ -33,15 +32,13 @@
       "id": "iudx.apd.acl.server.policy.PolicyVerticle",
       "isWorkerVerticle": false,
       "verticleInstances": 1,
-      "defaultExpiryDays": 12,
-      "domain": "iudx.io"
+      "defaultExpiryDays": 12
     },
     {
       "id": "iudx.apd.acl.server.notification.NotificationVerticle",
       "isWorkerVerticle": false,
       "verticleInstances": 1,
       "authPort": 443,
-      "domain": "",
       "emailHostName": "",
       "emailPort": 2587,
       "emailUserName": "",

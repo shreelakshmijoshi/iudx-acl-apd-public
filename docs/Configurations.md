@@ -40,7 +40,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 | commonConfig.clientSecret        |      UUID      | 87d05695-1911-44f6-a1bc-d04422df6209 | APD trustee client secret                                                                                                    |
 | commonConfig.poolSize            |    integer     | 25                                   | Pool size for postgres client                                                                                                |
 | commonConfig.apdURL              |     String     | acl-apd.iudx.io                      | DX ACL-APD URL to validate audience field                                                                                    |
-| commonConfig.domain              |     String     | iudx.io                              | Domain under which ACL-APD instance would be brought up                                                                      |
 
 ## Policy Verticle
 
