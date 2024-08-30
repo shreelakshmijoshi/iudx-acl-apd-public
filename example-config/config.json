@@ -29,7 +29,6 @@
       "id": "iudx.apd.acl.server.apiserver.ApiServerVerticle",
       "isWorkerVerticle": false,
       "verticleInstances": 1,
-      "ssl": true,
       "httpPort": 8443
     },
     {
