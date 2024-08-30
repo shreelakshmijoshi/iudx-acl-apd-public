@@ -22,7 +22,6 @@
     "poolSize": 25,
     "domain": ""
   },
-  "host": "acl-apd.iudx.io",
   "modules": [
     {
       "id": "iudx.apd.acl.server.apiserver.ApiServerVerticle",
