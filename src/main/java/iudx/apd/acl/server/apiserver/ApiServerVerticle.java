@@ -70,7 +70,6 @@ public class ApiServerVerticle extends AbstractVerticle {
   private HttpServer server;
   private Router router;
   private int port;
-  private boolean isSsl;
   private String dxApiBasePath;
   private PolicyService policyService;
   private String detail;
