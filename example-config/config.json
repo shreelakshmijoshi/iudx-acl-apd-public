@@ -24,7 +24,6 @@
     "apdURL": "<acl-apd-url>",
     "domain": "<domain-name>"
   },
-  "host": "acl-apd.iudx.io",
   "modules": [
     {
       "id": "iudx.apd.acl.server.apiserver.ApiServerVerticle",
