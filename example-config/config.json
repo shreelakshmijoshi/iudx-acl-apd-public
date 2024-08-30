@@ -21,8 +21,7 @@
     "clientId": "<acl-apd-trustee-client-id>",
     "clientSecret": "<acl-apd-trustee-client-secret>",
     "poolSize": 25,
-    "apdURL": "<acl-apd-url>",
-    "domain": "<domain-name>"
+    "apdURL": "<acl-apd-url>"
   },
   "modules": [
     {
