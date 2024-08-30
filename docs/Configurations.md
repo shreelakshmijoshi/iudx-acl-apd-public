@@ -14,7 +14,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 |:------------------|:--------------:|:--------------|:-----------------------------------------------------------------------------------------------------|
 | isWorkerVerticle  |    boolean     | false         | To check if worker verticle needs to be deployed for blocking operations                             |
 | verticleInstances |    integer     | 1             | Number of instances required for verticles                                                           |
-| ssl               |    boolean     | true          | To create a encrypted link between the browser and server to keep the information private and secure |
 | httpPort          |    integer     | 8080          | Port for running the instance DX ACL-APD Server                                                      |
 
 ## Other Configuration
