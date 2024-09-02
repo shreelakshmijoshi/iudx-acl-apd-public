@@ -57,7 +57,7 @@ How to get access token
 
 # Reference
 ## API Docs
-API docs are available [here](https://acl-apd.iudx.org.in/apis)
+API docs are available [here](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/datakaveri/iudx-acl-apd/main/docs/openapi.yaml)
 
 ## FAQ
 FAQs are available [here](./docs/FAQ.md)
