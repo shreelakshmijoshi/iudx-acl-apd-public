@@ -19,5 +19,7 @@
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] pmd-checkstyle issues are resolved locally
 - [ ] I have added reviewers for the checking the proposed changes
+- [ ] I have rebased recently merged pull requests
+
 
 * Please delete the content that is not relevant.

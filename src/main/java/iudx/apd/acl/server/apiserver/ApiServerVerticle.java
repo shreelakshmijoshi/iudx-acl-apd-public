@@ -70,7 +70,6 @@ public class ApiServerVerticle extends AbstractVerticle {
   private HttpServer server;
   private Router router;
   private int port;
-  private boolean isSsl;
   private String dxApiBasePath;
   private PolicyService policyService;
   private String detail;
@@ -445,23 +444,16 @@ public class ApiServerVerticle extends AbstractVerticle {
   }
 
   /**
-   * Sets the server options based on the configuration settings. If SSL is enabled, starts an HTTPS
-   * server with the specified HTTP port. If SSL is disabled, starts an HTTP server with the
-   * specified HTTP port. If the HTTP port is not specified in the configuration, default ports
-   * (8080 for HTTP and 8443 for HTTPS) will be used.
+   * starts an HTTP server with the specified HTTP port.
+   * If the HTTP port is not specified in the configuration, default ports
+   * (8080 for HTTP) will be used.
    *
    * @param serverOptions The server options to be configured.
    */
   private void setServerOptions(HttpServerOptions serverOptions) {
-    isSsl = config().getBoolean("ssl");
-    if (isSsl) {
-      LOGGER.debug("Info: Starting HTTPs server");
-      port = config().getInteger("httpPort") == null ? 8443 : config().getInteger("httpPort");
-    } else {
-      LOGGER.debug("Info: Starting HTTP server");
-      serverOptions.setSsl(false);
-      port = config().getInteger("httpPort") == null ? 8080 : config().getInteger("httpPort");
-    }
+    LOGGER.debug("Info: Starting HTTP server");
+    serverOptions.setSsl(false);
+    port = config().getInteger("httpPort") == null ? 8080 : config().getInteger("httpPort");
   }
 
   /**

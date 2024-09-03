@@ -4,7 +4,7 @@
 
 # Modules
 This document contains the information of the configurations to setup various services and dependencies in order to bring up the DX ACL APD Server. 
-Please find the example configuration file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/example-config/config-dev.json). While running the server, config-dev.json file could
+Please find the example configuration file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/example-config/config.json). While running the server, config.json file could
 be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/all-verticles-configs).
 
 
@@ -14,8 +14,7 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 |:------------------|:--------------:|:--------------|:-----------------------------------------------------------------------------------------------------|
 | isWorkerVerticle  |    boolean     | false         | To check if worker verticle needs to be deployed for blocking operations                             |
 | verticleInstances |    integer     | 1             | Number of instances required for verticles                                                           |
-| ssl               |    boolean     | true          | To create a encrypted link between the browser and server to keep the information private and secure |
-| httpPort          |    integer     | 8443          | Port for running the instance DX ACL-APD Server                                                      |
+| httpPort          |    integer     | 8080          | Port for running the instance DX ACL-APD Server                                                      |
 
 ## Other Configuration
 
@@ -31,17 +30,16 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 | commonConfig.catServerPort       |    integer     | 443                                  | Port number to access HTTPS APIs of Catalogue Server                                                                         |
 | commonConfig.authHost            |     String     | authvertx.iudx.io                    | Host name of DX AAA Server                                                                                                   |
 | commonConfig.authPort            |    integer     | 443                                  | Port number to access HTTPS APIs of DX AAA server Default                                                                    |
-| commonConfig.databaseIP          |     String     | localhost                            | Database IP address                                                                                                          |
-| commonConfig.databasePort        |    integer     | 5433                                 | Port number                                                                                                                  |
-| commonConfig.databaseSchema      |     String     | acl_apd_schema                       | Database schema                                                                                                              |
-| commonConfig.databaseName        |     String     | acl_apd                              | Database name                                                                                                                |
-| commonConfig.databaseUserName    |     String     | dbUserName                           | Database user name                                                                                                           |
-| commonConfig.databasePassword    |     String     | dbPassword                           | Password for DB                                                                                                              |
+| commonConfig.databaseIP          |     String     | localhost                            | Postgres Database IP address                                                                                                 |
+| commonConfig.databasePort        |    integer     | 5433                                 | Postgres Port number                                                                                                         |
+| commonConfig.databaseSchema      |     String     | acl_apd_schema                       | Postgres Database schema                                                                                                     |
+| commonConfig.databaseName        |     String     | acl_apd                              | Postgres Database name                                                                                                       |
+| commonConfig.databaseUserName    |     String     | dbUserName                           | Postgres Database user name                                                                                                  |
+| commonConfig.databasePassword    |     String     | dbPassword                           | Password for Postgres DB                                                                                                     |
 | commonConfig.clientId            |      UUID      | b806432c-e510-4233-a4ff-316af67b6df8 | APD trustee client ID                                                                                                        |
 | commonConfig.clientSecret        |      UUID      | 87d05695-1911-44f6-a1bc-d04422df6209 | APD trustee client secret                                                                                                    |
 | commonConfig.poolSize            |    integer     | 25                                   | Pool size for postgres client                                                                                                |
 | commonConfig.apdURL              |     String     | acl-apd.iudx.io                      | DX ACL-APD URL to validate audience field                                                                                    |
-| host                             |     String     | acl-apd.iudx.io                      | Host URL                                                                                                                     |
 
 ## Policy Verticle
 
@@ -50,7 +48,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 | isWorkerVerticle  |    boolean     | false         | To check if worker verticle needs to be deployed for blocking operations |
 | verticleInstances |    integer     | 1             | Number of instances required for verticles                               |
 | defaultExpiryDays |    integer     | 12            | Default number of days to expire a policy                                |
-| domain            |     String     | iudx.io       | Domain for which DX ACL-APD Server is deployed                           |
 
 ## Notification Verticle
 
@@ -58,7 +55,6 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 |:------------------|:--------------:|:--------------------------------|:--------------------------------------------------------------------------|
 | isWorkerVerticle  |    boolean     | false                           | To check if worker verticle needs to be deployed for blocking operations  |
 | verticleInstances |    integer     | 1                               | Number of instances required for verticles                                |
-| domain            |     String     | iudx.io                         | Domain for which DX ACL-APD Server is deployed                            |
 | emailHostName     |     String     | email-smtp-some-service.com     | Host for sending an email whenever an notification is created by consumer |
 | emailPort         |    integer     | 2587                            | Email port number for SMTP Service                                        |
 | emailUserName     |     String     | emailUserName                   | Username                                                                  |
@@ -76,8 +72,7 @@ be added [secrets](https://github.com/datakaveri/iudx-acl-apd/tree/main/secrets/
 |:------------------|:--------------:|:------------------|:-------------------------------------------------------------------------|
 | isWorkerVerticle  |    boolean     | false             | To check if worker verticle needs to be deployed for blocking operations |
 | verticleInstances |    integer     | 1                 | Number of instances required for verticles                               |
-| issuer            |     String     | cos.iudx.io       | To authenticate the issuer in the token                                  |
-| authServerHost    |     String     | authvertx.iudx.io | DX AAA Server host name                                                  |
+| issuer            |     String     | cos.iudx.io       | Data Exchange(DX) COS URL to authenticate the issuer in the token        |
 | jwtIgnoreExpiry   |    boolean     | false             | Set to true while using the server locally to allow expired tokens       |
 
 ## Auditing Verticle

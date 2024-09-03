@@ -21,28 +21,24 @@
     "clientSecret": "",
     "poolSize": 25
   },
-  "host": "acl-apd.iudx.io",
   "modules": [
     {
       "id": "iudx.apd.acl.server.apiserver.ApiServerVerticle",
       "isWorkerVerticle": false,
       "verticleInstances": 1,
-      "ssl": true,
       "httpPort": 8443
     },
     {
       "id": "iudx.apd.acl.server.policy.PolicyVerticle",
       "isWorkerVerticle": false,
       "verticleInstances": 1,
-      "defaultExpiryDays": 12,
-      "domain": "iudx.io"
+      "defaultExpiryDays": 12
     },
     {
       "id": "iudx.apd.acl.server.notification.NotificationVerticle",
       "isWorkerVerticle": false,
       "verticleInstances": 1,
       "authPort": 443,
-      "domain": "",
       "emailHostName": "",
       "emailPort": 2587,
       "emailUserName": "",
@@ -61,7 +57,6 @@
       "verticleInstances": 1,
       "issuer": "",
       "apdURL": "",
-      "authServerHost": "",
       "jwtIgnoreExpiry": false
     },
     {
@@ -79,10 +74,10 @@
       "handshakeTimeout": 6000,
       "requestedChannelMax": 5,
       "networkRecoveryInterval": 500,
-      "automaticRecoveryEnabled": "true",
-      "prodVhost": "",
-      "internalVhost": "",
-      "externalVhost": ""
+      "automaticRecoveryEnabled": "true"
+
+
+
     }
   ]
 }

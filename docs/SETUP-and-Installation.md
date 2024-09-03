@@ -151,7 +151,7 @@ The JAR requires 3 runtime arguments when running:
 * --modules/-m : comma separated list of module names to deploy
 
 e.g. ```java -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAPSHOT-fat.jar --host $(hostname)
--c secrets/all-verticles-configs/config-dev.json -m iudx.apd.acl.server.authentication.AuthenticationVerticle, iudx.apd.acl.server.apiserver.ApiServerVerticle,
+-c secrets/all-verticles-configs/config.json -m iudx.apd.acl.server.authentication.AuthenticationVerticle, iudx.apd.acl.server.apiserver.ApiServerVerticle,
 iudx.apd.acl.server.policy.PolicyVerticle, iudx.apd.acl.server.notification.NotificationVerticle, iudx.apd.acl.server.auditing.AuditingVerticle```
 
 Use the `--help/-h` argument for more information. You may additionally append an `ACL_APD_JAVA_OPTS` environment
@@ -169,7 +169,7 @@ The JAR requires 1 runtime argument when running
 
 * --config/-c : path to the config file
 
-e.g. `java -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAPSHOT-fat.jar -c secrets/all-verticles-configs/config-dev.json`
+e.g. `java -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAPSHOT-fat.jar -c secrets/all-verticles-configs/config.json`
 
 Use the `--help/-h` argument for more information. You may additionally append an `RS_JAVA_OPTS` environment variable containing any Java options to pass to the application.
 
@@ -218,7 +218,7 @@ Integration tests are through Postman/Newman whose script can be found from [her
 1. Install prerequisites
 - [postman](https://www.postman.com/) + [newman](https://www.npmjs.com/package/newman)
 - [newman reporter-htmlextra](https://www.npmjs.com/package/newman-reporter-htmlextra)
-2. Example Postman environment can be found [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/IUDX-ACL-APD-APIs.postman_environment.json)
+2. Example Postman environment can be found [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/DX-ACL-APD-APIs.postman_environment.json)
 - Please find the README to setup postman environment file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/README.md)
 3. Run the server through either docker, maven or redeployer
 4. Run the integration tests and generate the newman report
