@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Thanks you for filling out this feature request report :vulcan_salute:
+Thank you for filling out this feature request report :vulcan_salute:
 
 
 ### Description:
