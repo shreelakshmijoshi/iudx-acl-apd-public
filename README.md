@@ -35,9 +35,9 @@ The features of the DX ACL APD is as follows:
 - To try out the APIs, import the API collection, postman environment files in postman
 - Reference : [postman-collection](src/main/resources/DX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/DX-ACL-APD.postman_collection.json)
 
-  <video src="https://github.com/user-attachments/assets/3c142dd7-8596-4bd0-8bf3-49adcb3922fa" controls="controls" style="max-width: 730px;">
-  </video>
 
+
+[Watch Video 1](https://github.com/user-attachments/assets/3c142dd7-8596-4bd0-8bf3-49adcb3922fa)
 
 
 
@@ -49,11 +49,10 @@ Setup and Installation guide is available [here](./docs/SETUP-and-Installation.m
 ## Tutorials and Explanations
 How to get access token
 
-  <video src="https://github.com/user-attachments/assets/bc8aa7af-71a6-4623-8624-dae3e4964bd5" controls="controls" style="max-width: 730px;">
-  </video>
+[Watch Video 1](https://github.com/user-attachments/assets/bc8aa7af-71a6-4623-8624-dae3e4964bd5)
 
-  <video src="https://github.com/user-attachments/assets/abc909da-e470-4ce8-a8a1-0c7c11ccbbe1" controls="controls" style="max-width: 730px;">
-  </video>
+[Watch Video 2](https://github.com/user-attachments/assets/abc909da-e470-4ce8-a8a1-0c7c11ccbbe1)
+
 
 # Reference
 ## API Docs
