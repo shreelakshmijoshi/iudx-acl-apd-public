@@ -1,7 +1,7 @@
-* Please refer to the the code of conduct : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
+* Please refer to the the code of conduct : [link](https://github.com/datakaveri/dx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
 <br>
 * **Please check if the PR fulfills these requirements** :clipboard:
-- [ ] The commit message follows our guidelines : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/CONTRIBUTING.md)
+- [ ] The commit message follows our guidelines : [link](https://github.com/datakaveri/dx-acl-apd/blob/main/CONTRIBUTING.md)
 - [ ] Tests for the changes have been added (for bug fixes/features)
 - [ ] Docs have been added/updated (for bug fixes/features)
 - [ ] A new branch is created for the change(s) and the changes are not committed on the main or master branch

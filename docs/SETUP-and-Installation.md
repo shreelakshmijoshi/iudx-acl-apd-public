@@ -112,7 +112,7 @@ Body for the API request
 ### Database Migration using Flyway
 - Database flyway migrations help in updating the schema, permissions, grants, triggers etc., with the latest version
 - Each flyway schema file is versioned with the format `V<majorVersion>_<minorVersion>__<description>.sql`, ex : `V1_1__init-tables.sql`
-- Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/main/resources/db/migration)
+- Schemas for PostgreSQL tables are present here - [Flyway schema](https://github.com/datakaveri/dx-acl-apd/tree/main/src/main/resources/db/migration)
 - Values like DB URL, database user credentials, user and schema name should be populated in flyway.conf
 - The following commands shall be executed
     - ``` mvn flyway:info -Dflyway.configFiles=flyway.conf``` To get the flyway schema history table
@@ -191,7 +191,7 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 ## Logging and Monitoring
 ### Log4j 2
 - For asynchronous logging, logging messages to the console in a specific format, Apache's log4j 2 is used
-- For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/main/resources/log4j2.xml)
+- For log formatting, adding appenders, adding custom logs, setting log levels, log4j2.xml could be updated : [link](https://github.com/datakaveri/dx-acl-apd/blob/main/src/main/resources/log4j2.xml)
 - Please find the reference to log4j 2 : [here](https://logging.apache.org/log4j/2.x/manual/index.html)
 
 ### Micrometer
@@ -215,12 +215,12 @@ $ java ACL_APD_JAVA_OPTS -jar target/iudx.iudx.apd.acl.server-cluster-0.0.1-SNAP
 
 ### Integration Testing
 
-Integration tests are through Postman/Newman whose script can be found from [here](https://github.com/datakaveri/iudx-acl-apd/tree/main/src/test/resources).
+Integration tests are through Postman/Newman whose script can be found from [here](https://github.com/datakaveri/dx-acl-apd/tree/main/src/test/resources).
 1. Install prerequisites
 - [postman](https://www.postman.com/) + [newman](https://www.npmjs.com/package/newman)
 - [newman reporter-htmlextra](https://www.npmjs.com/package/newman-reporter-htmlextra)
-2. Example Postman environment can be found [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/DX-ACL-APD-APIs.postman_environment.json)
-- Please find the README to setup postman environment file [here](https://github.com/datakaveri/iudx-acl-apd/blob/main/src/test/resources/README.md)
+2. Example Postman environment can be found [here](https://github.com/datakaveri/dx-acl-apd/blob/main/src/test/resources/DX-ACL-APD-APIs.postman_environment.json)
+- Please find the README to setup postman environment file [here](https://github.com/datakaveri/dx-acl-apd/blob/main/src/test/resources/README.md)
 3. Run the server through either docker, maven or redeployer
 4. Run the integration tests and generate the newman report
    `newman run <postman-collection-path> -e <postman-environment> --insecure -r htmlextra --reporter-htmlextra-export .`
