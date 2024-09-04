@@ -39,9 +39,7 @@ info:
     url: https://dataforpublicgood.org.in/
   license:
     name: Apache 2.0
-  x-logo:
-    url: https://dataforpublicgood.org.in/wp-content/uploads/2020/12/DPG.svg
-    altText: CDPG logo
+
 
 tags:
   - name: Policies
