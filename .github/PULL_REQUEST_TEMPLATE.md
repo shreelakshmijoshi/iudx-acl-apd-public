@@ -1,5 +1,5 @@
-* Please refer to the the code of conduct : [link](https://github.com/datakaveri/dx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
-<br>
+* Please refer to the code of conduct : [link](https://github.com/datakaveri/dx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
+
 * **Please check if the PR fulfills these requirements** :clipboard:
 - [ ] The commit message follows our guidelines : [link](https://github.com/datakaveri/dx-acl-apd/blob/main/CONTRIBUTING.md)
 - [ ] Tests for the changes have been added (for bug fixes/features)
@@ -13,9 +13,9 @@
 
 * **Fixes** :wrench: # (issue)
 
-* **Checklist with respect to the current PR** :page_with_curl:
+* **Checklist for the current PR** :page_with_curl:
 - [ ] I have made corresponding changes to the documentation
-- [ ] I have added the respective changes in the [example-config](../example-config/config.json), if the changes are made in [config](../secrets/all-verticles-configs/config.json)
+- [ ] I have added the respective changes in the [example-config](../example-config/config.json) if the changes are made in [config](../secrets/all-verticles-configs/config.json)
 - [ ] For the changes made in example-config, backend components (elasticsearch, flyway files for postgres, immudb schema, rabbitmq) I have notified DX DevOps team by mentioning @datakaveri/devops as a PR comment to help facilitate the further necessary changes
 - [ ] I have mentioned the DX Catalogue items required in [resources-used](../src/test/resources/DX-Catalogue-Items/RESOURCES_USED.md)
 - [ ] I have commented on my code, particularly in hard-to-understand areas
