@@ -41,7 +41,7 @@ jobs:
               -e 's|./SETUP-and-Installation.md|./05-SETUP-and-Installation|g' \
               -e 's|./example-tutorials|./06-Tutorials|g' \
               -e 's|./FAQ.md|07-FAQ|g' \
-              -e 's|./mai./|./main//docs/|g'  README.md > wiki/Home.md
+              -e 's|./mai./|d/main/docs/|g'  README.md > wiki/Home.md
           ls -la wiki  # Verify the file creation
 
       - name: Copy Files to Wiki
@@ -59,6 +59,9 @@ jobs:
           mv wiki/SETUP-and-Installation.md wiki/05-SETUP-and-Installation.md
           mv wiki/Tutorials.md wiki/06-Tutorials.md
           mv wiki/FAQ.md wiki/07-FAQ.md
+          mv wiki/LICENSE wiki/08-LICENSE
+          mv wiki/CODE_OF_CONDUCT.md wiki/09-CODE_OF_CONDUCT.md
+          mv wiki/CONTRIBUTING.md wiki/10-CONTRIBUTING.md
           ls -la wiki  # List files to verify renaming
 
 

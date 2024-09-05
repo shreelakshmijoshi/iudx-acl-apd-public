@@ -25,10 +25,17 @@ jobs:
           cd target-repo
           git checkout dev
 
-      - name: Copy Files to Target Repository
+      - name: Copy Files from docs to Target Repository
         run: |
           cp -r docs/* target-repo/acl-docs/
-          ls -la target-repo/acl-docs 
+          ls -la target-repo/acl-docs
+
+      - name: Copy other files to target repository
+        run: |
+          cp -r LICENSE target-repo/acl-docs/ | 
+          cp -r CODE_OF_CONDUCT.md target-repo/acl-docs/ |
+          cp -r CONTRIBUTING.md target-repo/acl-docs/ 
+          ls -la target-repo/acl-docs
 
       - name: Commit and Push Changes to Target Repository
         env:
