@@ -34,8 +34,8 @@ jobs:
       - name: Copy other files to target repository
         run: |
           cp -r LICENSE wiki/ | 
-          cp -r CODE_OF_CONDUCT.md wiki/ |
-          cp -r CONTRIBUTING.md wiki/ 
+          cp -r CODE_OF_CONDUCT.md wiki/ | sed -i -e  's/.\/docs\/cdpg.png/cdpg.png/ ' CODE_OF_CONDUCT.md |
+          cp -r CONTRIBUTING.md wiki/ | sed -i -e 's/.\/docs\/cdpg.png/cdpg.png/ ' CONTRIBUTING.md |
           ls -la wiki/
 
       - name: Copy and Modify README for Wiki
