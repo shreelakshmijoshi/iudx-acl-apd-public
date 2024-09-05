@@ -61,11 +61,4 @@ API docs are available [here](https://redocly.github.io/redoc/?url=https://raw.g
 ## FAQ
 FAQs are available [here](./docs/FAQ.md)
 
-## Contributing
-Please find the information about contributing [here](https://github.com/datakaveri/dx-acl-apd/blob/main/CONTRIBUTING.md)
 
-## License
-[View License](./LICENSE)
-
-## Code of Conduct
-Please find the code of conduct [here](https://github.com/datakaveri/dx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
