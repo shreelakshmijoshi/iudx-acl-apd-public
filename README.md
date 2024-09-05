@@ -33,7 +33,7 @@ The features of the DX ACL APD is as follows:
 ## Understanding ACL APD
 - The section available [here](./docs/Solution_Architecture.md) explains the components/services used in implementing the ACL-APD server
 - To try out the APIs, import the API collection, postman environment files in postman
-- Reference : [postman-collection](src/main/resources/DX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/DX-ACL-APD.postman_collection.json)
+- Reference : [postman-collection](src/main/resources/DX-ACL-APD.postman_collection.json), [postman-environment](src/main/resources/DX-ACL-APD.postman_environment.json)
 
 
 
@@ -61,11 +61,4 @@ API docs are available [here](https://redocly.github.io/redoc/?url=https://raw.g
 ## FAQ
 FAQs are available [here](./docs/FAQ.md)
 
-## Contributing
-Please find the information about contributing [here](https://github.com/datakaveri/dx-acl-apd/blob/main/CONTRIBUTING.md)
 
-## License
-[View License](./LICENSE)
-
-## Code of Conduct
-Please find the code of conduct [here](https://github.com/datakaveri/dx-acl-apd/blob/main/CODE_OF_CONDUCT.md)
