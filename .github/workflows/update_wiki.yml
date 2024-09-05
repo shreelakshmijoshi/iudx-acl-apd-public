@@ -31,6 +31,13 @@ jobs:
           echo "Removing old wiki content..."
           rm -rf wiki/*
 
+      - name: Copy other files to target repository
+        run: |
+          cp -r LICENSE target-repo/acl-docs/ | 
+          cp -r CODE_OF_CONDUCT.md target-repo/acl-docs/ |
+          cp -r CONTRIBUTING.md target-repo/acl-docs/ 
+          ls -la target-repo/acl-docs
+
       - name: Copy and Modify README for Wiki
         run: |
           echo "Copying and modifying README.md to wiki/Home.md..."
