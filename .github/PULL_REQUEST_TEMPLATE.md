@@ -16,7 +16,7 @@
 * **Checklist for the current PR** :page_with_curl:
 - [ ] I have made corresponding changes to the documentation
 - [ ] I have added the respective changes in the [example-config](../example-config/config.json) if the changes are made in [config](../secrets/all-verticles-configs/config.json)
-- [ ] For the changes made in example-config, backend components (elasticsearch, flyway files for postgres, immudb schema, rabbitmq) I have notified DX DevOps team by mentioning @datakaveri/devops as a PR comment to help facilitate the further necessary changes
+- [ ] For the changes made in example-config, backend components (elasticsearch, flyway files for postgres, immudb schema, rabbitmq) I have notified DX DevOps team by mentioning [at-sign]datakaveri/devops as a PR comment to help facilitate the further necessary changes
 - [ ] I have mentioned the DX Catalogue items required in [resources-used](../src/test/resources/DX-Catalogue-Items/RESOURCES_USED.md)
 - [ ] I have commented on my code, particularly in hard-to-understand areas
 - [ ] My changes generate no new warnings
