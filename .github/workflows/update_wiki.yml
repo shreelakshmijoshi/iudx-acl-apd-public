@@ -33,7 +33,7 @@ jobs:
 
       - name: Copy other files to target repository
         run: |
-          cp -r LICENSE wiki/ | 
+          cp -r LICENSE wiki/LICENSE.md | 
           cp -r CODE_OF_CONDUCT.md wiki/ | sed -i -e  's/.\/docs\/cdpg.png/cdpg.png/ ' CODE_OF_CONDUCT.md |
           cp -r CONTRIBUTING.md wiki/ | sed -i -e 's/.\/docs\/cdpg.png/cdpg.png/ ' CONTRIBUTING.md |
           ls -la wiki/
@@ -66,7 +66,9 @@ jobs:
           mv wiki/SETUP-and-Installation.md wiki/05-SETUP-and-Installation.md
           mv wiki/Tutorials.md wiki/06-Tutorials.md
           mv wiki/FAQ.md wiki/07-FAQ.md
-          mv wiki/CONTRIBUTING.md wiki/08-CONTRIBUTING.md
+          mv wiki/LICENSE.md wiki/08-License.md
+          mv wiki/CODE_OF_CONDUCT.md wiki/09-Code-of-conduct.md
+          mv wiki/CONTRIBUTING.md wiki/10-Contributing.md
           ls -la wiki  # List files to verify renaming
 
 
