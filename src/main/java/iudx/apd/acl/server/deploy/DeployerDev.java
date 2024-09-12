@@ -101,6 +101,55 @@ public class DeployerDev {
     });
   }
 
+  /**
+   * Recursively deploy modules/verticles (if they exist) present in the `modules` list.
+   *
+   * @param vertx   the vert.x instance
+   * @param configs the JSON configuration
+   * @param modules the list of modules to deploy
+   */
+  public static void recursiveDeploy(Vertx vertx, JsonObject configs, List<String> modules) {
+    if (modules.isEmpty()) {
+      LOGGER.info("Deployed requested verticles");
+      return;
+    }
+    JsonArray configuredModules = configs.getJsonArray("modules");
+
+    String moduleName = modules.get(0);
+    JsonObject config =
+        configuredModules.stream().map(obj -> (JsonObject) obj).filter(obj -> obj.getString("id").equals(moduleName))
+            .findFirst().orElse(new JsonObject());
+
+    if (config.isEmpty()) {
+      LOGGER.fatal("Failed to deploy " + moduleName + " cause: Not Found");
+      return;
+    }
+    // get common configs and add this to config object
+    JsonObject commonConfigs = configs.getJsonObject("commonConfig");
+    config.mergeIn(commonConfigs, true);
+    int numInstances = config.getInteger("verticleInstances");
+    DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(numInstances).setConfig(config);
+    boolean isWorkerVerticle = config.getBoolean("isWorkerVerticle");
+    if (isWorkerVerticle) {
+      LOGGER.info("worker verticle : " + config.getString("id"));
+      deploymentOptions.setWorkerPoolName(config.getString("threadPoolName"));
+      deploymentOptions.setWorkerPoolSize(config.getInteger("threadPoolSize"));
+      deploymentOptions.setWorker(true);
+      deploymentOptions.setMaxWorkerExecuteTime(30L);
+      deploymentOptions.setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
+    }
+
+    vertx.deployVerticle(moduleName, deploymentOptions, ar -> {
+      if (ar.succeeded()) {
+        LOGGER.info("Deployed " + moduleName);
+        modules.remove(0);
+        recursiveDeploy(vertx, configs, modules);
+      } else {
+        LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
+      }
+    });
+  }
+
   private static JsonObject getConfigForModule(int moduleIndex, JsonObject configurations) {
     JsonObject commonConfigs = configurations.getJsonObject("commonConfig");
     JsonObject config = configurations.getJsonArray("modules").getJsonObject(moduleIndex);
@@ -150,7 +199,8 @@ public class DeployerDev {
         .addOption(
             new TypedOption<String>().setType(String.class).setLongName("modules").setShortName("m").setRequired(false)
                 .setDefaultValue("all").setParsedAsList(true).setDescription(
-                    "comma separated list of verticle names to deploy. " +
+                    "comma separated list of verticle names to deploy. "
+                        +
                         "If omitted, or if `all` is passed, all verticles are deployed"));
 
     StringBuilder usageString = new StringBuilder();
@@ -166,7 +216,7 @@ public class DeployerDev {
       List<String> modules = passedModules.stream().distinct().collect(Collectors.toList());
       if (!isDeploymentInClusteredMode) {
         deploy(configPath);
-      }/* `all` is also passed by default if no -m option given.*/ else if (modules.contains("all")) {
+      } /* `all` is also passed by default if no -m option given.*/ else if (modules.contains("all")) {
         deployInClusteredMode(configPath, host, List.of());
       } else {
         deployInClusteredMode(configPath, host, modules);
@@ -222,54 +272,6 @@ public class DeployerDev {
     });
   }
 
-  /**
-   * Recursively deploy modules/verticles (if they exist) present in the `modules` list.
-   *
-   * @param vertx   the vert.x instance
-   * @param configs the JSON configuration
-   * @param modules the list of modules to deploy
-   */
-  public static void recursiveDeploy(Vertx vertx, JsonObject configs, List<String> modules) {
-    if (modules.isEmpty()) {
-      LOGGER.info("Deployed requested verticles");
-      return;
-    }
-    JsonArray configuredModules = configs.getJsonArray("modules");
-
-    String moduleName = modules.get(0);
-    JsonObject config =
-        configuredModules.stream().map(obj -> (JsonObject) obj).filter(obj -> obj.getString("id").equals(moduleName))
-            .findFirst().orElse(new JsonObject());
-
-    if (config.isEmpty()) {
-      LOGGER.fatal("Failed to deploy " + moduleName + " cause: Not Found");
-      return;
-    }
-    // get common configs and add this to config object
-    JsonObject commonConfigs = configs.getJsonObject("commonConfig");
-    config.mergeIn(commonConfigs, true);
-    int numInstances = config.getInteger("verticleInstances");
-    DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(numInstances).setConfig(config);
-    boolean isWorkerVerticle = config.getBoolean("isWorkerVerticle");
-    if (isWorkerVerticle) {
-      LOGGER.info("worker verticle : " + config.getString("id"));
-      deploymentOptions.setWorkerPoolName(config.getString("threadPoolName"));
-      deploymentOptions.setWorkerPoolSize(config.getInteger("threadPoolSize"));
-      deploymentOptions.setWorker(true);
-      deploymentOptions.setMaxWorkerExecuteTime(30L);
-      deploymentOptions.setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
-    }
-
-    vertx.deployVerticle(moduleName, deploymentOptions, ar -> {
-      if (ar.succeeded()) {
-        LOGGER.info("Deployed " + moduleName);
-        modules.remove(0);
-        recursiveDeploy(vertx, configs, modules);
-      } else {
-        LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
-      }
-    });
-  }
 
   public static ClusterManager getClusterManager(String host, List<String> zookeepers, String clusterId) {
     Config config = new Config();
