@@ -57,8 +57,8 @@ import org.apache.logging.log4j.core.LoggerContext;
  * iudx.apd.acl.server.authenticator.JwtAuthenticationVerticle
  * ,iudx.apd.acl.server.apiserver.ApiServerVerticle</i>
  */
-public class DeployerDev {
-  private static final Logger LOGGER = LogManager.getLogger(DeployerDev.class);
+public class Deployer {
+  private static final Logger LOGGER = LogManager.getLogger(Deployer.class);
   private static Vertx vertxInstance;
   private static ClusterManager mgr;
 
