@@ -7,6 +7,7 @@ assignees: ''
 
 ---
 
+* To report vulnerabilities please refer [SECURITY.md](https://github.com/datakaveri/dx-acl-apd/blob/main/SECURITY.md)
 
 ### Current Behavior:
 <!-- A concise description of what you're experiencing. -->
