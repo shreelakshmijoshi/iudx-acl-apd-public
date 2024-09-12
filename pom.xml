@@ -32,7 +32,6 @@
     <junit-jupiter.params>5.10.2</junit-jupiter.params>
     <testcontainer.params>1.19.7</testcontainer.params>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <exec.mainClass>iudx.apd.acl.server.deploy.Deployer</exec.mainClass>
     <exec.mainClassDev>iudx.apd.acl.server.deploy.DeployerDev
     </exec.mainClassDev>
   </properties>
