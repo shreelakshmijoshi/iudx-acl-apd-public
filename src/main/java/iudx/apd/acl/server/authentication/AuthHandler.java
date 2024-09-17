@@ -34,6 +34,7 @@ import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
+import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.policy.PostgresService;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -46,16 +47,18 @@ public class AuthHandler implements Handler<RoutingContext> {
   private static AuthClient authClient;
   private static PostgresService pgService;
   private HttpServerRequest request;
-
+  private static RoutingContextHelper contextHelper;
   public static AuthHandler create(
       Api apis,
       AuthenticationService authenticationService,
       AuthClient client,
-      PostgresService postgresService) {
+      PostgresService postgresService,
+      RoutingContextHelper routingContextHelper) {
     authenticator = authenticationService;
     api = apis;
     authClient = client;
     pgService = postgresService;
+    contextHelper = routingContextHelper;
     return new AuthHandler();
   }
 
@@ -93,7 +96,7 @@ public class AuthHandler implements Handler<RoutingContext> {
           .onSuccess(
               userObj -> {
                 LOGGER.info("User Verified Successfully.");
-                context.put("user", userObj);
+                contextHelper.setUser(context, userObj);
                 context.next();
               })
           .onFailure(
