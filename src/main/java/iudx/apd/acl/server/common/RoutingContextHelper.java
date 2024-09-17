@@ -9,13 +9,11 @@ public class RoutingContextHelper {
   private RoutingContext routingContext;
 
 
-  public void setUser(RoutingContext routingContext, User user)
-  {
+  public void setUser(RoutingContext routingContext, User user) {
     routingContext.put(USER, user);
   }
 
-  public User getUser()
-  {
+  public User getUser() {
     return routingContext.get(USER);
   }
 
