@@ -21,6 +21,7 @@ import iudx.apd.acl.server.authentication.AuthClient;
 import iudx.apd.acl.server.authentication.AuthHandler;
 import iudx.apd.acl.server.authentication.AuthenticationService;
 import iudx.apd.acl.server.common.Api;
+import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.policy.PostgresService;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
@@ -44,6 +45,8 @@ public class TestAuthHandler {
   private static User owner;
   private static User consumer;
   @Mock HttpServerRequest httpServerRequest;
+  @Mock
+  RoutingContextHelper routingContextHelper;
   @Mock MultiMap multiMapMock;
   @Mock HttpMethod httpMethod;
   @Mock Future<JsonObject> future;
@@ -105,7 +108,7 @@ public class TestAuthHandler {
                 owner = getOwner();
                 consumer = getConsumer();
                 authHandler =
-                    AuthHandler.create(api, authenticationService, client, postgresService);
+                    AuthHandler.create(api, authenticationService, client, postgresService, routingContextHelper);
                 assertNotNull(authHandler);
                 LOG.info("Set up the environment for testing successfully");
                 vertxTestContext.completeNow();

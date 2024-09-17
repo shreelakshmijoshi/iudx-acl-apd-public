@@ -34,6 +34,7 @@ import iudx.apd.acl.server.authentication.AuthenticationService;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
+import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.notification.NotificationService;
 import iudx.apd.acl.server.policy.PolicyService;
 import iudx.apd.acl.server.policy.PostgresService;
@@ -80,6 +81,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private PostgresService pgService;
   private WebClient webClient;
   private WebClientOptions webClientOptions;
+  private RoutingContextHelper routingContextHelper;
 
   /**
    * This method is used to start the Verticle. It deploys a verticle in a cluster, reads the
@@ -105,6 +107,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
     authClient = new AuthClient(config(), webClient);
     pgService = new PostgresService(config(), vertx);
+    routingContextHelper = new RoutingContextHelper();
     FailureHandler failureHandler = new FailureHandler();
 
     /* Initialize Router builder */
@@ -115,49 +118,49 @@ public class ApiServerVerticle extends AbstractVerticle {
 
               routerBuilder
                   .operation(CREATE_POLICY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::postPoliciesHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(GET_POLICY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::getPoliciesHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(DELETE_POLICY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::deletePoliciesHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(CREATE_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::postAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(UPDATE_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::putAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(GET_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::getAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(DELETE_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::deleteAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(VERIFY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(AuthHandler.create(api, authenticator, authClient, pgService, routingContextHelper))
                   .handler(this::verifyRequestHandler)
                   .failureHandler(failureHandler);
 
@@ -228,7 +231,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void postAccessRequestHandler(RoutingContext routingContext) {
     JsonObject request = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     notificationService
         .createNotification(request, user)
         .onComplete(
@@ -261,7 +264,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void putAccessRequestHandler(RoutingContext routingContext) {
     JsonObject notification = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     notificationService
         .updateNotification(notification, user)
         .onComplete(
@@ -286,7 +289,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void deleteAccessRequestHandler(RoutingContext routingContext) {
     JsonObject notification = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     notificationService
         .deleteNotification(notification, user)
         .onComplete(
@@ -310,7 +313,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
   private void getAccessRequestHandler(RoutingContext routingContext) {
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     notificationService
         .getNotification(user)
         .onComplete(
@@ -327,7 +330,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void postPoliciesHandler(RoutingContext routingContext) {
     JsonObject requestBody = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     policyService
         .createPolicy(requestBody, user)
         .onComplete(
@@ -348,7 +351,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     JsonObject policy = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
 
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     policyService
         .deletePolicy(policy, user)
         .onComplete(
@@ -373,7 +376,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void getPoliciesHandler(RoutingContext routingContext) {
     HttpServerResponse response = routingContext.response();
 
-    User user = routingContext.get("user");
+    User user = routingContextHelper.getUser();
     policyService
         .getPolicy(user)
         .onComplete(
@@ -534,7 +537,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.debug("handleAuditLogs started");
     HttpServerRequest request = context.request();
     HttpServerResponse response = context.response();
-    User user = context.get(USER);
+    User user = routingContextHelper.getUser();
     JsonObject requestBody = context.body().asJsonObject();
     String userId = user.getUserId();
     long size = response.bytesWritten();
