@@ -1,23 +1,7 @@
 package iudx.apd.acl.server.authentication;
 
-import static iudx.apd.acl.server.apiserver.util.Constants.API_ENDPOINT;
-import static iudx.apd.acl.server.apiserver.util.Constants.API_METHOD;
-import static iudx.apd.acl.server.apiserver.util.Constants.APPLICATION_JSON;
-import static iudx.apd.acl.server.apiserver.util.Constants.AUTHORIZATION_KEY;
-import static iudx.apd.acl.server.apiserver.util.Constants.CONTENT_TYPE;
-import static iudx.apd.acl.server.apiserver.util.Constants.DETAIL;
-import static iudx.apd.acl.server.apiserver.util.Constants.EMAIL_ID;
-import static iudx.apd.acl.server.apiserver.util.Constants.FIRST_NAME;
-import static iudx.apd.acl.server.apiserver.util.Constants.HEADER_TOKEN;
-import static iudx.apd.acl.server.apiserver.util.Constants.LAST_NAME;
-import static iudx.apd.acl.server.apiserver.util.Constants.RS_SERVER_URL;
-import static iudx.apd.acl.server.apiserver.util.Constants.TITLE;
-import static iudx.apd.acl.server.apiserver.util.Constants.TYPE;
-import static iudx.apd.acl.server.apiserver.util.Constants.USER_ROLE;
-import static iudx.apd.acl.server.apiserver.util.Constants.VERIFY_POLICY_API;
-import static iudx.apd.acl.server.authentication.Constants.AUD;
-import static iudx.apd.acl.server.authentication.Constants.GET_USER;
-import static iudx.apd.acl.server.authentication.Constants.INSERT_USER_TABLE;
+import static iudx.apd.acl.server.apiserver.util.Constants.*;
+import static iudx.apd.acl.server.authentication.Constants.*;
 import static iudx.apd.acl.server.authentication.Constants.ROLE;
 import static iudx.apd.acl.server.authentication.Constants.USER_ID;
 import static iudx.apd.acl.server.common.ResponseUrn.INVALID_TOKEN_URN;
@@ -46,8 +30,9 @@ public class AuthHandler implements Handler<RoutingContext> {
   static Api api;
   private static AuthClient authClient;
   private static PostgresService pgService;
-  private HttpServerRequest request;
   private static RoutingContextHelper contextHelper;
+  private HttpServerRequest request;
+
   public static AuthHandler create(
       Api apis,
       AuthenticationService authenticationService,
