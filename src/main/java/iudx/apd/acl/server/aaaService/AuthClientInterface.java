@@ -1,4 +1,4 @@
-package iudx.apd.acl.server.authentication;
+package iudx.apd.acl.server.aaaService;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;

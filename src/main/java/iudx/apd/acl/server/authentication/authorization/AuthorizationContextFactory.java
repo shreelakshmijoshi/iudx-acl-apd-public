@@ -4,7 +4,7 @@ import iudx.apd.acl.server.common.Api;
 
 public class AuthorizationContextFactory {
 
-  public static AuthorizationStrategy create(IudxRole role, Api apis) {
+  public static AuthorizationStrategy create(DxRole role, Api apis) {
 
     if (role == null) {
       throw new IllegalArgumentException(role + "role is not defined in IUDX");

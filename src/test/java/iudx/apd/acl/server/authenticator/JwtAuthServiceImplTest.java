@@ -24,12 +24,14 @@ import iudx.apd.acl.server.apiserver.util.Role;
 import iudx.apd.acl.server.authentication.JwtAuthenticationServiceImpl;
 import iudx.apd.acl.server.authentication.model.JwtData;
 import iudx.apd.acl.server.common.Api;
+import iudx.apd.acl.server.common.RoutingContextHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({VertxExtension.class, MockitoExtension.class})
@@ -59,6 +61,7 @@ public class JwtAuthServiceImplTest {
 
     JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
+    RoutingContextHelper routingContextHelper = new RoutingContextHelper();
     jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth, authConfig, apis);
 
     LOGGER.info("Auth tests setup complete");
@@ -95,7 +98,7 @@ public class JwtAuthServiceImplTest {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-                JsonObject result = handler.result();
+                JsonObject result = handler.result().toJson();
                 assertEquals(Role.CONSUMER.getRole(), result.getString("role").toLowerCase());
                 assertEquals(true, result.getBoolean("isDelegate"));
                 testContext.completeNow();
@@ -134,9 +137,9 @@ public class JwtAuthServiceImplTest {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-                JsonObject result = handler.result();
-                assertEquals(Role.PROVIDER.getRole(), result.getString("role").toLowerCase());
-                assertEquals(true, result.getBoolean("isDelegate"));
+                JsonObject result = handler.result().toJson();
+                assertEquals(Role.PROVIDER.getRole(), result.getString("drl").toLowerCase());
+                assertEquals("delegate", result.getString("role"));
                 testContext.completeNow();
               } else {
                 testContext.failNow("invalid access");
@@ -192,6 +195,7 @@ public class JwtAuthServiceImplTest {
         .tokenIntrospect(authConfig)
         .onComplete(
             handler -> {
+              LOGGER.info("result is : " + handler);
               if (handler.succeeded()) {
                 testContext.failNow("invalid access");
               } else {

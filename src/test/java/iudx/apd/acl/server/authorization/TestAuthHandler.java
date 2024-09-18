@@ -14,12 +14,12 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.Tuple;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.AuthClient;
+import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.authentication.AuthHandler;
 import iudx.apd.acl.server.authentication.AuthenticationService;
+import iudx.apd.acl.server.authentication.model.JwtData;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.policy.PostgresService;
@@ -107,8 +107,7 @@ public class TestAuthHandler {
               if (handler.succeeded()) {
                 owner = getOwner();
                 consumer = getConsumer();
-                authHandler =
-                    AuthHandler.create(api, authenticationService, client, postgresService, routingContextHelper);
+                authHandler = new AuthHandler(api, authenticationService);
                 assertNotNull(authHandler);
                 LOG.info("Set up the environment for testing successfully");
                 vertxTestContext.completeNow();
@@ -213,10 +212,11 @@ public class TestAuthHandler {
             .put("userId", utility.getConsumerId())
             .put(ROLE, "consumer")
             .put(AUD, "someDummyValue");
+    JwtData jwtData = mock(JwtData.class);
 
     when(httpServerRequest.path()).thenReturn(api.getRequestPoliciesUrl());
     when(authenticationService.tokenIntrospect(any()))
-        .thenReturn(Future.succeededFuture(jsonObject));
+        .thenReturn(Future.succeededFuture(jwtData));
 
     authHandler.handle(routingContext);
 
@@ -294,13 +294,14 @@ public class TestAuthHandler {
             .put("firstName", firstName)
             .put("lastName", lastName)
             .put(AUD, "someDummyValue");
+    JwtData jwtData = mock(JwtData.class);
 
     lenient()
         .when(client.fetchUserInfo(any()))
         .thenReturn(Future.failedFuture("Something went wrong..."));
     when(httpServerRequest.path()).thenReturn(api.getRequestPoliciesUrl());
     when(authenticationService.tokenIntrospect(any()))
-        .thenReturn(Future.succeededFuture(jsonObject));
+        .thenReturn(Future.succeededFuture(jwtData));
     lenient().when(routingContext.response()).thenReturn(httpServerResponse);
     authHandler.handle(routingContext);
 

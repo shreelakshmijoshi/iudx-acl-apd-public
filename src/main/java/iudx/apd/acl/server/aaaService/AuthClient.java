@@ -1,4 +1,4 @@
-package iudx.apd.acl.server.authentication;
+package iudx.apd.acl.server.aaaService;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.EMAIL_ID;
 import static iudx.apd.acl.server.apiserver.util.Constants.FIRST_NAME;
