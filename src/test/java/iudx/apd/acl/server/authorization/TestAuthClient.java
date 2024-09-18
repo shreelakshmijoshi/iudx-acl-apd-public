@@ -17,7 +17,7 @@ import io.vertx.pgclient.PgPool;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.Role;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.AuthClient;
+import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.authentication.AuthHandler;
 import iudx.apd.acl.server.authentication.AuthenticationService;
 import iudx.apd.acl.server.common.Api;

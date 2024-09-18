@@ -20,7 +20,7 @@ import io.vertx.sqlclient.Tuple;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.ResourceObj;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.AuthClient;
+import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.policy.CatalogueClient;
