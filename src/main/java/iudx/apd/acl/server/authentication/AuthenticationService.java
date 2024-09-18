@@ -6,6 +6,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import iudx.apd.acl.server.authentication.model.JwtData;
 
 /**
  * The Authentication Service.
@@ -44,7 +45,7 @@ public interface AuthenticationService {
    * @param authenticationInfo which is a JsonObject containing token: String and apiEndpoint:
    * @return Future of JsonObject containing information from the decoded token
    */
-  Future<JsonObject> tokenIntrospect(JsonObject authenticationInfo);
+  Future<JwtData> tokenIntrospect(JsonObject authenticationInfo);
 
   /**
    * The tokenIntrospectForVerify method implements the authentication module for IUDX Verify APIs.
