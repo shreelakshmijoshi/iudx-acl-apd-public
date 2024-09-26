@@ -1,8 +1,7 @@
 package iudx.apd.acl.server.authentication.authorization;
 
-import static iudx.apd.acl.server.authentication.authorization.Method.DELETE;
-import static iudx.apd.acl.server.authentication.authorization.Method.GET;
-import static iudx.apd.acl.server.authentication.authorization.Method.POST;
+
+import static iudx.apd.acl.server.authentication.model.Method.*;
 
 import iudx.apd.acl.server.common.Api;
 import java.util.ArrayList;

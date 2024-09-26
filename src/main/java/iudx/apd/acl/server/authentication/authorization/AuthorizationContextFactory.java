@@ -1,5 +1,6 @@
 package iudx.apd.acl.server.authentication.authorization;
 
+import iudx.apd.acl.server.authentication.model.DxRole;
 import iudx.apd.acl.server.common.Api;
 
 public class AuthorizationContextFactory {

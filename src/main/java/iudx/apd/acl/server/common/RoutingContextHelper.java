@@ -56,15 +56,6 @@ public class RoutingContextHelper {
     return routingContext.get(JWT_DATA);
   }
 
-  public static void setApis(RoutingContext routingContext, Api api)
-  {
-    routingContext.put(API, api);
-  }
-
-  public static Api getApis(RoutingContext routingContext)
-  {
-    return routingContext.get(API);
-  }
 
 
 }
