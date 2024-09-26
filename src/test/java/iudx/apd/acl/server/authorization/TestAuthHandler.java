@@ -1,7 +1,7 @@
 package iudx.apd.acl.server.authorization;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.ROLE;
-import static iudx.apd.acl.server.authentication.Constants.AUD;
+import static iudx.apd.acl.server.authentication.util.Constants.AUD;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -107,7 +107,7 @@ public class TestAuthHandler {
               if (handler.succeeded()) {
                 owner = getOwner();
                 consumer = getConsumer();
-                authHandler = new AuthHandler(api, authenticationService);
+                authHandler = new AuthHandler(authenticationService);
                 assertNotNull(authHandler);
                 LOG.info("Set up the environment for testing successfully");
                 vertxTestContext.completeNow();

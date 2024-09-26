@@ -15,14 +15,12 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   private static final Logger LOGGER = LogManager.getLogger(JwtAuthenticationServiceImpl.class);
   final JWTAuth jwtAuth;
   final String issuer;
-  final Api apis;
   final String apdUrl;
 
-  public JwtAuthenticationServiceImpl(final JWTAuth jwtAuth, final JsonObject config, Api apis) {
+  public JwtAuthenticationServiceImpl(final JWTAuth jwtAuth, final JsonObject config) {
     this.jwtAuth = jwtAuth;
     this.issuer = config.getString("issuer");
     this.apdUrl = config.getString("apdURL");
-    this.apis = apis;
   }
 
 

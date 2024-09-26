@@ -26,8 +26,12 @@ public class ValidateAccessHandler implements Handler<RoutingContext> {
     event.next();
   }
 
-  public Handler<RoutingContext> setUserRolesForEndpoint(RoutingContext event, DxRole... roleForApi) {
-    JwtData jwtData = RoutingContextHelper.getJwtData(event);
+  public Handler<RoutingContext> setUserRolesForEndpoint(DxRole... roleForApi) {
+    return context -> handleWithRoles(context, roleForApi);
+}
+
+  private void handleWithRoles(RoutingContext event, DxRole[] roleForApi) {
+        JwtData jwtData = RoutingContextHelper.getJwtData(event);
     DxRole userRole = DxRole.fromRole(jwtData);
     boolean isUserAllowedToAccessApi = Arrays.asList(roleForApi).contains(userRole);
     if (!isUserAllowedToAccessApi) {
@@ -37,6 +41,5 @@ public class ValidateAccessHandler implements Handler<RoutingContext> {
           "no access provided to endpoint");
     }
     event.next();
-    return this;
-}
+  }
 }

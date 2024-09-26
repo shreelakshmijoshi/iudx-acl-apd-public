@@ -29,7 +29,7 @@ import io.vertx.ext.web.openapi.RouterBuilder;
 import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.auditing.AuditingService;
-import iudx.apd.acl.server.authentication.Authentication;
+import iudx.apd.acl.server.authentication.handler.Authentication;
 import iudx.apd.acl.server.authentication.AuthenticationService;
 import iudx.apd.acl.server.authentication.handler.AuthHandler;
 import iudx.apd.acl.server.authentication.handler.UserAccessHandler;
@@ -115,8 +115,8 @@ public class ApiServerVerticle extends AbstractVerticle {
     authClient = new AuthClient(config(), webClient);
     pgService = new PostgresService(config(), vertx);
     FailureHandler failureHandler = new FailureHandler();
-    authHandler = new AuthHandler(api, authenticator);
-    verifyAuthHandler = new VerifyAuthHandler(api, authenticator);
+    authHandler = new AuthHandler(authenticator);
+    verifyAuthHandler = new VerifyAuthHandler(authenticator);
     validateAccessHandler = new ValidateAccessHandler();
     userAccessHandler = new UserAccessHandler(pgService, authClient);
 
@@ -129,10 +129,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(CREATE_POLICY_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(context, PROVIDER, DELEGATE);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
                   .handler(userAccessHandler)
                   .handler(this::postPoliciesHandler)
                   .failureHandler(failureHandler);
@@ -140,11 +137,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(GET_POLICY_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(
-                            context, PROVIDER, DELEGATE, CONSUMER);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE, CONSUMER))
                   .handler(userAccessHandler)
                   .handler(this::getPoliciesHandler)
                   .failureHandler(failureHandler);
@@ -152,10 +145,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(DELETE_POLICY_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(context, PROVIDER, DELEGATE);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
                   .handler(userAccessHandler)
                   .handler(this::deletePoliciesHandler)
                   .failureHandler(failureHandler);
@@ -163,10 +153,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(CREATE_NOTIFICATIONS_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(context, DELEGATE, CONSUMER);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(DELEGATE, CONSUMER))
                   .handler(userAccessHandler)
                   .handler(this::postAccessRequestHandler)
                   .failureHandler(failureHandler);
@@ -174,10 +161,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(UPDATE_NOTIFICATIONS_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(context, PROVIDER, DELEGATE);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
                   .handler(userAccessHandler)
                   .handler(this::putAccessRequestHandler)
                   .failureHandler(failureHandler);
@@ -185,11 +169,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(GET_NOTIFICATIONS_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(
-                            context, PROVIDER, DELEGATE, CONSUMER);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE, CONSUMER))
                   .handler(userAccessHandler)
                   .handler(this::getAccessRequestHandler)
                   .failureHandler(failureHandler);
@@ -197,10 +177,7 @@ public class ApiServerVerticle extends AbstractVerticle {
               routerBuilder
                   .operation(DELETE_NOTIFICATIONS_API)
                   .handler(authHandler)
-                  .handler(
-                      context -> {
-                        validateAccessHandler.setUserRolesForEndpoint(context, DELEGATE, CONSUMER);
-                      })
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(DELEGATE, CONSUMER))
                   .handler(userAccessHandler)
                   .handler(this::deleteAccessRequestHandler)
                   .failureHandler(failureHandler);

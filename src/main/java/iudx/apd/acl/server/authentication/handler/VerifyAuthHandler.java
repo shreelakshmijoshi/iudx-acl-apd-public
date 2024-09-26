@@ -9,7 +9,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import iudx.apd.acl.server.authentication.AuthenticationService;
-import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
@@ -18,15 +17,10 @@ import org.apache.logging.log4j.Logger;
 
 public class VerifyAuthHandler implements Handler<RoutingContext> {
   static AuthenticationService authenticator;
-  static Api api;
   private final Logger LOGGER = LogManager.getLogger(VerifyAuthHandler.class);
 
-  public VerifyAuthHandler(
-      Api apis,
-      AuthenticationService authenticationService
-      ) {
+  public VerifyAuthHandler(AuthenticationService authenticationService) {
     authenticator = authenticationService;
-    api = apis;
   }
 
   @Override
