@@ -1,11 +1,9 @@
 package iudx.apd.acl.server.authentication.handler;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
-import static iudx.apd.acl.server.apiserver.util.Constants.ROLE;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ID;
 import static iudx.apd.acl.server.authentication.model.DxRole.DELEGATE;
 import static iudx.apd.acl.server.authentication.util.Constants.*;
-import static iudx.apd.acl.server.authentication.util.Constants.AUD;
 import static iudx.apd.acl.server.common.ResponseUrn.INVALID_TOKEN_URN;
 
 import io.vertx.core.Future;
@@ -19,6 +17,7 @@ import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.authentication.model.DxRole;
 import iudx.apd.acl.server.authentication.model.JwtData;
+import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
@@ -31,10 +30,12 @@ public class UserAccessHandler implements Handler<RoutingContext> {
   private static final Logger LOGGER = LogManager.getLogger(UserAccessHandler.class);
   private final PostgresService pgService;
   private final AuthClient authClient;
+  private final UserInfo userInfo;
 
-  public UserAccessHandler(PostgresService postgresService, AuthClient client) {
+  public UserAccessHandler(PostgresService postgresService, AuthClient client, UserInfo userInfo) {
     authClient = client;
     pgService = postgresService;
+    this.userInfo = userInfo;
   }
 
   /**
@@ -44,7 +45,7 @@ public class UserAccessHandler implements Handler<RoutingContext> {
    */
   @Override
   public void handle(RoutingContext event) {
-    JsonObject user = addUserInfo(event);
+    UserInfo user = addUserInfo(event);
     Future<User> getUserInfoFuture = getUserInfo(user);
     getUserInfoFuture.onComplete(
         handler -> {
@@ -66,23 +67,23 @@ public class UserAccessHandler implements Handler<RoutingContext> {
    * @param event
    * @return vert.x Json object containing consumer or provider info
    */
-  public JsonObject addUserInfo(RoutingContext event) {
+  public UserInfo addUserInfo(RoutingContext event) {
     JwtData jwtData = RoutingContextHelper.getJwtData(event);
     DxRole role = DxRole.fromRole(jwtData);
-
-    JsonObject jsonResponse = new JsonObject();
     boolean isDelegate = jwtData.getRole().equalsIgnoreCase(DELEGATE.getRole());
-    jsonResponse.put(USER_ID, isDelegate ? jwtData.getDid() : jwtData.getSub());
-    jsonResponse.put(IS_DELEGATE, isDelegate);
-    jsonResponse.put(ROLE, role);
-    jsonResponse.put(AUD, jwtData.getAud());
-    return jsonResponse;
+    UUID id = UUID.fromString(isDelegate ? jwtData.getDid() : jwtData.getSub());
+    userInfo
+        .setDelegate(isDelegate)
+        .setRole(role)
+        .setAudience(jwtData.getAud())
+        .setUserId(id);
+    return userInfo;
   }
 
-  private Future<User> getUserInfo(JsonObject jsonObject) {
+  private Future<User> getUserInfo(UserInfo userInfo) {
     LOGGER.info("Getting User Info.");
     Promise<User> promise = Promise.promise();
-    Tuple tuple = Tuple.of(UUID.fromString(jsonObject.getString("userId")));
+    Tuple tuple = Tuple.of(userInfo.getUserId());
     UserAccessHandler.UserContainer userContainer = new UserAccessHandler.UserContainer();
     pgService
         .getPool()
@@ -104,12 +105,12 @@ public class UserAccessHandler implements Handler<RoutingContext> {
                 Row row = rows.iterator().next();
                 JsonObject result = row.toJson(); // Get the single row
                 JsonObject userObj = new JsonObject();
-                userObj.put(USER_ID, jsonObject.getString(USER_ID));
-                userObj.put(USER_ROLE, jsonObject.getString(ROLE));
+                userObj.put(USER_ID, userInfo.getUserId());
+                userObj.put(USER_ROLE, userInfo.getRole());
                 userObj.put(EMAIL_ID, result.getString("email_id"));
                 userObj.put(FIRST_NAME, result.getString("first_name"));
                 userObj.put(LAST_NAME, result.getString("last_name"));
-                userObj.put(RS_SERVER_URL, jsonObject.getString(AUD));
+                userObj.put(RS_SERVER_URL, userInfo.getAudience());
                 //
                 // userObj.put(IS_DELEGATE,jsonObject.getBoolean(IS_DELEGATE));
 
@@ -117,7 +118,7 @@ public class UserAccessHandler implements Handler<RoutingContext> {
                 promise.complete(user);
               } else {
                 LOGGER.info("Getting user from Auth");
-                Future<User> getUserFromAuth = authClient.fetchUserInfo(jsonObject);
+                Future<User> getUserFromAuth = authClient.fetchUserInfo(userInfo);
                 Future<Void> insertIntoDb =
                     getUserFromAuth.compose(
                         userObj -> {

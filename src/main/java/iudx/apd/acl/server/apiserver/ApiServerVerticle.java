@@ -35,6 +35,7 @@ import iudx.apd.acl.server.authentication.handler.AuthHandler;
 import iudx.apd.acl.server.authentication.handler.UserAccessHandler;
 import iudx.apd.acl.server.authentication.handler.ValidateAccessHandler;
 import iudx.apd.acl.server.authentication.handler.VerifyAuthHandler;
+import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
@@ -89,7 +90,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private UserAccessHandler userAccessHandler;
   private VerifyAuthHandler verifyAuthHandler;
   private ValidateAccessHandler validateAccessHandler;
-
+  private UserInfo userInfo;
   /**
    * This method is used to start the Verticle. It deploys a verticle in a cluster, reads the
    * configuration, obtains a proxy for the Event bus services exposed through service discovery,
@@ -118,7 +119,9 @@ public class ApiServerVerticle extends AbstractVerticle {
     authHandler = new AuthHandler(authenticator);
     verifyAuthHandler = new VerifyAuthHandler(authenticator);
     validateAccessHandler = new ValidateAccessHandler();
-    userAccessHandler = new UserAccessHandler(pgService, authClient);
+    userInfo = new UserInfo();
+
+    userAccessHandler = new UserAccessHandler(pgService, authClient, userInfo);
 
     /* Initialize Router builder */
     RouterBuilder.create(vertx, "docs/openapi.yaml")
