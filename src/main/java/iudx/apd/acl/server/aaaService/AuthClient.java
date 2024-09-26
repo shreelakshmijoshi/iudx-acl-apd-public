@@ -5,10 +5,10 @@ import static iudx.apd.acl.server.apiserver.util.Constants.FIRST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.LAST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.RS_SERVER_URL;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ROLE;
-import static iudx.apd.acl.server.authentication.Constants.AUD;
-import static iudx.apd.acl.server.authentication.Constants.ROLE;
-import static iudx.apd.acl.server.authentication.Constants.SEARCH_PATH;
-import static iudx.apd.acl.server.authentication.Constants.USER_ID;
+import static iudx.apd.acl.server.authentication.util.Constants.AUD;
+import static iudx.apd.acl.server.authentication.util.Constants.ROLE;
+import static iudx.apd.acl.server.authentication.util.Constants.SEARCH_PATH;
+import static iudx.apd.acl.server.authentication.util.Constants.USER_ID;
 import static iudx.apd.acl.server.common.HttpStatusCode.INTERNAL_SERVER_ERROR;
 
 import io.vertx.core.Future;

@@ -62,7 +62,7 @@ public class JwtAuthServiceImplTest {
     JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
     RoutingContextHelper routingContextHelper = new RoutingContextHelper();
-    jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth, authConfig, apis);
+    jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth, authConfig);
 
     LOGGER.info("Auth tests setup complete");
 
