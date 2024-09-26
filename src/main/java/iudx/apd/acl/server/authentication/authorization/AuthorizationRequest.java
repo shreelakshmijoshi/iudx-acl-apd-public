@@ -1,5 +1,6 @@
 package iudx.apd.acl.server.authentication.authorization;
 
+import iudx.apd.acl.server.authentication.model.Method;
 import java.util.Objects;
 
 public final class AuthorizationRequest {

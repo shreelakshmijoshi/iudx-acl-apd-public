@@ -1,4 +1,4 @@
-package iudx.apd.acl.server.authentication.authorization;
+package iudx.apd.acl.server.authentication.model;
 
 import iudx.apd.acl.server.authentication.model.JwtData;
 import java.util.stream.Stream;
