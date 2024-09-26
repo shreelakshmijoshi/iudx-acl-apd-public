@@ -1,11 +1,11 @@
-package iudx.apd.acl.server.authentication.authorization;
+package iudx.apd.acl.server.authentication.handler;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 import static iudx.apd.acl.server.apiserver.util.Constants.ROLE;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ID;
-import static iudx.apd.acl.server.authentication.Constants.*;
-import static iudx.apd.acl.server.authentication.Constants.AUD;
-import static iudx.apd.acl.server.authentication.authorization.DxRole.DELEGATE;
+import static iudx.apd.acl.server.authentication.model.DxRole.DELEGATE;
+import static iudx.apd.acl.server.authentication.util.Constants.*;
+import static iudx.apd.acl.server.authentication.util.Constants.AUD;
 import static iudx.apd.acl.server.common.ResponseUrn.INVALID_TOKEN_URN;
 
 import io.vertx.core.Future;
@@ -15,10 +15,10 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
-import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.aaaService.AuthClient;
+import iudx.apd.acl.server.apiserver.util.User;
+import iudx.apd.acl.server.authentication.model.DxRole;
 import iudx.apd.acl.server.authentication.model.JwtData;
-import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
@@ -31,11 +31,12 @@ public class UserAccessHandler implements Handler<RoutingContext> {
   private static final Logger LOGGER = LogManager.getLogger(UserAccessHandler.class);
   private final PostgresService pgService;
   private final AuthClient authClient;
-  public UserAccessHandler(PostgresService postgresService, AuthClient client)
-  {
+
+  public UserAccessHandler(PostgresService postgresService, AuthClient client) {
     authClient = client;
     pgService = postgresService;
   }
+
   /**
    * After JWT Authentication, User Access Validation is handled here
    *
@@ -43,53 +44,39 @@ public class UserAccessHandler implements Handler<RoutingContext> {
    */
   @Override
   public void handle(RoutingContext event) {
-   Future<JsonObject> validateUserAccessFuture = validateAccess(event);
-    Future<User> getUserInfoFuture = validateUserAccessFuture.compose(this::getUserInfo);
-    getUserInfoFuture.onComplete(handler -> {
-      if(handler.succeeded())
-      {
-        /* set user in routing context */
-        RoutingContextHelper.setUser(event, handler.result());
-        event.next();
-      }
-      else
-      {
-        LOGGER.error("User info fetch, access validation failed : {}",handler.cause().getMessage());
-        processAuthorizationFailure(event, handler.cause().getMessage());
-      }
-    });
-
+    JsonObject user = addUserInfo(event);
+    Future<User> getUserInfoFuture = getUserInfo(user);
+    getUserInfoFuture.onComplete(
+        handler -> {
+          if (handler.succeeded()) {
+            /* set user in routing context */
+            RoutingContextHelper.setUser(event, handler.result());
+            event.next();
+          } else {
+            LOGGER.error(
+                "User info fetch, access validation failed : {}", handler.cause().getMessage());
+            processAuthorizationFailure(event, handler.cause().getMessage());
+          }
+        });
   }
-  
-  public Future<JsonObject> validateAccess(RoutingContext event){
-    LOGGER.info("Authorization check started");
-    Promise<JsonObject> promise = Promise.promise();
-    Method method = Method.valueOf(RoutingContextHelper.getMethod(event));
-    String api = RoutingContextHelper.getRequestPath(event);
-    AuthorizationRequest authRequest = new AuthorizationRequest(method, api);
+
+  /**
+   * Converts delegate user to its respective consumer or provider
+   *
+   * @param event
+   * @return vert.x Json object containing consumer or provider info
+   */
+  public JsonObject addUserInfo(RoutingContext event) {
     JwtData jwtData = RoutingContextHelper.getJwtData(event);
     DxRole role = DxRole.fromRole(jwtData);
-    Api apis = RoutingContextHelper.getApis(event);
-    LOGGER.info("api : {}", api.toString());
 
-    AuthorizationStrategy authStrategy = AuthorizationContextFactory.create(role, apis);
-    LOGGER.info("strategy : " + authStrategy.getClass().getSimpleName());
-
-    JwtAuthorization jwtAuthStrategy = new JwtAuthorization(authStrategy);
-    if (jwtAuthStrategy.isAuthorized(authRequest)) {
-      JsonObject jsonResponse = new JsonObject();
-      boolean isDelegate = jwtData.getRole().equalsIgnoreCase(DELEGATE.getRole());
-      jsonResponse.put(USER_ID, isDelegate ? jwtData.getDid() : jwtData.getSub());
-      jsonResponse.put(IS_DELEGATE, isDelegate);
-      jsonResponse.put(ROLE, role);
-      jsonResponse.put(AUD, jwtData.getAud());
-      promise.complete(jsonResponse);
-    } else {
-      LOGGER.info("Failed in authorization check.");
-      JsonObject result = new JsonObject().put("401", "no access provided to endpoint");
-      promise.fail(result.toString());
-    }
-    return promise.future();
+    JsonObject jsonResponse = new JsonObject();
+    boolean isDelegate = jwtData.getRole().equalsIgnoreCase(DELEGATE.getRole());
+    jsonResponse.put(USER_ID, isDelegate ? jwtData.getDid() : jwtData.getSub());
+    jsonResponse.put(IS_DELEGATE, isDelegate);
+    jsonResponse.put(ROLE, role);
+    jsonResponse.put(AUD, jwtData.getAud());
+    return jsonResponse;
   }
 
   private Future<User> getUserInfo(JsonObject jsonObject) {
@@ -126,7 +113,6 @@ public class UserAccessHandler implements Handler<RoutingContext> {
                 //
                 // userObj.put(IS_DELEGATE,jsonObject.getBoolean(IS_DELEGATE));
 
-                LOGGER.info("user ashadfadfhkadf : " + userObj.encodePrettily());
                 User user = new User(userObj);
                 promise.complete(user);
               } else {
