@@ -1,7 +1,7 @@
 package iudx.apd.acl.server.authentication;
 
-import static iudx.apd.acl.server.authentication.Constants.AUTH_CERTIFICATE_PATH;
-import static iudx.apd.acl.server.authentication.Constants.JWT_LEEWAY_TIME;
+import static iudx.apd.acl.server.authentication.util.Constants.AUTH_CERTIFICATE_PATH;
+import static iudx.apd.acl.server.authentication.util.Constants.JWT_LEEWAY_TIME;
 import static iudx.apd.acl.server.common.Constants.AUTH_SERVICE_ADDRESS;
 
 import io.vertx.core.AbstractVerticle;
@@ -16,7 +16,6 @@ import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
-import iudx.apd.acl.server.common.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,7 @@ import org.apache.logging.log4j.Logger;
  * <h1>Authentication Verticle</h1>
  *
  * <p>The Authentication Verticle implementation in the IUDX ACL-APD Server exposes the {@link
- * iudx.apd.acl.server.authenticator.AuthenticationService} over the Vert.x Event Bus.
+ * iudx.apd.acl.server.authentication.AuthenticationService} over the Vert.x Event Bus.
  *
  * @version 1.0
  * @since 2020-05-31
@@ -38,7 +37,6 @@ public class AuthenticationVerticle extends AbstractVerticle {
   private ServiceBinder binder;
   private MessageConsumer<JsonObject> consumer;
   private WebClient webClient;
-  private String dxApiBasePath;
 
   static WebClient createWebClient(Vertx vertx, JsonObject config) {
     return createWebClient(vertx, config, false);
@@ -85,11 +83,9 @@ public class AuthenticationVerticle extends AbstractVerticle {
                         + "do not set IgnoreExpiration in production!!");
               }
 
-              dxApiBasePath = config().getString("dxApiBasePath");
-              Api apis = Api.getInstance(dxApiBasePath);
               JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
 
-              jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth, config(), apis);
+              jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth, config());
 
               /* Publish the Authentication service with the Event Bus against an address. */
               consumer =

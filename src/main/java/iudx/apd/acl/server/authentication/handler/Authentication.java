@@ -1,4 +1,4 @@
-package iudx.apd.acl.server.authentication;
+package iudx.apd.acl.server.authentication.handler;
 
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthenticationHandler;

@@ -37,7 +37,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.nio.Buffer;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.RESULT;
-import static iudx.apd.acl.server.authentication.Constants.*;
+import static iudx.apd.acl.server.authentication.util.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
