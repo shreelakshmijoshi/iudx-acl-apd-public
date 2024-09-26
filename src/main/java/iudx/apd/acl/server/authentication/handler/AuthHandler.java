@@ -27,7 +27,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext context) {
     JsonObject authInfo = RoutingContextHelper.getAuthInfo(context);
-    checkIfAuth(authInfo)
+    checkIfTokenIsAuthenticated(authInfo)
         .onSuccess(
             jwtData -> {
               LOGGER.info("User Verified Successfully.");
@@ -41,11 +41,9 @@ public class AuthHandler implements Handler<RoutingContext> {
             });
   }
 
-  Future<JwtData> checkIfAuth(JsonObject authenticationInfo) {
+  Future<JwtData> checkIfTokenIsAuthenticated(JsonObject authenticationInfo) {
     Promise<JwtData> promise = Promise.promise();
     Future<JwtData> tokenIntrospect = authenticator.tokenIntrospect(authenticationInfo);
-
-    //    Future<User> getUserInfo = tokenIntrospect.compose(this::getUserInfo);
     tokenIntrospect.onSuccess(promise::complete).onFailure(promise::fail);
     return promise.future();
   }
