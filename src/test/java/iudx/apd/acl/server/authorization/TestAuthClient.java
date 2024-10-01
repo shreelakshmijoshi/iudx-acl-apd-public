@@ -17,9 +17,11 @@ import io.vertx.pgclient.PgPool;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.Role;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.AuthClient;
-import iudx.apd.acl.server.authentication.AuthHandler;
+import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.authentication.AuthenticationService;
+import iudx.apd.acl.server.authentication.handler.AuthHandler;
+import iudx.apd.acl.server.authentication.model.DxRole;
+import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.policy.PostgresService;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +39,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.nio.Buffer;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.RESULT;
-import static iudx.apd.acl.server.authentication.Constants.*;
+import static iudx.apd.acl.server.authentication.util.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -76,6 +78,7 @@ public class TestAuthClient {
   private String emailId;
   private String firstName;
   private String lastName;
+  private UserInfo userInfo;
 
   @BeforeEach
   public void setUp(VertxTestContext vertxTestContext) {
@@ -83,6 +86,11 @@ public class TestAuthClient {
     container.start();
     webClient = mock(WebClient.class);
     postgresService = utility.setUp(container);
+
+    userInfo = new UserInfo()
+        .setUserId(Utility.generateRandomUuid())
+        .setRole(DxRole.PROVIDER)
+        .setAudience("rs.iudx.io");
 
     config =
         new JsonObject()
@@ -180,7 +188,7 @@ public class TestAuthClient {
   public void testFetchUserInfoSuccess(VertxTestContext vertxTestContext) {
 
     client
-        .fetchUserInfo(config)
+        .fetchUserInfo(userInfo)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -207,7 +215,7 @@ public class TestAuthClient {
     when(throwable.getMessage()).thenReturn("Something went wrong : (");
 
     client
-        .fetchUserInfo(config)
+        .fetchUserInfo(userInfo)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -232,7 +240,7 @@ public class TestAuthClient {
     AuthClient client = new AuthClient(config, webClient);
 
     client
-        .fetchUserInfo(config)
+        .fetchUserInfo(userInfo)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -316,7 +324,7 @@ public class TestAuthClient {
                 LOG.info("Set up the environment for testing successfully");
 
                 client
-                    .fetchUserInfo(configJson)
+                    .fetchUserInfo(userInfo)
                     .onComplete(
                         authHandler -> {
                           if (authHandler.succeeded()) {

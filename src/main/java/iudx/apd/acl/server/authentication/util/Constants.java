@@ -1,4 +1,4 @@
-package iudx.apd.acl.server.authentication;
+package iudx.apd.acl.server.authentication.util;
 
 public class Constants {
   public static final String SEARCH_PATH = "/user/search";

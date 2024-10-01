@@ -4,6 +4,7 @@ import static iudx.apd.acl.server.apiserver.response.ResponseUtil.generateRespon
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 import static iudx.apd.acl.server.apiserver.util.Util.errorResponse;
 import static iudx.apd.acl.server.auditing.util.Constants.USERID;
+import static iudx.apd.acl.server.authentication.model.DxRole.*;
 import static iudx.apd.acl.server.common.Constants.*;
 import static iudx.apd.acl.server.common.HttpStatusCode.BAD_REQUEST;
 
@@ -25,15 +26,20 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
+import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.auditing.AuditingService;
-import iudx.apd.acl.server.authentication.AuthClient;
-import iudx.apd.acl.server.authentication.AuthHandler;
-import iudx.apd.acl.server.authentication.Authentication;
+import iudx.apd.acl.server.authentication.handler.Authentication;
 import iudx.apd.acl.server.authentication.AuthenticationService;
+import iudx.apd.acl.server.authentication.handler.AuthHandler;
+import iudx.apd.acl.server.authentication.handler.UserAccessHandler;
+import iudx.apd.acl.server.authentication.handler.ValidateAccessHandler;
+import iudx.apd.acl.server.authentication.handler.VerifyAuthHandler;
+import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
+import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.notification.NotificationService;
 import iudx.apd.acl.server.policy.PolicyService;
 import iudx.apd.acl.server.policy.PostgresService;
@@ -80,7 +86,11 @@ public class ApiServerVerticle extends AbstractVerticle {
   private PostgresService pgService;
   private WebClient webClient;
   private WebClientOptions webClientOptions;
-
+  private AuthHandler authHandler;
+  private UserAccessHandler userAccessHandler;
+  private VerifyAuthHandler verifyAuthHandler;
+  private ValidateAccessHandler validateAccessHandler;
+  private UserInfo userInfo;
   /**
    * This method is used to start the Verticle. It deploys a verticle in a cluster, reads the
    * configuration, obtains a proxy for the Event bus services exposed through service discovery,
@@ -106,6 +116,12 @@ public class ApiServerVerticle extends AbstractVerticle {
     authClient = new AuthClient(config(), webClient);
     pgService = new PostgresService(config(), vertx);
     FailureHandler failureHandler = new FailureHandler();
+    authHandler = new AuthHandler(authenticator);
+    verifyAuthHandler = new VerifyAuthHandler(authenticator);
+    validateAccessHandler = new ValidateAccessHandler();
+    userInfo = new UserInfo();
+
+    userAccessHandler = new UserAccessHandler(pgService, authClient, userInfo);
 
     /* Initialize Router builder */
     RouterBuilder.create(vertx, "docs/openapi.yaml")
@@ -115,49 +131,64 @@ public class ApiServerVerticle extends AbstractVerticle {
 
               routerBuilder
                   .operation(CREATE_POLICY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
+                  .handler(userAccessHandler)
                   .handler(this::postPoliciesHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(GET_POLICY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE, CONSUMER))
+                  .handler(userAccessHandler)
                   .handler(this::getPoliciesHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(DELETE_POLICY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
+                  .handler(userAccessHandler)
                   .handler(this::deletePoliciesHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(CREATE_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(DELEGATE, CONSUMER))
+                  .handler(userAccessHandler)
                   .handler(this::postAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(UPDATE_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
+                  .handler(userAccessHandler)
                   .handler(this::putAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(GET_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE, CONSUMER))
+                  .handler(userAccessHandler)
                   .handler(this::getAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(DELETE_NOTIFICATIONS_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(authHandler)
+                  .handler(validateAccessHandler.setUserRolesForEndpoint(DELEGATE, CONSUMER))
+                  .handler(userAccessHandler)
                   .handler(this::deleteAccessRequestHandler)
                   .failureHandler(failureHandler);
 
               routerBuilder
                   .operation(VERIFY_API)
-                  .handler(AuthHandler.create(api, authenticator, authClient, pgService))
+                  .handler(verifyAuthHandler)
+                  .handler(userAccessHandler)
                   .handler(this::verifyRequestHandler)
                   .failureHandler(failureHandler);
 
@@ -228,7 +259,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void postAccessRequestHandler(RoutingContext routingContext) {
     JsonObject request = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     notificationService
         .createNotification(request, user)
         .onComplete(
@@ -261,7 +292,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void putAccessRequestHandler(RoutingContext routingContext) {
     JsonObject notification = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     notificationService
         .updateNotification(notification, user)
         .onComplete(
@@ -286,7 +317,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void deleteAccessRequestHandler(RoutingContext routingContext) {
     JsonObject notification = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     notificationService
         .deleteNotification(notification, user)
         .onComplete(
@@ -310,7 +341,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
   private void getAccessRequestHandler(RoutingContext routingContext) {
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     notificationService
         .getNotification(user)
         .onComplete(
@@ -327,7 +358,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void postPoliciesHandler(RoutingContext routingContext) {
     JsonObject requestBody = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     policyService
         .createPolicy(requestBody, user)
         .onComplete(
@@ -348,7 +379,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     JsonObject policy = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
 
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     policyService
         .deletePolicy(policy, user)
         .onComplete(
@@ -373,7 +404,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void getPoliciesHandler(RoutingContext routingContext) {
     HttpServerResponse response = routingContext.response();
 
-    User user = routingContext.get("user");
+    User user = RoutingContextHelper.getUser(routingContext);
     policyService
         .getPolicy(user)
         .onComplete(
@@ -444,9 +475,8 @@ public class ApiServerVerticle extends AbstractVerticle {
   }
 
   /**
-   * starts an HTTP server with the specified HTTP port.
-   * If the HTTP port is not specified in the configuration, default ports
-   * (8080 for HTTP) will be used.
+   * starts an HTTP server with the specified HTTP port. If the HTTP port is not specified in the
+   * configuration, default ports (8080 for HTTP) will be used.
    *
    * @param serverOptions The server options to be configured.
    */
@@ -534,7 +564,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     LOGGER.debug("handleAuditLogs started");
     HttpServerRequest request = context.request();
     HttpServerResponse response = context.response();
-    User user = context.get(USER);
+    User user = RoutingContextHelper.getUser(context);
     JsonObject requestBody = context.body().asJsonObject();
     String userId = user.getUserId();
     long size = response.bytesWritten();

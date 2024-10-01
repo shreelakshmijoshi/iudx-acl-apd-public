@@ -1,14 +1,14 @@
-package iudx.apd.acl.server.authentication;
+package iudx.apd.acl.server.aaaService;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.EMAIL_ID;
 import static iudx.apd.acl.server.apiserver.util.Constants.FIRST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.LAST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.RS_SERVER_URL;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ROLE;
-import static iudx.apd.acl.server.authentication.Constants.AUD;
-import static iudx.apd.acl.server.authentication.Constants.ROLE;
-import static iudx.apd.acl.server.authentication.Constants.SEARCH_PATH;
-import static iudx.apd.acl.server.authentication.Constants.USER_ID;
+import static iudx.apd.acl.server.authentication.util.Constants.AUD;
+import static iudx.apd.acl.server.authentication.util.Constants.ROLE;
+import static iudx.apd.acl.server.authentication.util.Constants.SEARCH_PATH;
+import static iudx.apd.acl.server.authentication.util.Constants.USER_ID;
 import static iudx.apd.acl.server.common.HttpStatusCode.INTERNAL_SERVER_ERROR;
 
 import io.vertx.core.Future;
@@ -18,6 +18,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import iudx.apd.acl.server.apiserver.util.User;
+import iudx.apd.acl.server.authentication.model.UserInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,13 +42,13 @@ public class AuthClient implements AuthClientInterface {
   }
 
   @Override
-  public Future<User> fetchUserInfo(JsonObject jsonObject) {
+  public Future<User> fetchUserInfo(UserInfo userInfo) {
     final Promise<User> promise = Promise.promise();
-    String userId = jsonObject.getString(USER_ID);
-    String iudxRole = jsonObject.getString(ROLE).toLowerCase();
-    String resourceServer = jsonObject.getString(AUD);
+    String userId = userInfo.getUserId().toString();
+    String iudxRole = userInfo.getRole().getRole().toLowerCase();
+    String resourceServer = userInfo.getAudience();
 
-    LOGGER.debug("JsonObject params : {}", jsonObject.encodePrettily());
+    LOGGER.debug("JsonObject params : {}", userInfo);
     LOGGER.debug("authHost : {}", authHost);
     LOGGER.debug("authServerSearchPath : {}", authServerSearchPath);
     LOGGER.debug("authPort: {}", authPort);
