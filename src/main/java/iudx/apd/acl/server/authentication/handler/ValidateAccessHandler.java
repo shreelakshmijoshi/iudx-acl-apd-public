@@ -35,10 +35,10 @@ public class ValidateAccessHandler implements Handler<RoutingContext> {
     DxRole userRole = DxRole.fromRole(jwtData);
     boolean isUserAllowedToAccessApi = Arrays.asList(roleForApi).contains(userRole);
     if (!isUserAllowedToAccessApi) {
-      throw new DxRuntimeException(
-          HttpStatusCode.UNAUTHORIZED.getValue(),
-          ResponseUrn.INVALID_TOKEN_URN,
-          "no access provided to endpoint");
+       event.fail(new DxRuntimeException(
+           HttpStatusCode.UNAUTHORIZED.getValue(),
+           ResponseUrn.INVALID_TOKEN_URN,
+           "No access provided to endpoint"));
     }
     event.next();
   }

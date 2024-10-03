@@ -1,6 +1,6 @@
 package iudx.apd.acl.server.authentication.handler;
 
-import static iudx.apd.acl.server.apiserver.util.Constants.*;
+import static iudx.apd.acl.server.common.ResponseUrn.INTERNAL_SERVER_ERROR;
 import static iudx.apd.acl.server.common.ResponseUrn.INVALID_TOKEN_URN;
 
 import io.vertx.core.Future;
@@ -11,13 +11,13 @@ import io.vertx.ext.web.RoutingContext;
 import iudx.apd.acl.server.authentication.AuthenticationService;
 import iudx.apd.acl.server.authentication.model.JwtData;
 import iudx.apd.acl.server.common.HttpStatusCode;
-import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
+import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class AuthHandler implements Handler<RoutingContext> {
-  static AuthenticationService authenticator;
+   AuthenticationService authenticator;
   private final Logger LOGGER = LogManager.getLogger(AuthHandler.class);
 
   public AuthHandler(AuthenticationService authenticationService) {
@@ -27,6 +27,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext context) {
     JsonObject authInfo = RoutingContextHelper.getAuthInfo(context);
+
     checkIfTokenIsAuthenticated(authInfo)
         .onSuccess(
             jwtData -> {
@@ -48,24 +49,13 @@ public class AuthHandler implements Handler<RoutingContext> {
     return promise.future();
   }
 
-  private void processAuthFailure(RoutingContext ctx, String failureMessage) {
-    ResponseUrn responseUrn = INVALID_TOKEN_URN;
-    HttpStatusCode statusCode = HttpStatusCode.getByValue(401);
+  private void processAuthFailure(RoutingContext context, String failureMessage) {
+    LOGGER.error("Error : Authentication Failure : {}", failureMessage);
     if (failureMessage.equalsIgnoreCase("User information is invalid")) {
-      responseUrn = ResponseUrn.INTERNAL_SERVER_ERROR;
-      statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR;
+      LOGGER.error("User information is invalid");
+      context.fail(new DxRuntimeException(HttpStatusCode.INTERNAL_SERVER_ERROR.getValue(), INTERNAL_SERVER_ERROR));
     }
-    LOGGER.error("Error : Authentication Failure");
-    ctx.response()
-        .putHeader(CONTENT_TYPE, APPLICATION_JSON)
-        .setStatusCode(statusCode.getValue())
-        .end(generateResponse(responseUrn, statusCode).toString());
+    context.fail(new DxRuntimeException(HttpStatusCode.getByValue(401).getValue(), INVALID_TOKEN_URN));
   }
 
-  private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {
-    return new JsonObject()
-        .put(TYPE, urn.getUrn())
-        .put(TITLE, statusCode.getDescription())
-        .put(DETAIL, statusCode.getDescription());
-  }
 }
