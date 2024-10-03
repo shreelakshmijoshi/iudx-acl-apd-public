@@ -1,27 +1,21 @@
 package iudx.apd.acl.server.authentication.handler;
 
-import static iudx.apd.acl.server.apiserver.util.Constants.*;
-import static iudx.apd.acl.server.apiserver.util.Constants.USER_ID;
 import static iudx.apd.acl.server.authentication.model.DxRole.DELEGATE;
-import static iudx.apd.acl.server.authentication.util.Constants.*;
+import static iudx.apd.acl.server.common.ResponseUrn.INTERNAL_SERVER_ERROR;
 import static iudx.apd.acl.server.common.ResponseUrn.INVALID_TOKEN_URN;
 
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.Promise;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.Tuple;
 import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.authentication.model.DxRole;
 import iudx.apd.acl.server.authentication.model.JwtData;
 import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.HttpStatusCode;
-import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.policy.PostgresService;
+import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,8 +39,7 @@ public class UserAccessHandler implements Handler<RoutingContext> {
    */
   @Override
   public void handle(RoutingContext event) {
-    UserInfo user = addUserInfo(event);
-    Future<User> getUserInfoFuture = getUserInfo(user);
+    Future<User> getUserInfoFuture = getUserFromAuth(event);
     getUserInfoFuture.onComplete(
         handler -> {
           if (handler.succeeded()) {
@@ -56,18 +49,13 @@ public class UserAccessHandler implements Handler<RoutingContext> {
           } else {
             LOGGER.error(
                 "User info fetch, access validation failed : {}", handler.cause().getMessage());
-            processAuthorizationFailure(event, handler.cause().getMessage());
+            processAuthFailure(event,handler.cause().getMessage());
           }
         });
   }
 
-  /**
-   * Converts delegate user to its respective consumer or provider
-   *
-   * @param event
-   * @return vert.x Json object containing consumer or provider info
-   */
-  public UserInfo addUserInfo(RoutingContext event) {
+
+  private Future<User> getUserFromAuth(RoutingContext event){
     JwtData jwtData = RoutingContextHelper.getJwtData(event);
     DxRole role = DxRole.fromRole(jwtData);
     boolean isDelegate = jwtData.getRole().equalsIgnoreCase(DELEGATE.getRole());
@@ -77,9 +65,11 @@ public class UserAccessHandler implements Handler<RoutingContext> {
         .setRole(role)
         .setAudience(jwtData.getAud())
         .setUserId(id);
-    return userInfo;
-  }
+    LOGGER.info("Getting user from Auth");
+    return authClient.fetchUserInfo(userInfo);
 
+  }
+/*
   private Future<User> getUserInfo(UserInfo userInfo) {
     LOGGER.info("Getting User Info.");
     Promise<User> promise = Promise.promise();
@@ -162,29 +152,18 @@ public class UserAccessHandler implements Handler<RoutingContext> {
                         }));
     return promise.future();
   }
+*/
 
-  private void processAuthorizationFailure(RoutingContext ctx, String failureMessage) {
-    ResponseUrn responseUrn = INVALID_TOKEN_URN;
-    HttpStatusCode statusCode = HttpStatusCode.getByValue(401);
+  private void processAuthFailure(RoutingContext event, String failureMessage) {
+    LOGGER.error("Error : Authentication Failure : {}", failureMessage);
     if (failureMessage.equalsIgnoreCase("User information is invalid")) {
-      responseUrn = ResponseUrn.INTERNAL_SERVER_ERROR;
-      statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR;
+      LOGGER.error("User information is invalid");
+      event.fail(new DxRuntimeException(HttpStatusCode.INTERNAL_SERVER_ERROR.getValue(), INTERNAL_SERVER_ERROR));
     }
-    LOGGER.error("Error : Authentication Failure");
-    ctx.response()
-        .putHeader(CONTENT_TYPE, APPLICATION_JSON)
-        .setStatusCode(statusCode.getValue())
-        .end(generateResponse(responseUrn, statusCode).toString());
+  event.fail(new DxRuntimeException(HttpStatusCode.getByValue(401).getValue(), INVALID_TOKEN_URN));
   }
 
-  private JsonObject generateResponse(ResponseUrn urn, HttpStatusCode statusCode) {
-    return new JsonObject()
-        .put(TYPE, urn.getUrn())
-        .put(TITLE, statusCode.getDescription())
-        .put(DETAIL, statusCode.getDescription());
-  }
-
-  static final class UserContainer {
+  /*  static final class UserContainer {
     User user;
-  }
+  }*/
 }
