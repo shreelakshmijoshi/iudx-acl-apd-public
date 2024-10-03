@@ -22,9 +22,7 @@ import io.vertx.junit5.VertxTestContext;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 import iudx.apd.acl.server.Utility;
-import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.policy.PostgresService;
@@ -34,11 +32,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
@@ -77,8 +73,6 @@ public class TestUpdateNotifications {
   private static String ownerFirstName;
   private static String ownerLastName;
   private static LocalDateTime expiryAt;
-  @Mock private static AuthClient authClient;
-  private static UserInfo userInfo;
 
   @BeforeAll
   public static void setUp(VertxTestContext vertxTestContext) {
@@ -92,8 +86,6 @@ public class TestUpdateNotifications {
             handler -> {
               if (handler.succeeded()) {
 
-
-                userInfo = new UserInfo();
                 updateNotification = new UpdateNotification(pgService);
                 rejectNotification = new JsonObject();
                 approveNotification = new JsonObject();
@@ -201,7 +193,6 @@ public class TestUpdateNotifications {
   }
 
   @Test
-  @Disabled
   @DisplayName("Test PUT notification : Success")
   public void testUpdateNotificationSuccess(VertxTestContext vertxTestContext) {
     updateNotification
@@ -272,7 +263,6 @@ public class TestUpdateNotifications {
     rejectNotification.put("requestId", utility.getRequestId());
     rejectNotification.put("status", "rejected");
     Utility utility = new Utility();
-    userInfo = new UserInfo();
     PostgresService postgresService = utility.setUp(container);
     utility
         .testInsert()
@@ -330,7 +320,6 @@ public class TestUpdateNotifications {
   }
 
   @Test
-  @Disabled
   @DisplayName("Test initiateUpdateNotification method by rejecting an approved request : Failure")
   public void testInitiateUpdateNotification4ApprovedRequest(VertxTestContext vertxTestContext) {
     UUID requestId = UUID.randomUUID();
@@ -610,7 +599,6 @@ public class TestUpdateNotifications {
   }
 
   @Test
-  @Disabled
   @DisplayName(
       "Test initiateUpdateNotification method by approving a request for which a policy is already created")
   public void testApproveNotificationWithPolicyAlreadyCreated(VertxTestContext vertxTestContext) {
@@ -636,7 +624,6 @@ public class TestUpdateNotifications {
                         .put("firstName", utility1.getOwnerFirstName())
                         .put("lastName", utility1.getOwnerLastName());
                 User provider = new User(jsonObject);
-                userInfo = new UserInfo();
                 UpdateNotification updateNotification = new UpdateNotification(postgresService);
                 updateNotification
                     .initiateUpdateNotification(approveNotification, provider)
@@ -669,7 +656,6 @@ public class TestUpdateNotifications {
   public void testWithDatabaseConnectionError(VertxTestContext vertxTestContext) {
     PostgresService postgresService = mock(PostgresService.class);
     PgPool pgPool = mock(PgPool.class);
-    userInfo = new UserInfo();
     when(postgresService.getPool()).thenReturn(pgPool);
     when(pgPool.withConnection(any())).thenReturn(Future.failedFuture("Some error"));
     UpdateNotification updateNotification1 = new UpdateNotification(postgresService);
@@ -696,7 +682,6 @@ public class TestUpdateNotifications {
   public void testWithNullPgPool(VertxTestContext vertxTestContext) {
     PostgresService postgresService = mock(PostgresService.class);
     when(postgresService.getPool()).thenReturn(null);
-    userInfo = new UserInfo();
 
     UpdateNotification updateNotification1 = new UpdateNotification(postgresService);
     assertThrows(
@@ -706,7 +691,6 @@ public class TestUpdateNotifications {
   }
 
   @Test
-  @Disabled
   @DisplayName("Test checkIfPolicyExists method when consumer is invalid")
   public void testCheckIfPolicyExistsWithInvalidConsumer(VertxTestContext vertxTestContext) {
     updateNotification.setConsumerId(UUID.randomUUID());
@@ -767,7 +751,6 @@ public class TestUpdateNotifications {
             .put(DETAIL, "Something went wrong while approving access request");
     Utility util = new Utility();
     container.start();
-    userInfo = new UserInfo();
     PostgresService postgresService = util.setUp(container);
     util.testInsert()
         .onComplete(
@@ -897,7 +880,6 @@ public class TestUpdateNotifications {
     container.start();
     Utility utility = new Utility();
     PostgresService postgresService = utility.setUp(container);
-    userInfo = new UserInfo();
     utility
         .testInsert()
         .onComplete(
@@ -981,10 +963,10 @@ public class TestUpdateNotifications {
                                                                     .succeeded()) {
                                                                   JsonArray
                                                                       approvedAccessRequestResponse =
-                                                                          approvedAccessRequestHandler
-                                                                              .result()
-                                                                              .getJsonArray(
-                                                                                  "response");
+                                                                      approvedAccessRequestHandler
+                                                                          .result()
+                                                                          .getJsonArray(
+                                                                              "response");
                                                                   assertTrue(
                                                                       approvedAccessRequestResponse
                                                                           .isEmpty());
