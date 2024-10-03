@@ -121,7 +121,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     validateAccessHandler = new ValidateAccessHandler();
     userInfo = new UserInfo();
 
-    userAccessHandler = new UserAccessHandler(pgService, authClient, userInfo);
+    userAccessHandler = new UserAccessHandler(authClient, userInfo);
 
     /* Initialize Router builder */
     RouterBuilder.create(vertx, "docs/openapi.yaml")
