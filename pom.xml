@@ -31,6 +31,13 @@
     <maven-surefire-report-plugin.version>3.2.5</maven-surefire-report-plugin.version>
     <junit-jupiter.params>5.10.2</junit-jupiter.params>
     <testcontainer.params>1.19.7</testcontainer.params>
+    <postgresql.version>42.7.2</postgresql.version>
+    <guava.version>33.0.0-jre</guava.version>
+    <flyway-db-core.version>9.22.3</flyway-db-core.version>
+    <vertx-mail-client.version>4.5.4</vertx-mail-client.version>
+    <client.version>2.1</client.version>
+    <mockito-inline.version>5.2.0</mockito-inline.version>
+    <mockito-junit-jupiter.version>5.11.0</mockito-junit-jupiter.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <exec.mainClassDev>iudx.apd.acl.server.deploy.Deployer
     </exec.mainClassDev>
@@ -67,7 +74,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.7.2</version>
+      <version>${postgresql.version}</version>
     </dependency>
 
     <dependency>
@@ -111,13 +118,13 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>33.0.0-jre</version>
+      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>9.22.3</version>
+      <version>${flyway-db-core.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -173,13 +180,13 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-mail-client</artifactId>
-      <version>4.5.4</version>
+      <version>${vertx-mail-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.ongres.scram</groupId>
       <artifactId>client</artifactId>
-      <version>2.1</version>
+      <version>${client.version}</version>
     </dependency>
 
     <dependency>
@@ -255,14 +262,14 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-inline</artifactId>
-      <version>5.2.0</version>
+      <version>${mockito-inline.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-      <version>5.11.0</version>
+      <version>${mockito-junit-jupiter.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -270,7 +277,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.16.1</version>
+      <version>${client.version}6.1</version>
     </dependency>
 
     <dependency>
@@ -293,7 +300,7 @@
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <version>9.22.3</version>
+        <version>${flyway-db-core.version}</version>
       </plugin>
 
       <plugin>
