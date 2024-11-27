@@ -430,7 +430,7 @@ public class CreateNotification {
                                 JsonObject failureMessage =
                                     new JsonObject()
                                         .put(TYPE, INTERNAL_SERVER_ERROR.getValue())
-                                        .put(TITLE, ResponseUrn.INTERNAL_SERVER_ERROR.getUrn())
+                                        .put(TITLE, INTERNAL_SERVER_ERROR.getUrn())
                                         .put(DETAIL, FAILURE_MESSAGE);
                                 promise.fail(failureMessage.encode());
                               }
@@ -457,7 +457,7 @@ public class CreateNotification {
                   JsonObject failureMessage =
                       new JsonObject()
                           .put(TYPE, BAD_REQUEST.getValue())
-                          .put(TITLE, ResponseUrn.BAD_REQUEST_URN.getUrn())
+                          .put(TITLE, BAD_REQUEST_URN.getUrn())
                           .put(DETAIL, FAILURE_MESSAGE + ", as the item type is invalid");
                   promise.fail(failureMessage.encode());
                 }
@@ -488,7 +488,7 @@ public class CreateNotification {
                   JsonObject failureMessage =
                       new JsonObject()
                           .put(TYPE, INTERNAL_SERVER_ERROR.getValue())
-                          .put(TITLE, ResponseUrn.INTERNAL_SERVER_ERROR.getUrn())
+                          .put(TITLE, INTERNAL_SERVER_ERROR.getUrn())
                           .put(DETAIL, FAILURE_MESSAGE);
                   promise.fail(failureMessage.encode());
                 }
