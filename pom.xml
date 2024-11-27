@@ -37,7 +37,6 @@
     <client.version>2.1</client.version>
     <mockito-inline.version>5.2.0</mockito-inline.version>
     <mockito-junit-jupiter.version>5.14.2</mockito-junit-jupiter.version>
-    <jackson-databind.version>2.16.2</jackson-databind.version>
     <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <exec.mainClassDev>iudx.apd.acl.server.deploy.Deployer
@@ -299,11 +298,6 @@
     </dependency>
 
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-databind.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>io.vertx</groupId>
