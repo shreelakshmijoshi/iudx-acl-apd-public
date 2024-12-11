@@ -12,7 +12,7 @@ COPY src src
 RUN mvn clean package -Dmaven.test.skip=true
 
 # Java Runtime as the base for final image
-FROM eclipse-temurin:21-jre-focal
+FROM maven:3-eclipse-temurin-21
 
 ARG VERSION
 ENV JAR="iudx.acl-apd.server-dev-${VERSION}-fat.jar"

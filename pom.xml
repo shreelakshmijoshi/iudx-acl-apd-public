@@ -33,7 +33,7 @@
     <testcontainer.params>1.20.4</testcontainer.params>
     <postgresql.version>42.7.4</postgresql.version>
     <guava.version>33.3.1-jre</guava.version>
-    <flyway-db-core.version>9.22.3</flyway-db-core.version>
+    <flyway-db-core.version>11.0.1</flyway-db-core.version>
     <client.version>2.1</client.version>
     <mockito-inline.version>5.2.0</mockito-inline.version>
     <mockito-junit-jupiter.version>5.14.2</mockito-junit-jupiter.version>
@@ -135,7 +135,11 @@
       <artifactId>httpclient</artifactId>
       <version>${httpclient.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <version>11.0.1</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
       <groupId>com.google.guava</groupId>
