@@ -114,7 +114,6 @@ pipeline {
         }
         cleanup{
           script{
-            sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
             sh 'mvn flyway:clean -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
             sh 'docker compose -f docker-compose.test.yml down --remove-orphans'
           }
