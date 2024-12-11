@@ -104,7 +104,6 @@ pipeline {
         always{
           node('built-in') {
             script{
-             sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true, reportDir: '/var/lib/jenkins/iudx/acl-apd/Newman/report/', reportFiles: 'report.html', reportTitles: '', reportName: 'Integration Test Report'])
               archiveZap failHighAlerts: 1, failMediumAlerts: 1, failLowAlerts: 1
             }
