@@ -31,7 +31,6 @@ pipeline {
     stage('Unit Tests and CodeCoverage Test'){
       steps{
         script{
-          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
           sh 'docker compose -f docker-compose.test.yml up test'
         }
         xunit (
@@ -63,7 +62,6 @@ pipeline {
         }
         cleanup{
           script{
-            sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
             sh 'sudo rm -rf target/'
           }
         }
@@ -93,6 +91,7 @@ pipeline {
             sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
           }
         }
+
       }
     }
 
