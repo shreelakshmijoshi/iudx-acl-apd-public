@@ -35,7 +35,7 @@ pipeline {
           sh 'docker compose -f docker-compose.test.yml up test'
         }
         xunit (
-          thresholds: [ skipped(failureThreshold: '200'), failed(failureThreshold: '200') ],
+          thresholds: [ skipped(failureThreshold: '0'), failed(failureThreshold: '0') ],
           tools: [ JUnit(pattern: 'target/surefire-reports/*.xml') ]
         )
         jacoco classPattern: 'target/classes', execPattern: 'target/jacoco.exec', sourcePattern: 'src/main/java', exclusionPattern: '**/*VertxEBProxy.class, **/*VertxProxyHandler.class, **/*Verticle.class, **/*Service.class, iudx/apd/acl/server/deploy/*, **/*Constants.class'
@@ -73,9 +73,8 @@ pipeline {
     stage('Start acl-apd-Server for Integration Testing'){
       steps{
         script{
-          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-          sh 'scp src/test/resources/DX-ACL-APD-APIs.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/acl-apd/Newman/'
           sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
+          sh 'scp src/test/resources/DX-ACL-APD-APIs.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/acl-apd/Newman/'
           sh 'mvn flyway:migrate -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
           sh 'docker compose -f docker-compose.test.yml up -d integTest'
           sh 'sleep 45'
@@ -94,7 +93,6 @@ pipeline {
             sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
           }
         }
-
       }
     }
 
