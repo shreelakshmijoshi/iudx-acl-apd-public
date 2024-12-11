@@ -10,10 +10,11 @@
 
 
   <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
     <vertx.version>4.5.11</vertx.version>
-    <openjdk.version>11</openjdk.version>
+    <openjdk.version>21</openjdk.version>
     <hazelcast.version>4.0.2</hazelcast.version>
     <micrometer.version>1.14.1</micrometer.version>
     <curator.version>5.7.1</curator.version>
@@ -33,7 +34,7 @@
     <testcontainer.params>1.20.4</testcontainer.params>
     <postgresql.version>42.7.4</postgresql.version>
     <guava.version>33.3.1-jre</guava.version>
-    <flyway-db-core.version>9.22.3</flyway-db-core.version>
+    <flyway-db-core.version>11.0.1</flyway-db-core.version>
     <client.version>2.1</client.version>
     <mockito-inline.version>5.2.0</mockito-inline.version>
     <mockito-junit-jupiter.version>5.14.2</mockito-junit-jupiter.version>
@@ -135,7 +136,11 @@
       <artifactId>httpclient</artifactId>
       <version>${httpclient.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <version>11.0.1</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -305,7 +310,12 @@
       <scope>test</scope>
     </dependency>
 
-
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.5.0</version> <!-- Latest Mockito compatible with Java 21 -->
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>io.vertx</groupId>
