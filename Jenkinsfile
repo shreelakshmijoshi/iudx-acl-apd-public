@@ -31,6 +31,7 @@ pipeline {
     stage('Unit Tests and CodeCoverage Test'){
       steps{
         script{
+          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
           sh 'docker compose -f docker-compose.test.yml up test'
         }
         xunit (
@@ -62,6 +63,7 @@ pipeline {
         }
         cleanup{
           script{
+            sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
             sh 'sudo rm -rf target/'
           }
         }
@@ -71,6 +73,7 @@ pipeline {
     stage('Start acl-apd-Server for Integration Testing'){
       steps{
         script{
+          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
           sh 'scp src/test/resources/DX-ACL-APD-APIs.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/acl-apd/Newman/'
           sh 'mvn flyway:migrate -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
           sh 'docker compose -f docker-compose.test.yml up -d integTest'
@@ -115,11 +118,11 @@ pipeline {
           script{
             sh 'mvn flyway:clean -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
             sh 'docker compose -f docker-compose.test.yml down --remove-orphans'
-          } 
+          }
         }
       }
     }
-    
+
     stage('Continuous Deployment') {
       when {
         allOf {
@@ -151,7 +154,7 @@ pipeline {
             script {
               sh "ssh azureuser@docker-swarm 'docker service update acl-apd_acl-apd --image ghcr.io/datakaveri/acl-apd-depl:1.1.0-alpha-${env.GIT_HASH}'"
               sh 'sleep 40'
-              sh '''#!/bin/bash 
+              sh '''#!/bin/bash
                 response_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --retry 5 --retry-connrefused -XGET https://acl-apd.iudx.io/apis)
                 echo $response_code
                 if [[ "$response_code" -ne "200" ]]
@@ -169,7 +172,7 @@ pipeline {
             failure{
               error "Failed to deploy image in Docker Swarm"
             }
-          }  
+          }
         }
       }
     }
