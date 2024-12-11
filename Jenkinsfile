@@ -73,7 +73,7 @@ pipeline {
     stage('Start acl-apd-Server for Integration Testing'){
       steps{
         script{
-          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
+          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
           sh 'scp src/test/resources/DX-ACL-APD-APIs.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/acl-apd/Newman/'
           sh 'mvn flyway:migrate -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
           sh 'docker compose -f docker-compose.test.yml up -d integTest'
@@ -87,6 +87,11 @@ pipeline {
             sh 'docker compose -f docker-compose.test.yml down --remove-orphans'
           }
           cleanWs deleteDirs: true, disableDeferredWipeout: true
+        }
+        cleanup{
+          script{
+            sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
+          }
         }
       }
     }
@@ -118,11 +123,11 @@ pipeline {
           script{
             sh 'mvn flyway:clean -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
             sh 'docker compose -f docker-compose.test.yml down --remove-orphans'
-          } 
+          }
         }
       }
     }
-    
+
     stage('Continuous Deployment') {
       when {
         allOf {
