@@ -31,6 +31,7 @@ pipeline {
     stage('Unit Tests and CodeCoverage Test'){
       steps{
         script{
+          sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
           sh 'docker compose -f docker-compose.test.yml up test'
         }
         xunit (
@@ -62,6 +63,7 @@ pipeline {
         }
         cleanup{
           script{
+            sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
             sh 'sudo rm -rf target/'
           }
         }
@@ -71,8 +73,8 @@ pipeline {
     stage('Start acl-apd-Server for Integration Testing'){
       steps{
         script{
-          sh 'scp src/test/resources/DX-ACL-APD-APIs.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/acl-apd/Newman/'
           sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
+          sh 'scp src/test/resources/DX-ACL-APD-APIs.postman_collection.json jenkins@jenkins-master:/var/lib/jenkins/iudx/acl-apd/Newman/'
           sh 'mvn flyway:migrate -Dflyway.configFiles=/home/ubuntu/configs/acl-apd-flyway.conf'
           sh 'docker compose -f docker-compose.test.yml up -d integTest'
           sh 'sleep 45'
@@ -91,7 +93,6 @@ pipeline {
             sh 'sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java'
           }
         }
-
       }
     }
 
@@ -101,6 +102,7 @@ pipeline {
           script{
             startZap ([host: 'localhost', port: 8090, zapHome: '/var/lib/jenkins/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/OWASP_ZAP/ZAP_2.11.0'])
             sh 'curl http://127.0.0.1:8090/JSON/pscan/action/disableScanners/?ids=10096'
+            sh 'sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java'
             sh 'HTTP_PROXY=\'127.0.0.1:8090\' newman run /var/lib/jenkins/iudx/acl-apd/Newman/DX-ACL-APD-APIs.postman_collection.json -e /home/ubuntu/configs/acl-apd-postman-env.json --insecure -r htmlextra --reporter-htmlextra-export /var/lib/jenkins/iudx/acl-apd/Newman/report/report.html --reporter-htmlextra-skipSensitiveData'
             runZapAttack()
           }
