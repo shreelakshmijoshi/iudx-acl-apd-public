@@ -94,7 +94,7 @@ public class TestUpdateNotifications {
 
 
                 userInfo = new UserInfo();
-                updateNotification = new UpdateNotification(authClient,userInfo,pgService);
+                updateNotification = new UpdateNotification(pgService);
                 rejectNotification = new JsonObject();
                 approveNotification = new JsonObject();
 
@@ -279,7 +279,7 @@ public class TestUpdateNotifications {
         .onComplete(
             setUpHandler -> {
               if (setUpHandler.succeeded()) {
-                UpdateNotification updateNotification = new UpdateNotification(authClient, userInfo,postgresService);
+                UpdateNotification updateNotification = new UpdateNotification(postgresService);
                 rejectNotification.put("requestId", utility.getRequestId());
                 rejectNotification.put("status", "rejected");
 
@@ -637,7 +637,7 @@ public class TestUpdateNotifications {
                         .put("lastName", utility1.getOwnerLastName());
                 User provider = new User(jsonObject);
                 userInfo = new UserInfo();
-                UpdateNotification updateNotification = new UpdateNotification(authClient, userInfo, postgresService);
+                UpdateNotification updateNotification = new UpdateNotification(postgresService);
                 updateNotification
                     .initiateUpdateNotification(approveNotification, provider)
                     .onComplete(
@@ -672,7 +672,7 @@ public class TestUpdateNotifications {
     userInfo = new UserInfo();
     when(postgresService.getPool()).thenReturn(pgPool);
     when(pgPool.withConnection(any())).thenReturn(Future.failedFuture("Some error"));
-    UpdateNotification updateNotification1 = new UpdateNotification(authClient, userInfo, postgresService);
+    UpdateNotification updateNotification1 = new UpdateNotification(postgresService);
     updateNotification1
         .initiateUpdateNotification(approveNotification, owner)
         .onComplete(
@@ -698,7 +698,7 @@ public class TestUpdateNotifications {
     when(postgresService.getPool()).thenReturn(null);
     userInfo = new UserInfo();
 
-    UpdateNotification updateNotification1 = new UpdateNotification(authClient, userInfo, postgresService);
+    UpdateNotification updateNotification1 = new UpdateNotification(postgresService);
     assertThrows(
         NullPointerException.class,
         () -> updateNotification1.initiateUpdateNotification(approveNotification, owner));
@@ -773,7 +773,7 @@ public class TestUpdateNotifications {
         .onComplete(
             vertxTestContext.succeeding(
                 testSetUpSuccessful -> {
-                  UpdateNotification updateNotification = new UpdateNotification(authClient, userInfo,postgresService);
+                  UpdateNotification updateNotification = new UpdateNotification(postgresService);
                   updateNotification
                       .initiateTransactions(
                           new JsonObject()
@@ -903,7 +903,7 @@ public class TestUpdateNotifications {
         .onComplete(
             vertxTestContext.succeeding(
                 successfulInsertion -> {
-                  UpdateNotification updateNotification = new UpdateNotification(authClient, userInfo, postgresService);
+                  UpdateNotification updateNotification = new UpdateNotification(postgresService);
 
                   UUID itemId = utility.getResourceId();
                   UUID somePolicyId = UUID.randomUUID();
