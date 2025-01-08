@@ -257,7 +257,7 @@ public class CreateNotification {
             if (isPolicyAbsent) {
               promise.complete(false);
             } else
-            /* An active policy for the consumer is present */ {
+            /* An active policy for the consumer is present and check 1*/ {
               JsonObject failureMessage =
                   new JsonObject()
                       .put(TYPE, HttpStatusCode.CONFLICT.getValue())
@@ -299,6 +299,7 @@ public class CreateNotification {
               promise.complete(false);
             } else {
               /* A notification was created previously by the consumer and is in PENDING status */
+              // check 2
               JsonObject failureResponse =
                   new JsonObject()
                       .put(TYPE, HttpStatusCode.CONFLICT.getValue())
