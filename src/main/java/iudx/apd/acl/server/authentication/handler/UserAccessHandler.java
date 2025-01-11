@@ -63,8 +63,7 @@ public class UserAccessHandler implements Handler<RoutingContext> {
                   .onFailure(
                       dbFailureMessage -> {
                         LOGGER.error(
-                            "Failed to insert user in DB : {}",
-                            dbFailureMessage.getCause().getMessage());
+                            "Failed to insert user with ID {} in DB", user.getUserId());
                         event.fail(new DxRuntimeException(HttpStatusCode.getByValue(500).getValue(), DB_ERROR_URN));
                       });
             })
@@ -99,7 +98,7 @@ public class UserAccessHandler implements Handler<RoutingContext> {
         .onFailure(
             failureHandler -> {
               LOGGER.error("Failure while executing the query : {}", failureHandler.getMessage());
-              promise.fail(failureHandler.getCause().getMessage());
+              promise.fail("Failure while executing user insertion query in the user_table during authentication");
             });
     return promise.future();
   }
