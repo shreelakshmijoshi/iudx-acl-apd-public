@@ -12,8 +12,8 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ValidateAccessHandler implements Handler<RoutingContext> {
-  private static final Logger LOGGER = LogManager.getLogger(ValidateAccessHandler.class);
+public class AuthorizationHandler implements Handler<RoutingContext> {
+  private static final Logger LOGGER = LogManager.getLogger(AuthorizationHandler.class);
 
 
   /**
