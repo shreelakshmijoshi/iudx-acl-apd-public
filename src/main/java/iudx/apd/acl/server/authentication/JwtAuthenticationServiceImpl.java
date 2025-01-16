@@ -1,13 +1,13 @@
 package iudx.apd.acl.server.authentication;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
+
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import iudx.apd.acl.server.authentication.model.JwtData;
-import iudx.apd.acl.server.common.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,46 +17,39 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
   final String issuer;
   final String apdUrl;
 
-
   public JwtAuthenticationServiceImpl(final JWTAuth jwtAuth, final JsonObject config) {
     this.jwtAuth = jwtAuth;
     this.issuer = config.getString("issuer");
     this.apdUrl = config.getString("apdURL");
   }
 
-
   @Override
   public Future<JwtData> tokenIntrospect(JsonObject authenticationInfo) {
     Promise<JwtData> promise = Promise.promise();
     String token = authenticationInfo.getString(HEADER_TOKEN);
     ResultContainer resultContainer = new ResultContainer();
-    /* token would can be of the type : Bearer <JWT-Token>, <JWT-Token> */
-    /* allowing both the tokens to be authenticated for now */
-    /* TODO: later, 401 error is thrown if the token does not contain Bearer keyword */
-    boolean isItABearerToken = token.contains(HEADER_TOKEN_BEARER);
-    if(isItABearerToken && token.trim().split(" ").length == 2)
-    {
-      String[] tokenWithoutBearer = token.split(HEADER_TOKEN_BEARER);
-      token = tokenWithoutBearer[1].replaceAll("\\s", "");
-    }
     Future<JwtData> jwtDecodeFuture = decodeJwt(token);
 
-    Future<Boolean> validateJwtAccessFuture = jwtDecodeFuture
-        .compose(
+    Future<Boolean> validateJwtAccessFuture =
+        jwtDecodeFuture.compose(
             decodeHandler -> {
               resultContainer.jwtData = decodeHandler;
               return validateJwtAccess(resultContainer.jwtData);
             });
     validateJwtAccessFuture
-        .onSuccess(isValidJwt -> {
-           promise.complete(resultContainer.jwtData);
-        }).onFailure(failureHandler ->{
-          LOGGER.error("error : " + failureHandler.getMessage());
-          promise.fail(failureHandler.getLocalizedMessage());
-        });
+        .onSuccess(
+            isValidJwt -> {
+              promise.complete(resultContainer.jwtData);
+            })
+        .onFailure(
+            failureHandler -> {
+              LOGGER.error("error : {}", failureHandler.getMessage());
+              promise.fail(failureHandler.getLocalizedMessage());
+            });
 
     return promise.future();
   }
+
   @Override
   public Future<Void> tokenIntrospectForVerify(JsonObject authenticationInfo) {
     Promise<Void> promise = Promise.promise();
@@ -88,7 +81,7 @@ public class JwtAuthenticationServiceImpl implements AuthenticationService {
             })
         .onFailure(
             failureHandler -> {
-              LOGGER.error("FAIL to decode the token.");
+              LOGGER.error("FAILED to decode the token.");
               promise.fail(failureHandler.getLocalizedMessage());
             });
 
