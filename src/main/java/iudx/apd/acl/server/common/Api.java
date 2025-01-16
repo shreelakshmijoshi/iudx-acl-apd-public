@@ -45,4 +45,14 @@ public class Api {
   public String getVerifyUrl() {
     return verifyUrl.toString();
   }
+
+  @Override
+  public String toString() {
+    return "Api{" +
+        "dxApiBasePath='" + dxApiBasePath + '\'' +
+        ", policiesUrl=" + policiesUrl +
+        ", verifyUrl=" + verifyUrl +
+        ", requestPoliciesUrl=" + requestPoliciesUrl +
+        '}';
+  }
 }

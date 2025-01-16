@@ -45,6 +45,7 @@ public class GetPolicy {
   }
 
   public Future<JsonObject> initiateGetPolicy(User user) {
+
     Role role = user.getUserRole();
     switch (role) {
       case CONSUMER_DELEGATE:
