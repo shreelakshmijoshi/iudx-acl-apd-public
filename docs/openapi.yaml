@@ -28,7 +28,7 @@ info:
     # Tokens
      - All the endpoints except `/verify` should contain valid DX Identity token in the request header
      - `/verify` endpoint that is called by DX AAA Server, should contain valid Keycloak token in the request header 
-     
+    
     # API HTTP Responses
      Apart from the response codes specified in each API, the API server may respond with certain 4xx and 5xx error codes which are related to common API Gateway behaviours.
      The application should address them accordingly.
@@ -839,7 +839,7 @@ paths:
                     status:
                       type: string
                       enum:
-                      - granted
+                        - granted
                     expiryAt:
                       type: string
                     constraints:
@@ -861,7 +861,7 @@ paths:
                     status:
                       type: string
                       enum:
-                      - rejected
+                        - rejected
                   required:
                     - requestId
                     - status
