@@ -19,6 +19,8 @@ import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.User;
+import iudx.apd.acl.server.notification.service.EmailNotification;
+import iudx.apd.acl.server.notification.service.GetDelegateEmailIds;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +39,8 @@ public class TestEmailNotification {
   @Container static PostgreSQLContainer container = new PostgreSQLContainer<>("postgres:12.11");
   EmailNotification emailNotification;
   JsonObject config;
-  @Mock GetDelegateEmailIds getDelegateEmailIds;
+  @Mock
+  GetDelegateEmailIds getDelegateEmailIds;
   @Mock Future<JsonArray> jsonArrayFuture;
   @Mock Future<MailResult> mailResultFuture;
   @Mock AsyncResult<JsonArray> asyncResult;

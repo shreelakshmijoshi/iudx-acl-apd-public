@@ -7,9 +7,10 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
 import iudx.apd.acl.server.aaaService.AuthClient;
-import iudx.apd.acl.server.authentication.model.UserInfo;
-import iudx.apd.acl.server.policy.CatalogueClient;
-import iudx.apd.acl.server.policy.PostgresService;
+import iudx.apd.acl.server.aclAuth.model.UserInfo;
+import iudx.apd.acl.server.notification.service.*;
+import iudx.apd.acl.server.catalogueService.CatalogueClient;
+import iudx.apd.acl.server.database.PostgresService;
 
 public class NotificationVerticle extends AbstractVerticle {
   private DeleteNotification deleteNotification;

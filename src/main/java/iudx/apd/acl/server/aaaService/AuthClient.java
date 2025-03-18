@@ -5,8 +5,6 @@ import static iudx.apd.acl.server.apiserver.util.Constants.FIRST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.LAST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.RS_SERVER_URL;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ROLE;
-import static iudx.apd.acl.server.authentication.util.Constants.AUD;
-import static iudx.apd.acl.server.authentication.util.Constants.ROLE;
 import static iudx.apd.acl.server.authentication.util.Constants.SEARCH_PATH;
 import static iudx.apd.acl.server.authentication.util.Constants.USER_ID;
 import static iudx.apd.acl.server.common.HttpStatusCode.INTERNAL_SERVER_ERROR;
@@ -18,7 +16,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.model.UserInfo;
+import iudx.apd.acl.server.aclAuth.model.UserInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -98,7 +96,7 @@ public class AuthClient implements AuthClientInterface {
               promise.fail("User not present in Auth.");
             }
           } else {
-            LOGGER.error("fetchItem error : " + authHandler.cause().getMessage());
+            LOGGER.error("fetchItem error : {}" , authHandler.cause().getMessage());
             promise.fail(INTERNAL_SERVER_ERROR.getDescription());
           }
         });

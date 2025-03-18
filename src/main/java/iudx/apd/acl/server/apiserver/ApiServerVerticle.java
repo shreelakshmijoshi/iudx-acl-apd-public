@@ -1,6 +1,9 @@
 package iudx.apd.acl.server.apiserver;
 
-import static iudx.apd.acl.server.apiserver.response.ResponseUtil.generateResponse;
+import io.vertx.core.http.*;
+import io.vertx.core.json.JsonArray;
+import io.vertx.serviceproxy.HelperUtils;
+import static iudx.apd.acl.server.common.response.ResponseUtil.generateResponse;
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 import static iudx.apd.acl.server.apiserver.util.Util.errorResponse;
 import static iudx.apd.acl.server.auditing.util.Constants.USERID;
@@ -11,10 +14,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Route;
@@ -28,23 +27,23 @@ import io.vertx.ext.web.handler.TimeoutHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
 import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.auditing.AuditingService;
-import iudx.apd.acl.server.authentication.AuthenticationService;
-import iudx.apd.acl.server.authentication.handler.Authentication;
+import iudx.apd.acl.server.auditing.service.AuditingService;
+import iudx.apd.acl.server.authentication.service.AuthenticationService;
+import iudx.apd.acl.server.aclAuth.Authentication;
 import iudx.apd.acl.server.authentication.handler.authentication.AuthHandler;
 import iudx.apd.acl.server.authentication.handler.authentication.TokenIntrospectHandler;
 import iudx.apd.acl.server.authentication.handler.authorization.AuthorizationHandler;
-import iudx.apd.acl.server.authentication.handler.authorization.UserAccessHandler;
-import iudx.apd.acl.server.authentication.model.DxRole;
-import iudx.apd.acl.server.authentication.model.UserInfo;
+import iudx.apd.acl.server.aclAuth.UserAccessHandler;
+import iudx.apd.acl.server.authentication.service.model.DxRole;
+import iudx.apd.acl.server.aclAuth.model.UserInfo;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
-import iudx.apd.acl.server.notification.NotificationService;
-import iudx.apd.acl.server.policy.PolicyService;
-import iudx.apd.acl.server.policy.PostgresService;
-import iudx.apd.acl.server.validation.FailureHandler;
+import iudx.apd.acl.server.notification.service.NotificationService;
+import iudx.apd.acl.server.policy.service.PolicyService;
+import iudx.apd.acl.server.database.PostgresService;
+import iudx.apd.acl.server.common.FailureHandler;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -250,7 +249,7 @@ public class ApiServerVerticle extends AbstractVerticle {
 
               printDeployedEndpoints(router);
               /* Print the deployed endpoints */
-              LOGGER.info("API server deployed on: " + port);
+              LOGGER.info("API server deployed on: {}", port);
             })
         .onFailure(
             failure -> {
@@ -305,7 +304,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void printDeployedEndpoints(Router router) {
     for (Route route : router.getRoutes()) {
       if (route.getPath() != null) {
-        LOGGER.debug("API Endpoints deployed : " + route.methods() + " : " + route.getPath());
+        LOGGER.debug("API Endpoints deployed : {} : {}",  route.methods() , route.getPath());
       }
     }
   }
@@ -446,7 +445,7 @@ public class ApiServerVerticle extends AbstractVerticle {
    */
   private void configureCorsHandler(RouterBuilder routerBuilder) {
     routerBuilder.rootHandler(
-        CorsHandler.create("*").allowedHeaders(ALLOWED_HEADERS).allowedMethods(ALLOWED_METHODS));
+        CorsHandler.create().allowedHeaders(ALLOWED_HEADERS).allowedMethods(ALLOWED_METHODS));
   }
 
   /**
@@ -465,9 +464,10 @@ public class ApiServerVerticle extends AbstractVerticle {
                     HttpServerResponse response = errorHandler.response();
                     if (response.headWritten()) {
                       try {
-                        response.close();
+                        response.reset();
                       } catch (RuntimeException e) {
-                        LOGGER.error("Error: " + e);
+                        JsonArray stackTrace = HelperUtils.convertStackTrace(e);
+                        LOGGER.error("Error: {}", stackTrace.encode());
                       }
                       return;
                     }
@@ -604,7 +604,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     auditLog.put(RESPONSE_SIZE, size);
 
     Promise<Void> promise = Promise.promise();
-    LOGGER.debug("AuditLog: " + auditLog);
+    LOGGER.debug("AuditLog: {}" , auditLog);
     auditingService
         .insertAuditlogIntoRmq(auditLog)
         .onComplete(
@@ -613,7 +613,7 @@ public class ApiServerVerticle extends AbstractVerticle {
                 LOGGER.info("Audit data published into RMQ.");
                 promise.complete();
               } else {
-                LOGGER.error("failed: " + handler.cause().getMessage());
+                LOGGER.error("failed: {}",  handler.cause().getMessage());
                 promise.complete();
               }
             });

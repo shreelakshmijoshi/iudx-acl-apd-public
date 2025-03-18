@@ -2,13 +2,17 @@ package iudx.apd.acl.server.apiserver.util;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.serviceproxy.HelperUtils;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Util {
+  private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
   public static Function<String, URI> toUriFunction =
       (value) -> {
@@ -16,7 +20,8 @@ public class Util {
         try {
           uri = new URI(value);
         } catch (URISyntaxException e) {
-          e.printStackTrace();
+          JsonArray stackTrace = HelperUtils.convertStackTrace(e);
+          LOG.error("Stack trace : {}", stackTrace.encode());
         }
         return uri;
       };

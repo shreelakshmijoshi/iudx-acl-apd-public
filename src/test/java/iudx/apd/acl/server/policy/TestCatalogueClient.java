@@ -21,6 +21,7 @@ import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.ResourceObj;
+import iudx.apd.acl.server.catalogueService.CatalogueClient;
 import java.util.Set;
 import java.util.UUID;
 

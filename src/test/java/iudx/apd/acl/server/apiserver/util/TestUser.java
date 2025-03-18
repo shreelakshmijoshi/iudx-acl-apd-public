@@ -13,7 +13,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.Utility;
-import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
+import iudx.apd.acl.server.common.DxRuntimeException;
 import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;

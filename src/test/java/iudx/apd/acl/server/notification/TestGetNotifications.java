@@ -10,13 +10,14 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.Role;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.policy.PostgresService;
+import iudx.apd.acl.server.notification.service.GetNotification;
+import iudx.apd.acl.server.database.PostgresService;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -237,9 +238,9 @@ public class TestGetNotifications {
   @DisplayName("Test executeGetNotification method when DB connection failed")
   public void testExecuteGetNotificationFailure(VertxTestContext vertxTestContext) {
     PostgresService pgService = mock(PostgresService.class);
-    PgPool pgPool = mock(PgPool.class);
-    when(pgPool.withConnection(any())).thenReturn(Future.failedFuture("Some failure message"));
-    when(pgService.getPool()).thenReturn(pgPool);
+    Pool Pool = mock(Pool.class);
+    when(Pool.withConnection(any())).thenReturn(Future.failedFuture("Some failure message"));
+    when(pgService.getPool()).thenReturn(Pool);
     GetNotification getNotification = new GetNotification(pgService);
     getNotification
         .initiateGetNotifications(consumer)
@@ -262,8 +263,8 @@ public class TestGetNotifications {
   }
 
   @Test
-  @DisplayName("Test executeGetNotification method when Pgpool is null")
-  public void testExecuteGetNotificationWithNullPgPool(VertxTestContext vertxTestContext) {
+  @DisplayName("Test executeGetNotification method when Pool is null")
+  public void testExecuteGetNotificationWithNullPool(VertxTestContext vertxTestContext) {
     PostgresService pgService = mock(PostgresService.class);
     when(pgService.getPool()).thenReturn(null);
     GetNotification getNotification = new GetNotification(pgService);

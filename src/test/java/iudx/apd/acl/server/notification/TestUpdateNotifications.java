@@ -11,25 +11,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.*;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.model.UserInfo;
+import iudx.apd.acl.server.aclAuth.model.UserInfo;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.policy.PostgresService;
+import iudx.apd.acl.server.notification.service.UpdateNotification;
+import iudx.apd.acl.server.database.PostgresService;
 
-import java.nio.Buffer;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -38,9 +35,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -664,10 +659,10 @@ public class TestUpdateNotifications {
   @DisplayName("Test initiateUpdateNotification with error while creating database connection")
   public void testWithDatabaseConnectionError(VertxTestContext vertxTestContext) {
     PostgresService postgresService = mock(PostgresService.class);
-    PgPool pgPool = mock(PgPool.class);
+    Pool Pool = mock(Pool.class);
     userInfo = new UserInfo();
-    when(postgresService.getPool()).thenReturn(pgPool);
-    when(pgPool.withConnection(any())).thenReturn(Future.failedFuture("Some error"));
+    when(postgresService.getPool()).thenReturn(Pool);
+    when(Pool.withConnection(any())).thenReturn(Future.failedFuture("Some error"));
     UpdateNotification updateNotification1 = new UpdateNotification(postgresService);
     updateNotification1
         .initiateUpdateNotification(approveNotification, owner)
@@ -688,8 +683,8 @@ public class TestUpdateNotifications {
   }
 
   @Test
-  @DisplayName("Test initiateUpdateNotification with NULL PgPool")
-  public void testWithNullPgPool(VertxTestContext vertxTestContext) {
+  @DisplayName("Test initiateUpdateNotification with NULL Pool")
+  public void testWithNullPool(VertxTestContext vertxTestContext) {
     PostgresService postgresService = mock(PostgresService.class);
     when(postgresService.getPool()).thenReturn(null);
     userInfo = new UserInfo();

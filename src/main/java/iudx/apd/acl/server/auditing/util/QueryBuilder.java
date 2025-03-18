@@ -17,7 +17,7 @@ public class QueryBuilder {
     request.put(PRIMARY_KEY, primaryKey);
     request.put(ORIGIN, ORIGIN_SERVER);
 
-    LOGGER.debug("Info: Request " + request);
+    LOGGER.debug("Info: Request {}" , request);
     return request;
   }
 }

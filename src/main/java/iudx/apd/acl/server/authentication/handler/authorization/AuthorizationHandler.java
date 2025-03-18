@@ -2,12 +2,12 @@ package iudx.apd.acl.server.authentication.handler.authorization;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
-import iudx.apd.acl.server.authentication.model.DxRole;
-import iudx.apd.acl.server.authentication.model.JwtData;
+import iudx.apd.acl.server.authentication.service.model.DxRole;
+import iudx.apd.acl.server.authentication.service.model.JwtData;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
-import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
+import iudx.apd.acl.server.common.DxRuntimeException;
 import java.util.Arrays;
 
 public class AuthorizationHandler implements Handler<RoutingContext> {

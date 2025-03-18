@@ -3,7 +3,7 @@ package iudx.apd.acl.server.exceptions;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
+import iudx.apd.acl.server.common.DxRuntimeException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
