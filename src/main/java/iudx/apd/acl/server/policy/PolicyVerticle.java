@@ -4,6 +4,9 @@ import static iudx.apd.acl.server.common.Constants.POLICY_SERVICE_ADDRESS;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.serviceproxy.ServiceBinder;
+import iudx.apd.acl.server.catalogueService.CatalogueClient;
+import iudx.apd.acl.server.database.PostgresService;
+import iudx.apd.acl.server.policy.service.*;
 
 public class PolicyVerticle extends AbstractVerticle {
   private PostgresService postgresService;

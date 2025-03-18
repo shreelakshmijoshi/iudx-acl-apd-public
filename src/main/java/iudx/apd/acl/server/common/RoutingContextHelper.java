@@ -7,8 +7,7 @@ import static iudx.apd.acl.server.common.ResponseUrn.INVALID_TOKEN_URN;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.model.JwtData;
-import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
+import iudx.apd.acl.server.authentication.service.model.JwtData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

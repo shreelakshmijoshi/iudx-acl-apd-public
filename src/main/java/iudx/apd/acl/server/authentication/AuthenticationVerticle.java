@@ -14,6 +14,8 @@ import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
+import iudx.apd.acl.server.authentication.service.AuthenticationService;
+import iudx.apd.acl.server.authentication.service.JwtAuthenticationServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;

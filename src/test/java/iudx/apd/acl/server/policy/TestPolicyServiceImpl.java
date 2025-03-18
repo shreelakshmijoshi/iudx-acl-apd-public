@@ -3,12 +3,12 @@ package iudx.apd.acl.server.policy;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.User;
+import iudx.apd.acl.server.policy.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import org.testcontainers.junit.jupiter.Container;
 import static iudx.apd.acl.server.apiserver.util.Constants.EMAIL_ID;
 import static iudx.apd.acl.server.apiserver.util.Constants.FIRST_NAME;
 import static iudx.apd.acl.server.apiserver.util.Constants.LAST_NAME;
-import static iudx.apd.acl.server.apiserver.util.Constants.USER;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ID;
 import static iudx.apd.acl.server.apiserver.util.Constants.USER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,10 +32,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith({VertxExtension.class, MockitoExtension.class})
 public class TestPolicyServiceImpl {
   @Container static PostgreSQLContainer container = new PostgreSQLContainer<>("postgres:12.11");
-  @Mock DeletePolicy deletePolicy;
-  @Mock CreatePolicy createPolicy;
-  @Mock GetPolicy getPolicy;
-  @Mock VerifyPolicy verifyPolicy;
+  @Mock
+  DeletePolicy deletePolicy;
+  @Mock
+  CreatePolicy createPolicy;
+  @Mock
+  GetPolicy getPolicy;
+  @Mock
+  VerifyPolicy verifyPolicy;
   Utility utility;
   User consumer;
   User provider;

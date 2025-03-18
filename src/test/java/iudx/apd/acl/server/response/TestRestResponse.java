@@ -3,7 +3,7 @@ package iudx.apd.acl.server.response;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import iudx.apd.acl.server.apiserver.response.RestResponse;
+import iudx.apd.acl.server.common.response.RestResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

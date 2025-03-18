@@ -4,10 +4,10 @@ import static iudx.apd.acl.server.apiserver.util.Constants.RESULT;
 
 import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
-import iudx.apd.acl.server.policy.PostgresService;
+import iudx.apd.acl.server.database.PostgresService;
 import iudx.apd.acl.server.policy.util.ItemType;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +30,7 @@ public class Utility {
   public static final String INSERT_INTO_REQUEST_TABLE =
       "INSERT INTO request(_id, user_id, item_id, owner_id, status, created_at, updated_at, constraints) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING _id;";
   private static final Logger LOG = LoggerFactory.getLogger(Utility.class);
-  private PgPool pool;
+  private Pool pool;
   private String resourceType;
   private String status;
   private JsonObject constraints;

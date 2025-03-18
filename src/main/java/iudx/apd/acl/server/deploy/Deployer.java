@@ -11,6 +11,7 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.ThreadingModel;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.cli.CLI;
@@ -27,6 +28,7 @@ import io.vertx.micrometer.Label;
 import io.vertx.micrometer.MicrometerMetricsOptions;
 import io.vertx.micrometer.VertxPrometheusOptions;
 import io.vertx.micrometer.backends.BackendRegistries;
+import io.vertx.serviceproxy.HelperUtils;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -50,7 +52,8 @@ import org.apache.logging.log4j.core.LoggerContext;
  *   <li>--config/-c : path to the config file
  *   <li>--isClustered/-C : true for clustering and false for non-clustered mode
  *   <li>--host/-i : the hostname for clustering or localhost for non-clustered mode
- *   <li>--modules/-m : comma separated list of module names to deploy, by default all is used to deploy every verticle
+ *   <li>--modules/-m : comma separated list of module names to deploy, by default all is used to
+ *       deploy every verticle
  * </ul>
  *
  * <p>e.g. <i>java -jar ./fatjar.jar -c configs/config.json -C false -i localhost -m
@@ -60,14 +63,13 @@ import org.apache.logging.log4j.core.LoggerContext;
 public class Deployer {
   private static final Logger LOGGER = LogManager.getLogger(Deployer.class);
   private static Vertx vertxInstance;
-  private static ClusterManager mgr;
 
   /**
    * Recursively deploy all modules.
    *
-   * @param vertx   the vert.x instance
+   * @param vertx the vert.x instance
    * @param configs the JSON configuration
-   * @param i       for recursive base case
+   * @param i for recursive base case
    */
   public static void recursiveDeploy(Vertx vertx, JsonObject configs, int i) {
     if (i >= configs.getJsonArray("modules").size()) {
@@ -83,28 +85,31 @@ public class Deployer {
 
     boolean isWorkerVerticle = moduleConfigurations.getBoolean("isWorkerVerticle");
     if (isWorkerVerticle) {
-      LOGGER.info("worker verticle : " + moduleConfigurations.getString("id"));
+      LOGGER.info("worker verticle : {}", moduleConfigurations.getString("id"));
       deploymentOptions.setWorkerPoolName(moduleConfigurations.getString("threadPoolName"));
       deploymentOptions.setWorkerPoolSize(moduleConfigurations.getInteger("threadPoolSize"));
-      deploymentOptions.setWorker(true);
+      deploymentOptions.setThreadingModel(ThreadingModel.WORKER);
       deploymentOptions.setMaxWorkerExecuteTime(30L);
       deploymentOptions.setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
     }
 
-    vertx.deployVerticle(moduleName, deploymentOptions, ar -> {
-      if (ar.succeeded()) {
-        LOGGER.info("Deployed " + moduleName);
-        recursiveDeploy(vertx, configs, i + 1);
-      } else {
-        LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
-      }
-    });
+    vertx.deployVerticle(
+        moduleName,
+        deploymentOptions,
+        ar -> {
+          if (ar.succeeded()) {
+            LOGGER.info("Deployed " + moduleName);
+            recursiveDeploy(vertx, configs, i + 1);
+          } else {
+            LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
+          }
+        });
   }
 
   /**
    * Recursively deploy modules/verticles (if they exist) present in the `modules` list.
    *
-   * @param vertx   the vert.x instance
+   * @param vertx the vert.x instance
    * @param configs the JSON configuration
    * @param modules the list of modules to deploy
    */
@@ -117,37 +122,44 @@ public class Deployer {
 
     String moduleName = modules.get(0);
     JsonObject config =
-        configuredModules.stream().map(obj -> (JsonObject) obj).filter(obj -> obj.getString("id").equals(moduleName))
-            .findFirst().orElse(new JsonObject());
+        configuredModules.stream()
+            .map(obj -> (JsonObject) obj)
+            .filter(obj -> obj.getString("id").equals(moduleName))
+            .findFirst()
+            .orElse(new JsonObject());
 
     if (config.isEmpty()) {
-      LOGGER.fatal("Failed to deploy " + moduleName + " cause: Not Found");
+      LOGGER.fatal("Failed to deploy {} | cause : Not Found", moduleName);
       return;
     }
     // get common configs and add this to config object
     JsonObject commonConfigs = configs.getJsonObject("commonConfig");
     config.mergeIn(commonConfigs, true);
     int numInstances = config.getInteger("verticleInstances");
-    DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(numInstances).setConfig(config);
+    DeploymentOptions deploymentOptions =
+        new DeploymentOptions().setInstances(numInstances).setConfig(config);
     boolean isWorkerVerticle = config.getBoolean("isWorkerVerticle");
     if (isWorkerVerticle) {
       LOGGER.info("worker verticle : " + config.getString("id"));
       deploymentOptions.setWorkerPoolName(config.getString("threadPoolName"));
       deploymentOptions.setWorkerPoolSize(config.getInteger("threadPoolSize"));
-      deploymentOptions.setWorker(true);
+      deploymentOptions.setThreadingModel(ThreadingModel.WORKER);
       deploymentOptions.setMaxWorkerExecuteTime(30L);
       deploymentOptions.setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
     }
 
-    vertx.deployVerticle(moduleName, deploymentOptions, ar -> {
-      if (ar.succeeded()) {
-        LOGGER.info("Deployed " + moduleName);
-        modules.remove(0);
-        recursiveDeploy(vertx, configs, modules);
-      } else {
-        LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
-      }
-    });
+    vertx.deployVerticle(
+        moduleName,
+        deploymentOptions,
+        ar -> {
+          if (ar.succeeded()) {
+            LOGGER.info("Deployed " + moduleName);
+            modules.remove(0);
+            recursiveDeploy(vertx, configs, modules);
+          } else {
+            LOGGER.fatal("Failed to deploy " + moduleName + " cause:", ar.cause());
+          }
+        });
   }
 
   private static JsonObject getConfigForModule(int moduleIndex, JsonObject configurations) {
@@ -158,16 +170,18 @@ public class Deployer {
 
   public static void deploy(String configPath) {
     EventBusOptions ebOptions = new EventBusOptions();
-    VertxOptions options = new VertxOptions().setEventBusOptions(ebOptions).setMetricsOptions(getMetricsOptions());
+    VertxOptions options =
+        new VertxOptions().setEventBusOptions(ebOptions).setMetricsOptions(getMetricsOptions());
 
     String config;
     try {
       config = new String(Files.readAllBytes(Paths.get(configPath)), StandardCharsets.UTF_8);
     } catch (Exception e) {
-      LOGGER.fatal("Couldn't read configuration file");
+      JsonArray stackTrace = HelperUtils.convertStackTrace(e);
+      LOGGER.fatal("Couldn't read configuration file : {}", stackTrace);
       return;
     }
-    if (config.length() < 1) {
+    if (config.isEmpty()) {
       LOGGER.fatal("Couldn't read configuration file");
       return;
     }
@@ -177,7 +191,6 @@ public class Deployer {
     setJvmMetrics();
 
     recursiveDeploy(vertx, configuration, 0);
-
   }
 
   private static void setVertxInstance(Vertx vertx) {
@@ -186,28 +199,52 @@ public class Deployer {
 
   public static void main(String[] args) {
 
-    CLI cli = CLI.create("DX ACL APD Server").setSummary("A CLI to deploy the acl-apd server")
-        .addOption(new Option().setLongName("help").setShortName("h").setFlag(true).setDescription("display help"))
-        .addOption(
-            new Option().setLongName("config").setShortName("c").setRequired(true).setDescription("configuration file"))
-        .addOption(new Option().setLongName("isClustered").setShortName("C").setRequired(true).setDefaultValue("false")
-            .setDescription("Is it being deployed in clustered mode"))
-
-        .addOption(new Option().setLongName("host").setShortName("i").setRequired(true).setDefaultValue("localhost")
-            .setDescription("public host"))
-
-        .addOption(
-            new TypedOption<String>().setType(String.class).setLongName("modules").setShortName("m").setRequired(false)
-                .setDefaultValue("all").setParsedAsList(true).setDescription(
-                    "comma separated list of verticle names to deploy. "
-                        +
-                        "If omitted, or if `all` is passed, all verticles are deployed"));
+    CLI cli =
+        CLI.create("DX ACL APD Server")
+            .setSummary("A CLI to deploy the acl-apd server")
+            .addOption(
+                new Option()
+                    .setLongName("help")
+                    .setShortName("h")
+                    .setFlag(true)
+                    .setDescription("display help"))
+            .addOption(
+                new Option()
+                    .setLongName("config")
+                    .setShortName("c")
+                    .setRequired(true)
+                    .setDescription("configuration file"))
+            .addOption(
+                new Option()
+                    .setLongName("isClustered")
+                    .setShortName("C")
+                    .setRequired(true)
+                    .setDefaultValue("false")
+                    .setDescription("Is it being deployed in clustered mode"))
+            .addOption(
+                new Option()
+                    .setLongName("host")
+                    .setShortName("i")
+                    .setRequired(true)
+                    .setDefaultValue("localhost")
+                    .setDescription("public host"))
+            .addOption(
+                new TypedOption<String>()
+                    .setType(String.class)
+                    .setLongName("modules")
+                    .setShortName("m")
+                    .setRequired(false)
+                    .setDefaultValue("all")
+                    .setParsedAsList(true)
+                    .setDescription(
+                        "comma separated list of verticle names to deploy. "
+                            + "If omitted, or if `all` is passed, all verticles are deployed"));
 
     StringBuilder usageString = new StringBuilder();
     cli.usage(usageString);
     CommandLine commandLine = cli.parse(Arrays.asList(args), false);
-    boolean isDeploymentInClusteredMode = Boolean.parseBoolean(commandLine.getOptionValue("isClustered"));
-
+    boolean isDeploymentInClusteredMode =
+        Boolean.parseBoolean(commandLine.getOptionValue("isClustered"));
 
     if (commandLine.isValid() && !commandLine.isFlagEnabled("help")) {
       String configPath = commandLine.getOptionValue("config");
@@ -216,7 +253,8 @@ public class Deployer {
       List<String> modules = passedModules.stream().distinct().collect(Collectors.toList());
       if (!isDeploymentInClusteredMode) {
         deploy(configPath);
-      } /* `all` is also passed by default if no -m option given.*/ else if (modules.contains("all")) {
+      } /* `all` is also passed by default if no -m option given.*/ else if (modules.contains(
+          "all")) {
         deployInClusteredMode(configPath, host, List.of());
       } else {
         deployInClusteredMode(configPath, host, modules);
@@ -228,13 +266,12 @@ public class Deployer {
     }
   }
 
-
   /**
    * Deploy clustered vert.x instance.
    *
    * @param configPath the path for JSON config file
-   * @param host       String
-   * @param modules    list of modules to deploy. If list is empty, all modules are deployed
+   * @param host String
+   * @param modules list of modules to deploy. If list is empty, all modules are deployed
    */
   public static void deployInClusteredMode(String configPath, String host, List<String> modules) {
     String config;
@@ -251,29 +288,34 @@ public class Deployer {
     JsonObject configuration = new JsonObject(config);
     List<String> zookeepers = configuration.getJsonArray("zookeepers").getList();
     String clusterId = configuration.getString("clusterId");
-    mgr = getClusterManager(host, zookeepers, clusterId);
+    ClusterManager mgr = getClusterManager(host, zookeepers, clusterId);
     EventBusOptions ebOptions = new EventBusOptions().setClusterPublicHost(host);
     VertxOptions options =
-        new VertxOptions().setClusterManager(mgr).setEventBusOptions(ebOptions).setMetricsOptions(getMetricsOptions());
-    LOGGER.debug("metrics-options" + options.getMetricsOptions());
-    Vertx.clusteredVertx(options, res -> {
-      if (res.succeeded()) {
-        vertxInstance = res.result();
-        LOGGER.debug(vertxInstance.isMetricsEnabled());
-        setJvmMetrics();
-        if (modules.isEmpty()) {
-          recursiveDeploy(vertxInstance, configuration, 0);
-        } else {
-          recursiveDeploy(vertxInstance, configuration, modules);
-        }
-      } else {
-        LOGGER.fatal("Could not join cluster");
-      }
-    });
+        new VertxOptions().setEventBusOptions(ebOptions).setMetricsOptions(getMetricsOptions());
+    LOGGER.debug("metrics-options {}", options.getMetricsOptions());
+    Vertx.builder()
+        .withClusterManager(mgr)
+        .with(options)
+        .buildClustered()
+        .onSuccess(
+            vertx -> {
+              setVertxInstance(vertx);
+              LOGGER.debug(vertxInstance.isMetricsEnabled());
+              setJvmMetrics();
+              if (modules.isEmpty()) {
+                recursiveDeploy(vertxInstance, configuration, 0);
+              } else {
+                recursiveDeploy(vertxInstance, configuration, modules);
+              }
+            })
+        .onFailure(
+            throwable -> {
+              LOGGER.fatal("Could not join cluster");
+            });
   }
 
-
-  public static ClusterManager getClusterManager(String host, List<String> zookeepers, String clusterId) {
+  public static ClusterManager getClusterManager(
+      String host, List<String> zookeepers, String clusterId) {
     Config config = new Config();
     config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
     config.getNetworkConfig().setPublicAddress(host);
@@ -281,18 +323,28 @@ public class Deployer {
     config.setProperty("hazelcast.logging.type", "log4j2");
     DiscoveryStrategyConfig discoveryStrategyConfig =
         new DiscoveryStrategyConfig(new ZookeeperDiscoveryStrategyFactory());
-    discoveryStrategyConfig.addProperty(ZookeeperDiscoveryProperties.ZOOKEEPER_URL.key(), String.join(",", zookeepers));
+    discoveryStrategyConfig.addProperty(
+        ZookeeperDiscoveryProperties.ZOOKEEPER_URL.key(), String.join(",", zookeepers));
     discoveryStrategyConfig.addProperty(ZookeeperDiscoveryProperties.GROUP.key(), clusterId);
-    config.getNetworkConfig().getJoin().getDiscoveryConfig().addDiscoveryStrategyConfig(discoveryStrategyConfig);
+    config
+        .getNetworkConfig()
+        .getJoin()
+        .getDiscoveryConfig()
+        .addDiscoveryStrategyConfig(discoveryStrategyConfig);
 
     return new HazelcastClusterManager(config);
   }
 
   public static MetricsOptions getMetricsOptions() {
-    return new MicrometerMetricsOptions().setPrometheusOptions(
-            new VertxPrometheusOptions().setEnabled(true).setStartEmbeddedServer(true)
+    return new MicrometerMetricsOptions()
+        .setPrometheusOptions(
+            new VertxPrometheusOptions()
+                .setEnabled(true)
+                .setStartEmbeddedServer(true)
                 .setEmbeddedServerOptions(new HttpServerOptions().setPort(9000)))
-        .setLabels(EnumSet.of(Label.EB_ADDRESS, Label.EB_FAILURE, Label.HTTP_CODE, Label.HTTP_METHOD)).setEnabled(true);
+        .setLabels(
+            EnumSet.of(Label.EB_ADDRESS, Label.EB_FAILURE, Label.HTTP_CODE, Label.HTTP_METHOD))
+        .setEnabled(true);
   }
 
   public static void setJvmMetrics() {
@@ -315,14 +367,16 @@ public class Deployer {
     LOGGER.debug("number of verticles being undeployed are:" + deployIdSet.size());
     // shutdown verticles
     for (String deploymentId : deployIdSet) {
-      vertxInstance.undeploy(deploymentId, handler -> {
-        if (handler.succeeded()) {
-          LOGGER.debug(deploymentId + " verticle  successfully Undeployed");
-          latchVerticles.countDown();
-        } else {
-          LOGGER.warn(deploymentId + "Undeploy failed!");
-        }
-      });
+      vertxInstance.undeploy(
+          deploymentId,
+          handler -> {
+            if (handler.succeeded()) {
+              LOGGER.debug(deploymentId + " verticle  successfully Undeployed");
+              latchVerticles.countDown();
+            } else {
+              LOGGER.warn(deploymentId + "Undeploy failed!");
+            }
+          });
     }
 
     try {
@@ -331,22 +385,25 @@ public class Deployer {
       return;
 
     } catch (Exception e) {
-      e.printStackTrace();
+      JsonArray stackTrace = HelperUtils.convertStackTrace(e);
+      LOGGER.error("Stack trace : {}", stackTrace);
     }
 
     try {
       latchCluster.await(5, TimeUnit.SECONDS);
       // shutdown vertx
-      vertxInstance.close(handler -> {
-        if (handler.succeeded()) {
-          LOGGER.info("vertx closed succesfully");
-          latchVertx.countDown();
-        } else {
-          LOGGER.warn("Vertx didn't close properly, reason:" + handler.cause());
-        }
-      });
+      vertxInstance.close(
+          handler -> {
+            if (handler.succeeded()) {
+              LOGGER.info("vertx closed succesfully");
+              latchVertx.countDown();
+            } else {
+              LOGGER.warn("Vertx didn't close properly, reason:" + handler.cause());
+            }
+          });
     } catch (Exception e) {
-      e.printStackTrace();
+      JsonArray stackTrace = HelperUtils.convertStackTrace(e);
+      LOGGER.error("Stack trace : {}", stackTrace);
     }
 
     try {
@@ -359,8 +416,8 @@ public class Deployer {
         LOGGER.warn("Unable to shutdown log4j2");
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      JsonArray stackTrace = HelperUtils.convertStackTrace(e);
+      LOGGER.error("Stack trace : {}", stackTrace);
     }
   }
-
 }

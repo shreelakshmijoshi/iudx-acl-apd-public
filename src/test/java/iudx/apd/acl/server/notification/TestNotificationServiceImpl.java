@@ -12,6 +12,7 @@ import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.apiserver.util.User;
+import iudx.apd.acl.server.notification.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,14 @@ public class TestNotificationServiceImpl {
   Utility utility;
   User consumer;
   User provider;
-  @Mock DeleteNotification deleteNotification;
-  @Mock CreateNotification createNotification;
-  @Mock UpdateNotification updateNotification;
-  @Mock GetNotification getNotification;
+  @Mock
+  DeleteNotification deleteNotification;
+  @Mock
+  CreateNotification createNotification;
+  @Mock
+  UpdateNotification updateNotification;
+  @Mock
+  GetNotification getNotification;
   @Mock JsonObject request;
   @Mock Future<JsonObject> future;
   @Mock AsyncResult<JsonObject> asyncResult;

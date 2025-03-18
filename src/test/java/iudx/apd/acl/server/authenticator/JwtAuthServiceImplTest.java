@@ -14,7 +14,7 @@ import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.apiserver.util.Role;
-import iudx.apd.acl.server.authentication.JwtAuthenticationServiceImpl;
+import iudx.apd.acl.server.authentication.service.JwtAuthenticationServiceImpl;
 import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.RoutingContextHelper;
 import org.apache.logging.log4j.LogManager;

@@ -10,8 +10,10 @@ import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQOptions;
 import io.vertx.serviceproxy.ServiceBinder;
-import iudx.apd.acl.server.auditing.databroker.DataBrokerService;
-import iudx.apd.acl.server.auditing.databroker.DataBrokerServiceImpl;
+import iudx.apd.acl.server.auditing.service.databroker.DataBrokerService;
+import iudx.apd.acl.server.auditing.service.databroker.DataBrokerServiceImpl;
+import iudx.apd.acl.server.auditing.service.AuditingService;
+import iudx.apd.acl.server.auditing.service.AuditingServiceImpl;
 
 public class AuditingVerticle extends AbstractVerticle {
 

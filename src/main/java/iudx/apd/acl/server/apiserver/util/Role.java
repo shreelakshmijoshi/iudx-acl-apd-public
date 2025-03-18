@@ -2,7 +2,7 @@ package iudx.apd.acl.server.apiserver.util;
 
 import static iudx.apd.acl.server.common.ResponseUrn.ROLE_NOT_FOUND;
 
-import iudx.apd.acl.server.validation.exceptions.DxRuntimeException;
+import iudx.apd.acl.server.common.DxRuntimeException;
 import java.util.stream.Stream;
 
 public enum Role {
