@@ -39,7 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 @ExtendWith({MockitoExtension.class, VertxExtension.class})
-public class TestCatalogueClient {
+public class TestCatalogueServiceImpl {
 
   CatalogueClient catalogueClient;
   JsonObject options;
@@ -57,7 +57,7 @@ public class TestCatalogueClient {
   JsonArray providerJsonArray;
   JsonArray resourceServerJsonArray;
   String ownerId;
-  private static final Logger LOGGER = LogManager.getLogger(TestCatalogueClient.class);
+  private static final Logger LOGGER = LogManager.getLogger(TestCatalogueServiceImpl.class);
 
   @BeforeEach
   public void init(VertxTestContext vertxTestContext) {
