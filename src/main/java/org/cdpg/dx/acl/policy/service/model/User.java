@@ -16,7 +16,7 @@ import java.util.Objects;
 @DataObject(generateConverter = true)
 public class User {
   private final String userId;
-  private final iudx.apd.acl.server.apiserver.util.Role userRole;
+  private final Role userRole;
   private final String emailId;
   private final String firstName;
   private final String lastName;
@@ -24,7 +24,7 @@ public class User {
 
   public User(JsonObject userDetails) {
     this.userId = userDetails.getString(USER_ID);
-    this.userRole = iudx.apd.acl.server.apiserver.util.Role.fromString(userDetails.getString(USER_ROLE));
+    this.userRole = Role.fromString(userDetails.getString(USER_ROLE));
     this.emailId = userDetails.getString(EMAIL_ID);
     this.firstName = userDetails.getString(FIRST_NAME);
     this.lastName = userDetails.getString(LAST_NAME);
