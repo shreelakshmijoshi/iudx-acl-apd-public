@@ -7,6 +7,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import iudx.apd.acl.server.apiserver.util.User;
+import iudx.apd.acl.server.common.response.RestResponse;
+import org.cdpg.dx.acl.policy.service.model.Response;
 
 @VertxGen
 @ProxyGen
@@ -22,7 +24,7 @@ public interface PolicyService {
 
   Future<JsonObject> createPolicy(JsonObject request, User user);
 
-  Future<JsonObject> deletePolicy(JsonObject policy, User user);
+  Future<Response> deletePolicy(JsonObject policy, User user);
 
   Future<JsonObject> getPolicy(User user);
 

@@ -2,6 +2,7 @@ package iudx.apd.acl.server.common;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 
+import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -9,21 +10,22 @@ import io.vertx.ext.web.validation.BodyProcessorException;
 import io.vertx.ext.web.validation.ParameterProcessorException;
 import io.vertx.ext.web.validation.RequestPredicateException;
 import io.vertx.json.schema.ValidationException;
+import io.vertx.serviceproxy.HelperUtils;
 import iudx.apd.acl.server.common.response.ResponseUtil;
 import iudx.apd.acl.server.common.response.RestResponse;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FailureHandler implements Handler<RoutingContext> {
+public class FailureHandler implements Handler<RoutingContext>  {
 
   private static final Logger LOGGER = LogManager.getLogger(FailureHandler.class);
+
 
   @Override
   public void handle(RoutingContext routingContext) {
     Throwable failure = routingContext.failure();
-    failure.printStackTrace();
-    LOGGER.debug("Exception caught");
+    LOGGER.debug("Exception caught : {}", HelperUtils.convertStackTrace(failure));
     if (failure instanceof DxRuntimeException) {
       DxRuntimeException exception = (DxRuntimeException) failure;
       LOGGER.error(exception.getUrn().getUrn() + " : " + exception.getMessage());

@@ -405,14 +405,14 @@ public class ApiServerVerticle extends AbstractVerticle {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-                LOGGER.info("Delete policy succeeded : {} ", handler.result().encode());
+                LOGGER.info("Delete policy succeeded : {} ", handler.result().toString());
                 JsonObject responseJson =
                     new JsonObject()
-                        .put(TYPE, handler.result().getString(TYPE))
-                        .put(TITLE, handler.result().getString(TITLE))
-                        .put(DETAIL, handler.result().getValue(DETAIL));
+                        .put(TYPE, handler.result().getType())
+                        .put(TITLE, handler.result().getTitle())
+                        .put(DETAIL, handler.result().getDetail());
                 handleSuccessResponse(
-                    response, handler.result().getInteger(STATUS_CODE), responseJson.toString());
+                    response, handler.result().getStatusCode(), responseJson.toString());
                 Future.future(fu -> handleAuditLogs(routingContext));
               } else {
                 LOGGER.error("Delete policy failed : {} ", handler.cause().getMessage());

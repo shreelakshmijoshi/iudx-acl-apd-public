@@ -5,5 +5,6 @@ public class Constants {
   public static final String POLICY_SERVICE_ADDRESS = "iudx.apd.acl.policy.service";
   public static final String NOTIFICATION_SERVICE_ADDRESS = "iudx.apd.acl.notification.service";
   public static final String AUDITING_SERVICE_ADDRESS = "iudx.apd.acl.server.auditing";
+  public static final String POSTGRES_SERVICE_ADDRESS = "iudx.apd.acl.server.database.postgres";
 
 }

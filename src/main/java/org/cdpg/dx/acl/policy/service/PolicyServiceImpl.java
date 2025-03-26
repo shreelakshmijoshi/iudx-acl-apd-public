@@ -3,7 +3,9 @@ package org.cdpg.dx.acl.policy.service;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import org.cdpg.dx.acl.policy.model.User;
+import iudx.apd.acl.server.common.response.RestResponse;
+import org.cdpg.dx.acl.policy.service.model.Response;
+import org.cdpg.dx.acl.policy.service.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +49,8 @@ public class PolicyServiceImpl implements PolicyService {
   }
 
   @Override
-  public Future<JsonObject> deletePolicy(JsonObject policy, User user) {
-    Promise<JsonObject> promise = Promise.promise();
+  public Future<Response> deletePolicy(JsonObject policy, User user) {
+    Promise<Response> promise = Promise.promise();
     this.deletePolicy
         .initiateDeletePolicy(policy, user)
         .onComplete(

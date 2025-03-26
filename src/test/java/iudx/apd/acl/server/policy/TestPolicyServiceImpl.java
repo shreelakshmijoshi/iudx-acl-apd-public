@@ -75,7 +75,7 @@ public class TestPolicyServiceImpl {
             })
         .when(future)
         .onComplete(any(Handler.class));
-    lenient().when(deletePolicy.initiateDeletePolicy(any(), any())).thenReturn(future);
+    lenient().when(deletePolicy.initiateDeletePolicy(any(), any())).thenReturn(mock(Future.class));
     lenient().when(getPolicy.initiateGetPolicy(any())).thenReturn(future);
     lenient().when(verifyPolicy.initiateVerifyPolicy(any())).thenReturn(future);
     vertxTestContext.completeNow();

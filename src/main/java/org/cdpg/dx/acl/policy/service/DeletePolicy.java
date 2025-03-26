@@ -1,14 +1,8 @@
 package org.cdpg.dx.acl.policy.service;
 
 import static org.cdpg.dx.util.Constants.*;
-import static org.cdpg.dx.common.models.HttpStatusCode.BAD_REQUEST;
-import static org.cdpg.dx.common.models.HttpStatusCode.FORBIDDEN;
-import static org.cdpg.dx.acl.policy.util.Constants.CHECK_IF_POLICY_PRESENT_QUERY;
-import static org.cdpg.dx.acl.policy.util.Constants.DELETE_POLICY_QUERY;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -19,7 +13,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import org.cdpg.dx.acl.policy.model.User;
+import org.cdpg.dx.acl.policy.service.model.Response;
+import org.cdpg.dx.acl.policy.service.model.User;
+import org.cdpg.dx.acl.policy.util.Constants;
+import org.cdpg.dx.common.exception.DxRuntimeException;
 import org.cdpg.dx.common.models.HttpStatusCode;
 import org.cdpg.dx.common.models.ResponseUrn;
 import org.cdpg.dx.database.postgres.service.PostgresqlService;
@@ -29,19 +26,10 @@ import org.slf4j.LoggerFactory;
 public class DeletePolicy {
   private static final Logger LOG = LoggerFactory.getLogger(DeletePolicy.class);
   private static final String FAILURE_MESSAGE = "Policy could not be deleted";
-  private final PostgresqlService postgresqlService;
-  private Pool pool;
+  private final PostgresqlService postgresService;
 
-  public DeletePolicy(PostgresqlService postgresqlService) {
-    this.postgresqlService = postgresqlService;
-  }
-
-  private String getFailureResponse(JsonObject response, String detail) {
-    return response
-        .put(TYPE, BAD_REQUEST.getValue())
-        .put(TITLE, BAD_REQUEST.getUrn())
-        .put(DETAIL, detail)
-        .encode();
+  public DeletePolicy(PostgresqlService postgresService) {
+    this.postgresService = postgresService;
   }
 
   /**
@@ -52,35 +40,36 @@ public class DeletePolicy {
    * @param policyUuid policy id as type UUID
    * @return The response of the query execution
    */
-  private Future<JsonObject> executeUpdateQuery(String query, UUID policyUuid) {
+  private Future<Response> executeUpdateQuery(String query, UUID policyUuid) {
     LOG.debug("inside executeUpdateQuery");
-    Promise<JsonObject> promise = Promise.promise();
+    Promise<Response> promise = Promise.promise();
     Tuple tuple = Tuple.of(policyUuid);
-    this.executeQuery(
-        query,
-        tuple,
-        handler -> {
-          if (handler.succeeded()) {
-            /* policy has expired */
-            if (handler.result().getJsonArray(RESULT).isEmpty()) {
-              promise.fail(
-                  getFailureResponse(
-                      new JsonObject(), FAILURE_MESSAGE + " , as policy is expired"));
-            } else {
-              LOG.info("update query succeeded");
-              JsonObject responseJson =
-                  handler
-                      .result()
-                      .put(STATUS_CODE, HttpStatusCode.SUCCESS.getValue())
-                      .put(DETAIL, "Policy deleted successfully");
-              promise.complete(responseJson);
-            }
-          } else {
-            LOG.debug("update query failed");
-            promise.fail(
-                getFailureResponse(new JsonObject(), FAILURE_MESSAGE + ", update query failed"));
-          }
-        });
+    this.executeQuery(query, tuple)
+        .onSuccess(
+            response -> {
+              /* policy has expired */
+              if (response.getJsonArray(RESULT).isEmpty()) {
+                String detail = FAILURE_MESSAGE + " , as policy is expired";
+                throw new DxRuntimeException(
+                    HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
+              } else {
+                LOG.info("update query succeeded");
+                String detail = "Policy deleted successfully";
+                Response restResponse =
+                    new Response()
+                        .setType(ResponseUrn.SUCCESS_URN.getUrn())
+                        .setTitle(ResponseUrn.SUCCESS_URN.getMessage())
+                        .setDetail(detail);
+                promise.complete(restResponse);
+              }
+            })
+        .onFailure(
+            throwable -> {
+              LOG.debug("update query failed");
+              String detail = FAILURE_MESSAGE + ", update query failed";
+              throw new DxRuntimeException(
+                  HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
+            });
     return promise.future();
   }
 
@@ -89,14 +78,14 @@ public class DeletePolicy {
    *
    * @param query SQL Query to be executed
    * @param tuple exchangeable(s) for the query
-   * @param handler Result of the query execution is sent as Json Object in a handler
+   * @return JsonObject Result of the query execution is sent as Json Object in a Future
    */
-  public void executeQuery(String query, Tuple tuple, Handler<AsyncResult<JsonObject>> handler) {
+  public Future<JsonObject> executeQuery(String query, Tuple tuple) {
 
-    pool = postgresqlService.getPool();
+    Pool pool = postgresService.getPool();
     Collector<Row, ?, List<JsonObject>> rowListCollector =
         Collectors.mapping(row -> row.toJson(), Collectors.toList());
-
+    Promise<JsonObject> promise = Promise.promise();
     pool.withConnection(
             sqlConnection ->
                 sqlConnection
@@ -112,18 +101,18 @@ public class DeletePolicy {
                       .put(TYPE, ResponseUrn.SUCCESS_URN.getUrn())
                       .put(TITLE, ResponseUrn.SUCCESS_URN.getMessage())
                       .put(RESULT, response);
-              handler.handle(Future.succeededFuture(responseJson));
+              promise.complete(responseJson);
             })
         .onFailure(
             failureHandler -> {
               LOG.error("Failure while executing the query : {}", failureHandler.getMessage());
-              JsonObject response =
-                  new JsonObject()
-                      .put(TYPE, HttpStatusCode.INTERNAL_SERVER_ERROR.getValue())
-                      .put(TITLE, ResponseUrn.DB_ERROR_URN.getUrn())
-                      .put(DETAIL, "Failure while executing query");
-              handler.handle(Future.failedFuture(response.encode()));
+              String detail = "Failure while executing query";
+              throw new DxRuntimeException(
+                  HttpStatusCode.INTERNAL_SERVER_ERROR.getValue(),
+                  ResponseUrn.DB_ERROR_URN,
+                  detail);
             });
+    return promise.future();
   }
 
   /**
@@ -141,60 +130,53 @@ public class DeletePolicy {
     String ownerId = user.getUserId();
     LOG.trace("What's the ownerId : " + ownerId);
     Tuple tuple = Tuple.of(policyUuid);
-    executeQuery(
-        query,
-        tuple,
-        handler -> {
-          if (handler.succeeded()) {
-            if (handler.result().getJsonArray(RESULT).isEmpty()) {
-              JsonObject failureResponse =
-                  new JsonObject()
-                      .put(TYPE, HttpStatusCode.NOT_FOUND.getValue())
-                      .put(TITLE, ResponseUrn.RESOURCE_NOT_FOUND_URN.getUrn())
-                      .put(DETAIL, FAILURE_MESSAGE + ", as it doesn't exist");
-              promise.fail(failureResponse.encode());
-            } else {
-              JsonObject result = handler.result().getJsonArray(RESULT).getJsonObject(0);
-              String rsServerUrl = result.getString("resource_server_url");
-              String ownerIdValue = result.getString("owner_id");
-              String status = result.getString("status");
-              /* does the policy belong to the owner who is requesting */
-              if (!rsServerUrl.equalsIgnoreCase(user.getResourceServerUrl())) {
-                LOG.error("Failure : OwnerShip error, rsServerUrl does not match");
-                promise.fail(
-                    new JsonObject()
-                        .put(TYPE, FORBIDDEN.getValue())
-                        .put(TITLE, FORBIDDEN.getUrn())
-                        .put(
-                            DETAIL,
-                            "Access Denied: You do not have ownership rights for this policy.")
-                        .encode());
-              } else if (ownerIdValue.equals(ownerId)) {
-                /* is policy in ACTIVE status */
-                if (status.equals("ACTIVE")) {
-                  LOG.info("Success : policy verified");
-                  promise.complete(true);
-                } else {
-                  LOG.error("Failure : policy is not active");
-                  promise.fail(
-                      getFailureResponse(
-                          new JsonObject(), FAILURE_MESSAGE + ", as policy is not ACTIVE"));
-                }
+    Future<JsonObject> queryFuture = executeQuery(query, tuple);
+    queryFuture
+        .onSuccess(
+            response -> {
+              if (response.getJsonArray(RESULT).isEmpty()) {
+                String detail = FAILURE_MESSAGE + ", as it doesn't exist";
+                throw new DxRuntimeException(
+                    HttpStatusCode.NOT_FOUND.getValue(),
+                    ResponseUrn.RESOURCE_NOT_FOUND_URN,
+                    detail);
               } else {
-                LOG.error("Failure : policy does not belong to the user");
-                JsonObject failureResponse =
-                    new JsonObject()
-                        .put(TYPE, FORBIDDEN.getValue())
-                        .put(TITLE, ResponseUrn.FORBIDDEN_URN.getUrn())
-                        .put(DETAIL, FAILURE_MESSAGE + ", as policy doesn't belong to the user");
-                promise.fail(failureResponse.encode());
+                JsonObject result = response.getJsonArray(RESULT).getJsonObject(0);
+                String rsServerUrl = result.getString("resource_server_url");
+                String ownerIdValue = result.getString("owner_id");
+                String status = result.getString("status");
+                /* does the policy belong to the owner who is requesting */
+                if (!rsServerUrl.equalsIgnoreCase(user.getResourceServerUrl())) {
+                  LOG.error("Failure : OwnerShip error, rsServerUrl does not match");
+                  String detail =
+                      "Access Denied: You do not have ownership rights for this policy.";
+                  throw new DxRuntimeException(
+                      HttpStatusCode.FORBIDDEN.getValue(), ResponseUrn.FORBIDDEN_URN, detail);
+                } else if (ownerIdValue.equals(ownerId)) {
+                  /* is policy in ACTIVE status */
+                  if (status.equals("ACTIVE")) {
+                    LOG.info("Success : policy verified");
+                    promise.complete(true);
+                  } else {
+                    LOG.error("Failure : policy is not active");
+                    String detail = FAILURE_MESSAGE + ", as policy is not ACTIVE";
+                    throw new DxRuntimeException(
+                        HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
+                  }
+                } else {
+                  LOG.error("Failure : policy does not belong to the user");
+                  String detail = FAILURE_MESSAGE + ", as policy doesn't belong to the user";
+                  throw new DxRuntimeException(
+                      HttpStatusCode.FORBIDDEN.getValue(), ResponseUrn.FORBIDDEN_URN, detail);
+                }
               }
-            }
-          } else {
-            LOG.error("Failed {}", handler.cause().getMessage());
-            promise.fail(handler.cause().getMessage());
-          }
-        });
+            })
+        .onFailure(
+            throwable -> {
+              LOG.error("Failed {}", throwable.getCause().getMessage());
+              promise.fail(throwable.getCause().getMessage());
+            });
+
     return promise.future();
   }
 
@@ -204,14 +186,14 @@ public class DeletePolicy {
    * @param policy to be deleted
    * @return result of the execution as Json Object
    */
-  public Future<JsonObject> initiateDeletePolicy(JsonObject policy, User user) {
+  public Future<Response> initiateDeletePolicy(JsonObject policy, User user) {
     UUID policyUuid = UUID.fromString(policy.getString("id"));
     Future<Boolean> policyVerificationFuture =
-        verifyPolicy(user, CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
+        verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
     return policyVerificationFuture.compose(
         isVerified -> {
           if (isVerified) {
-            return executeUpdateQuery(DELETE_POLICY_QUERY, policyUuid);
+            return executeUpdateQuery(Constants.DELETE_POLICY_QUERY, policyUuid);
           }
           return Future.failedFuture(policyVerificationFuture.cause().getMessage());
         });

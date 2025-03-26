@@ -1,4 +1,4 @@
-package org.cdpg.dx.acl.policy.model;
+package org.cdpg.dx.acl.policy.service.model;
 
 
 import static org.cdpg.dx.util.Constants.*;
@@ -6,6 +6,7 @@ import static org.cdpg.dx.util.Constants.*;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import java.util.Objects;
+import org.cdpg.dx.acl.policy.model.Role;
 
 /**
  * User class is used to initialize information about the user like id, role, email-Id etc., <br>

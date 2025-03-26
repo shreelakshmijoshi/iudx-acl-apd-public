@@ -1,8 +1,9 @@
-package org.cdpg.dx.acl.policy.model;
+package org.cdpg.dx.acl.policy.service.model;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import java.util.Objects;
+import org.cdpg.dx.acl.policy.model.Role;
 
 @DataObject(generateConverter = true)
 public class Policy {
