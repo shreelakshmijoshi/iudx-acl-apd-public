@@ -1,4 +1,4 @@
-package org.cdpg.dx.acl.policy.service.model;
+package org.cdpg.dx.acl.policy.model;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
