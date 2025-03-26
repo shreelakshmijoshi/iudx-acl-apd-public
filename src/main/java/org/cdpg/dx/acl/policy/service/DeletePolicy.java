@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import org.cdpg.dx.acl.policy.service.model.User;
+import org.cdpg.dx.acl.policy.model.User;
 import org.cdpg.dx.common.models.HttpStatusCode;
 import org.cdpg.dx.common.models.ResponseUrn;
 import org.cdpg.dx.database.postgres.service.PostgresqlService;

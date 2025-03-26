@@ -6,7 +6,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import org.cdpg.dx.acl.policy.service.model.User;
+import org.cdpg.dx.acl.policy.model.User;
 
 @VertxGen
 @ProxyGen

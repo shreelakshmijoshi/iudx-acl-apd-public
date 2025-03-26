@@ -3,7 +3,7 @@ package org.cdpg.dx.acl.policy.service;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import org.cdpg.dx.acl.policy.service.model.User;
+import org.cdpg.dx.acl.policy.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

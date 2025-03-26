@@ -1,4 +1,4 @@
-package org.cdpg.dx.acl.policy.service.model;
+package org.cdpg.dx.acl.policy.model;
 
 
 import static org.cdpg.dx.util.Constants.*;
