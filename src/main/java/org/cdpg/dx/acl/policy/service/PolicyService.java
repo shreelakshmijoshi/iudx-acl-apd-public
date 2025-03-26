@@ -6,7 +6,9 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import org.cdpg.dx.acl.policy.model.User;
+import iudx.apd.acl.server.common.response.RestResponse;
+import org.cdpg.dx.acl.policy.service.model.Response;
+import org.cdpg.dx.acl.policy.service.model.User;
 
 @VertxGen
 @ProxyGen
@@ -19,10 +21,11 @@ public interface PolicyService {
   }
 
   /* service operation */
+  // TODO: add different data object in param and the response (in future)
 
   Future<JsonObject> createPolicy(JsonObject request, User user);
 
-  Future<JsonObject> deletePolicy(JsonObject policy, User user);
+  Future<Response> deletePolicy(JsonObject policy, User user);
 
   Future<JsonObject> getPolicy(User user);
 

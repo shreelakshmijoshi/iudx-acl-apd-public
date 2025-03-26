@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cdpg.dx.acl.policy.model.CreatePolicyRequest;
-import org.cdpg.dx.acl.policy.model.User;
+import org.cdpg.dx.acl.policy.service.model.User;
 import org.cdpg.dx.acl.policy.util.ItemType;
 import org.cdpg.dx.acl.policy.util.Status;
 import org.cdpg.dx.catalogue.models.ResourceObj;

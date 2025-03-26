@@ -79,10 +79,10 @@ public class TestDeletePolicy {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-                assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getString(TYPE));
+                assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getType());
                 assertEquals(
-                    ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getString(TITLE));
-                assertEquals("Policy deleted successfully", handler.result().getString(DETAIL));
+                    ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getTitle());
+                assertEquals("Policy deleted successfully", handler.result().getDetail());
                 vertxTestContext.completeNow();
 
               } else {
@@ -168,8 +168,7 @@ public class TestDeletePolicy {
   public void testExecuteQueryWithInvalidTuple(VertxTestContext vertxTestContext) {
     deletePolicy.executeQuery(
         DELETE_POLICY_QUERY,
-        Tuple.tuple(),
-        handler -> {
+        Tuple.tuple()).onComplete(handler -> {
           if (handler.succeeded()) {
             vertxTestContext.failNow("Succeeded for invalid tuple");
           } else {
@@ -276,7 +275,7 @@ public class TestDeletePolicy {
         NullPointerException.class,
         () ->
             deletePolicy.executeQuery(
-                DELETE_POLICY_QUERY, Tuple.of(null, null), mock(Handler.class)));
+                DELETE_POLICY_QUERY, Tuple.of(null, null)));
     vertxTestContext.completeNow();
   }
 
@@ -287,8 +286,7 @@ public class TestDeletePolicy {
         "UPDATE abcd SET status='DELETED' WHERE _id = ANY ('{shjdfgsfhguergugr}'::uuid[])";
     deletePolicy.executeQuery(
         query,
-        Tuple.tuple(),
-        handler -> {
+        Tuple.tuple()).onComplete(handler ->{
           if (handler.succeeded()) {
             vertxTestContext.failNow("Succeeded for non-existent relation or table");
           } else {

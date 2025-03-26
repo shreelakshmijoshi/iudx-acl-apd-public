@@ -54,16 +54,17 @@ public class AAAServiceImpl implements AAAService {
         throw new IllegalArgumentException("Missing required user fields: " + result.encode());
       }
   
-      User user = new User(
-          result.getString(AAAConstants.USER_ID),
-          DxRole.fromString(result.getString(AAAConstants.ROLE)),
-          result.getString(AAAConstants.EMAIL),
-          result.getJsonObject(AAAConstants.NAME).getString(AAAConstants.FIRST_NAME),
-          result.getJsonObject(AAAConstants.NAME).getString(AAAConstants.LAST_NAME),
-          result.getString(AAAConstants.RESOURCE_SERVER)
-      );
+//      User user = new User(
+//          result.getString(AAAConstants.USER_ID),
+//          DxRole.fromString(result.getString(AAAConstants.ROLE)),
+//          result.getString(AAAConstants.EMAIL),
+//          result.getJsonObject(AAAConstants.NAME).getString(AAAConstants.FIRST_NAME),
+//          result.getJsonObject(AAAConstants.NAME).getString(AAAConstants.LAST_NAME),
+//          result.getString(AAAConstants.RESOURCE_SERVER)
+//      );
   
-      return Future.succeededFuture(user);
+//      return Future.succeededFuture(user);
+      return null;
     } catch (IllegalArgumentException e) {
       LOGGER.error("Invalid user data received: {}", result.encode());
       return Future.failedFuture(e.getMessage());
