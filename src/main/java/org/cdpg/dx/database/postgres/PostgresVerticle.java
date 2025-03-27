@@ -33,9 +33,9 @@ public class PostgresVerticle extends AbstractVerticle {
         PoolOptions poolOptions = new PoolOptions().setMaxSize(config.getInteger("poolSize", 5));
         pgPool = PgPool.pool(vertx, connectOptions, poolOptions);
 
-//        PostgresService service = new PostgresServiceImpl(pgPool);
+        PostgresService service = new PostgresServiceImpl(pgPool);
         binder = new ServiceBinder(vertx);
-//        consumer = binder.setAddress("postgres.service").register(PostgresService.class, service);
+        consumer = binder.setAddress("postgres.service").register(PostgresService.class, service);
 
         LOGGER.info("Postgres verticle started.");
         startPromise.complete();
