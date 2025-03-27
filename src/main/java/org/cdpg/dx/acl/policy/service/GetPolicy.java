@@ -1,6 +1,5 @@
 package org.cdpg.dx.acl.policy.service;
 
-
 import static org.cdpg.dx.acl.policy.util.Constants.GET_POLICY_4_CONSUMER_QUERY;
 import static org.cdpg.dx.acl.policy.util.Constants.GET_POLICY_4_PROVIDER_QUERY;
 import static org.cdpg.dx.common.models.HttpStatusCode.BAD_REQUEST;
@@ -9,17 +8,12 @@ import static org.cdpg.dx.util.Constants.*;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import io.vertx.sqlclient.Pool;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.Tuple;
+import iudx.apd.acl.server.database.postgres.service.PostgresService;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import org.cdpg.dx.acl.policy.model.Role;
-import org.cdpg.dx.acl.policy.service.model.User;
 import org.cdpg.dx.common.models.HttpStatusCode;
 import org.cdpg.dx.common.models.ResponseUrn;
-import org.cdpg.dx.database.postgres.service.PostgresqlService;
+import org.cdpg.dx.common.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +34,9 @@ import org.slf4j.LoggerFactory;
 public class GetPolicy {
   private static final Logger LOG = LoggerFactory.getLogger(GetPolicy.class);
   private static final String FAILURE_MESSAGE = "Policy could not be fetched";
-  private final PostgresqlService postgresqlService;
+  private final PostgresService postgresqlService;
 
-  public GetPolicy(PostgresqlService postgresqlService) {
+  public GetPolicy(PostgresService postgresqlService) {
     this.postgresqlService = postgresqlService;
   }
 
@@ -80,7 +74,7 @@ public class GetPolicy {
     String resourceServerUrl = provider.getResourceServerUrl();
 
     LOG.trace(provider.toString());
-    Tuple tuple = Tuple.of(ownerIdValue, resourceServerUrl);
+    JsonObject queryParam = new JsonObject().put("$1", ownerIdValue).put("$2", resourceServerUrl);
     JsonObject jsonObject =
         new JsonObject()
             .put("email", provider.getEmailId())
@@ -91,7 +85,7 @@ public class GetPolicy {
                     .put("lastName", provider.getLastName()))
             .put("id", provider.getUserId());
     JsonObject providerInfo = new JsonObject().put("provider", jsonObject);
-    this.executeGetPolicy(tuple, query, providerInfo, Role.PROVIDER)
+    this.executeGetPolicy(queryParam, query, providerInfo, Role.PROVIDER)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -119,7 +113,7 @@ public class GetPolicy {
     String emailId = consumer.getEmailId();
     String resourceServerUrl = consumer.getResourceServerUrl();
     LOG.trace(consumer.toString());
-    Tuple tuple = Tuple.of(emailId, resourceServerUrl);
+    JsonObject queryParam = new JsonObject().put("$1", emailId).put("$2", resourceServerUrl);
     JsonObject jsonObject =
         new JsonObject()
             .put("email", consumer.getEmailId())
@@ -131,7 +125,7 @@ public class GetPolicy {
             .put("id", consumer.getUserId());
     JsonObject consumerInfo = new JsonObject().put("consumer", jsonObject);
 
-    this.executeGetPolicy(tuple, query, consumerInfo, Role.CONSUMER)
+    this.executeGetPolicy(queryParam, query, consumerInfo, Role.CONSUMER)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -146,61 +140,54 @@ public class GetPolicy {
   }
 
   /**
-   * Executes the respective queries by using the vertx Pool instance
+   * Executes the respective queries by using Postgres service's executePreparedQuery method
    *
-   * @param tuple Exchangeable values of query in the form of Vertx Tuple
+   * @param queryParam Exchangeable values of query in the form of Vertx JsonObject
    * @param query String query to be executed
    * @param information Information to be added in the response
    * @return the response as Future JsonObject type
    */
   private Future<JsonObject> executeGetPolicy(
-      Tuple tuple, String query, JsonObject information, Role role) {
+      JsonObject queryParam, String query, JsonObject information, Role role) {
     Promise<JsonObject> promise = Promise.promise();
-    Collector<Row, ?, List<JsonObject>> rowListCollector =
-        Collectors.mapping(row -> row.toJson(), Collectors.toList());
-    Pool pool = postgresqlService.getPool();
-    pool.withConnection(
-            sqlConnection ->
-                sqlConnection
-                    .preparedQuery(query)
-                    .collecting(rowListCollector)
-                    .execute(tuple)
-                    .map(rows -> rows.value()))
-        .onComplete(
-            handler -> {
-              if (handler.succeeded()) {
-                if (!handler.result().isEmpty()) {
-                  for (JsonObject jsonObject : handler.result()) {
-                    jsonObject.mergeIn(information).mergeIn(getInformation(jsonObject, role));
-                  }
-                  JsonObject result =
-                      new JsonObject()
-                          .put(TYPE, ResponseUrn.SUCCESS_URN.getUrn())
-                          .put(TITLE, ResponseUrn.SUCCESS_URN.getMessage())
-                          .put(RESULT, handler.result());
-
-                  promise.complete(
-                      new JsonObject()
-                          .put(RESULT, result)
-                          .put(STATUS_CODE, HttpStatusCode.SUCCESS.getValue()));
-                } else {
-                  JsonObject response =
-                      new JsonObject()
-                          .put(TYPE, HttpStatusCode.NOT_FOUND.getValue())
-                          .put(TITLE, ResponseUrn.RESOURCE_NOT_FOUND_URN.getUrn())
-                          .put(DETAIL, "Policy not found");
-                  LOG.error("No policy found!");
-                  promise.fail(response.encode());
+    postgresqlService
+        .executePreparedQuery(query, queryParam)
+        .onSuccess(
+            response -> {
+              List<JsonObject> responseList = response.getJsonArray(RESULT).getList();
+              if (!response.isEmpty()) {
+                for (JsonObject jsonObject : responseList) {
+                  jsonObject.mergeIn(information).mergeIn(getInformation(jsonObject, role));
                 }
-              } else {
-                JsonObject response =
+                JsonObject result =
                     new JsonObject()
-                        .put(TYPE, HttpStatusCode.INTERNAL_SERVER_ERROR.getValue())
-                        .put(TITLE, ResponseUrn.DB_ERROR_URN.getUrn())
-                        .put(DETAIL, FAILURE_MESSAGE + ", Failure while executing query");
-                promise.fail(response.encode());
-                LOG.error("Error response : {}", handler.cause().getMessage());
+                        .put(TYPE, ResponseUrn.SUCCESS_URN.getUrn())
+                        .put(TITLE, ResponseUrn.SUCCESS_URN.getMessage())
+                        .put(RESULT, responseList);
+                promise.complete(
+                    new JsonObject()
+                        .put(RESULT, result)
+                        .put(STATUS_CODE, HttpStatusCode.SUCCESS.getValue()));
+
+              } else {
+                JsonObject result =
+                    new JsonObject()
+                        .put(TYPE, HttpStatusCode.NOT_FOUND.getValue())
+                        .put(TITLE, ResponseUrn.RESOURCE_NOT_FOUND_URN.getUrn())
+                        .put(DETAIL, "Policy not found");
+                LOG.error("No policy found!");
+                promise.fail(result.encode());
               }
+            })
+        .onFailure(
+            failure -> {
+              JsonObject response =
+                  new JsonObject()
+                      .put(TYPE, HttpStatusCode.INTERNAL_SERVER_ERROR.getValue())
+                      .put(TITLE, ResponseUrn.DB_ERROR_URN.getUrn())
+                      .put(DETAIL, FAILURE_MESSAGE + ", Failure while executing query");
+              promise.fail(response.encode());
+              LOG.error("Error response : {}", failure.getCause().getMessage());
             });
     return promise.future();
   }

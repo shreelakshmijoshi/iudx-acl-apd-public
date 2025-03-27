@@ -1,19 +1,21 @@
 package org.cdpg.dx.acl.policy;
 
 import static iudx.apd.acl.server.common.Constants.POLICY_SERVICE_ADDRESS;
+import static iudx.apd.acl.server.common.Constants.POSTGRES_SERVICE_ADDRESS;
 import static org.cdpg.dx.util.Constants.APD_URL;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
+import iudx.apd.acl.server.database.postgres.service.PostgresService;
 import org.cdpg.dx.acl.policy.service.*;
 import org.cdpg.dx.catalogue.client.CatalogueWebClient;
 import org.cdpg.dx.catalogue.service.CatalogueServiceImpl;
 import org.cdpg.dx.database.postgres.service.PostgresqlService;
 
 public class PolicyVerticle extends AbstractVerticle {
-  private PostgresqlService postgresqlService;
+  private PostgresService postgresqlService;
   private PolicyServiceImpl policyService;
   private DeletePolicy deletePolicy;
   private CreatePolicy createPolicy;
@@ -28,7 +30,7 @@ public class PolicyVerticle extends AbstractVerticle {
     WebClientOptions clientOptions =
         new WebClientOptions().setSsl(true).setVerifyHost(false).setTrustAll(true);
     client = WebClient.create(vertx, clientOptions);
-    postgresqlService = new PostgresqlService(config(), vertx);
+    postgresqlService = PostgresService.createProxy(vertx, POSTGRES_SERVICE_ADDRESS);
     deletePolicy = new DeletePolicy(postgresqlService);
     getPolicy = new GetPolicy(postgresqlService);
     catalogueWebClient = new CatalogueWebClient(config(),client);

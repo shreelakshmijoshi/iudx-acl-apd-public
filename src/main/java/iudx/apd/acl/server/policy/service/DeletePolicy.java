@@ -63,8 +63,6 @@ public class DeletePolicy {
                         .setTitle(SUCCESS.getUrn())
                         .setType(ResponseUrn.SUCCESS_URN.getUrn())
                         .setDetail(detail);
-                //                promise.complete(restResponse);
-                // TODO; rest response
                 promise.complete(restResponse);
               }
             })

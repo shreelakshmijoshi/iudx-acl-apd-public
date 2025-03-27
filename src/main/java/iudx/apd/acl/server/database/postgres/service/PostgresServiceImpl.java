@@ -13,6 +13,7 @@ import io.vertx.sqlclient.Tuple;
 import iudx.apd.acl.server.common.ResponseUrn;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -201,5 +202,9 @@ public class PostgresServiceImpl implements PostgresService {
               promise.fail(response);
             });
     return promise.future();
+  }
+
+  public Future<JsonObject> executeBatchQuery(final String query){
+    return null;
   }
 }
