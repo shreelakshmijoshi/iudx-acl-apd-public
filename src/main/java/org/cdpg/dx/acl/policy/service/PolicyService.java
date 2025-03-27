@@ -27,7 +27,7 @@ public interface PolicyService {
 
   Future<JsonObject> createPolicy(JsonObject request, User user);
 
-  Future<Response> deletePolicy(JsonObject policy, User user);
+  Future<Response> deletePolicy(String policyId, User user);
 
   Future<JsonObject> getPolicy(User user);
 

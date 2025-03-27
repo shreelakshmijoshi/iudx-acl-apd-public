@@ -51,8 +51,8 @@ public class PolicyServiceImpl implements PolicyService {
   }
 
   @Override
-  public Future<Response> deletePolicy(JsonObject policy, User user) {
-    UUID policyUuid = UUID.fromString(policy.getString("id"));
+  public Future<Response> deletePolicy(String policyId, User user) {
+    UUID policyUuid = UUID.fromString(policyId);
     Future<Boolean> policyVerificationFuture =
         deletePolicy.verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
     Future<Void> deleteFuture= policyVerificationFuture.compose(
