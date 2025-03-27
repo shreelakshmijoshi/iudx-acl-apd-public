@@ -3,9 +3,11 @@ package org.cdpg.dx.acl.policy.service;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import iudx.apd.acl.server.common.response.RestResponse;
-import org.cdpg.dx.acl.policy.service.model.Response;
-import org.cdpg.dx.acl.policy.service.model.User;
+import java.util.UUID;
+import org.cdpg.dx.acl.policy.util.Constants;
+import org.cdpg.dx.common.models.Response;
+import org.cdpg.dx.common.models.ResponseUrn;
+import org.cdpg.dx.common.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,21 +51,27 @@ public class PolicyServiceImpl implements PolicyService {
   }
 
   @Override
-  public Future<Response> deletePolicy(JsonObject policy, User user) {
-    Promise<Response> promise = Promise.promise();
-    this.deletePolicy
-        .initiateDeletePolicy(policy, user)
-        .onComplete(
-            handler -> {
-              if (handler.succeeded()) {
-                LOG.info("Successfully deleted the policy");
-                promise.complete(handler.result());
-              } else {
-                LOG.error("Failed to delete the policy");
-                promise.fail(handler.cause().getMessage());
-              }
-            });
-    return promise.future();
+  public Future<Response> deletePolicy(String policyId, User user) {
+    UUID policyUuid = UUID.fromString(policyId);
+    Future<Boolean> policyVerificationFuture =
+        deletePolicy.verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
+    Future<Void> deleteFuture= policyVerificationFuture.compose(
+        isVerified -> {
+          if (isVerified) {
+            return deletePolicy.executeDeletePolicy(Constants.DELETE_POLICY_QUERY, policyUuid);
+          }
+          return Future.failedFuture(policyVerificationFuture.cause().getMessage());
+        });
+   return deleteFuture.compose(map -> {
+      LOG.info("update query succeeded");
+      String detail = "Policy deleted successfully";
+      Response restResponse =
+          new Response()
+              .setType(ResponseUrn.SUCCESS_URN.getUrn())
+              .setTitle(ResponseUrn.SUCCESS_URN.getMessage())
+              .setDetail(detail);
+      return Future.succeededFuture(restResponse);
+    });
   }
 
   @Override

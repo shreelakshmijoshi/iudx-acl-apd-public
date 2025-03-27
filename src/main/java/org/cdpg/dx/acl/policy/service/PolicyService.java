@@ -7,8 +7,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import iudx.apd.acl.server.common.response.RestResponse;
-import org.cdpg.dx.acl.policy.service.model.Response;
-import org.cdpg.dx.acl.policy.service.model.User;
+import org.cdpg.dx.common.models.Response;
+import org.cdpg.dx.common.models.User;
 
 @VertxGen
 @ProxyGen
@@ -22,10 +22,12 @@ public interface PolicyService {
 
   /* service operation */
   // TODO: add different data object in param and the response (in future)
+  // TODO: return policy object after inserting into the postgres not the response object
+  // TODO: logic before and after policy creation will be added in the policy serviceimpl
 
   Future<JsonObject> createPolicy(JsonObject request, User user);
 
-  Future<Response> deletePolicy(JsonObject policy, User user);
+  Future<Response> deletePolicy(String policyId, User user);
 
   Future<JsonObject> getPolicy(User user);
 

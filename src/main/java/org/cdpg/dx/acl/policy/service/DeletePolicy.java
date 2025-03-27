@@ -4,115 +4,23 @@ import static org.cdpg.dx.util.Constants.*;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.sqlclient.Pool;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.Tuple;
-import java.util.List;
+import iudx.apd.acl.server.database.postgres.service.PostgresService;
 import java.util.UUID;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import org.cdpg.dx.acl.policy.service.model.Response;
-import org.cdpg.dx.acl.policy.service.model.User;
-import org.cdpg.dx.acl.policy.util.Constants;
 import org.cdpg.dx.common.exception.DxRuntimeException;
 import org.cdpg.dx.common.models.HttpStatusCode;
 import org.cdpg.dx.common.models.ResponseUrn;
-import org.cdpg.dx.database.postgres.service.PostgresqlService;
+import org.cdpg.dx.common.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DeletePolicy {
   private static final Logger LOG = LoggerFactory.getLogger(DeletePolicy.class);
   private static final String FAILURE_MESSAGE = "Policy could not be deleted";
-  private final PostgresqlService postgresService;
+  private final PostgresService postgresService;
 
-  public DeletePolicy(PostgresqlService postgresService) {
+  public DeletePolicy(PostgresService postgresService) {
     this.postgresService = postgresService;
-  }
-
-  /**
-   * Executes delete policy by setting the status field in record to DELETED from ACTIVE and by
-   * checking if the policy is expired
-   *
-   * @param query SQL query to update the status of the policy
-   * @param policyUuid policy id as type UUID
-   * @return The response of the query execution
-   */
-  private Future<Response> executeUpdateQuery(String query, UUID policyUuid) {
-    LOG.debug("inside executeUpdateQuery");
-    Promise<Response> promise = Promise.promise();
-    Tuple tuple = Tuple.of(policyUuid);
-    this.executeQuery(query, tuple)
-        .onSuccess(
-            response -> {
-              /* policy has expired */
-              if (response.getJsonArray(RESULT).isEmpty()) {
-                String detail = FAILURE_MESSAGE + " , as policy is expired";
-                throw new DxRuntimeException(
-                    HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
-              } else {
-                LOG.info("update query succeeded");
-                String detail = "Policy deleted successfully";
-                Response restResponse =
-                    new Response()
-                        .setType(ResponseUrn.SUCCESS_URN.getUrn())
-                        .setTitle(ResponseUrn.SUCCESS_URN.getMessage())
-                        .setDetail(detail);
-                promise.complete(restResponse);
-              }
-            })
-        .onFailure(
-            throwable -> {
-              LOG.debug("update query failed");
-              String detail = FAILURE_MESSAGE + ", update query failed";
-              throw new DxRuntimeException(
-                  HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
-            });
-    return promise.future();
-  }
-
-  /**
-   * Executes the respective queries
-   *
-   * @param query SQL Query to be executed
-   * @param tuple exchangeable(s) for the query
-   * @return JsonObject Result of the query execution is sent as Json Object in a Future
-   */
-  public Future<JsonObject> executeQuery(String query, Tuple tuple) {
-
-    Pool pool = postgresService.getPool();
-    Collector<Row, ?, List<JsonObject>> rowListCollector =
-        Collectors.mapping(row -> row.toJson(), Collectors.toList());
-    Promise<JsonObject> promise = Promise.promise();
-    pool.withConnection(
-            sqlConnection ->
-                sqlConnection
-                    .preparedQuery(query)
-                    .collecting(rowListCollector)
-                    .execute(tuple)
-                    .map(rows -> rows.value()))
-        .onSuccess(
-            successHandler -> {
-              JsonArray response = new JsonArray(successHandler);
-              JsonObject responseJson =
-                  new JsonObject()
-                      .put(TYPE, ResponseUrn.SUCCESS_URN.getUrn())
-                      .put(TITLE, ResponseUrn.SUCCESS_URN.getMessage())
-                      .put(RESULT, response);
-              promise.complete(responseJson);
-            })
-        .onFailure(
-            failureHandler -> {
-              LOG.error("Failure while executing the query : {}", failureHandler.getMessage());
-              String detail = "Failure while executing query";
-              throw new DxRuntimeException(
-                  HttpStatusCode.INTERNAL_SERVER_ERROR.getValue(),
-                  ResponseUrn.DB_ERROR_URN,
-                  detail);
-            });
-    return promise.future();
   }
 
   /**
@@ -124,13 +32,13 @@ public class DeletePolicy {
    * @param policyUuid list of policies of UUID
    * @return true if qualifies all the checks
    */
-  private Future<Boolean> verifyPolicy(User user, String query, UUID policyUuid) {
+  public Future<Boolean> verifyPolicy(User user, String query, UUID policyUuid) {
     LOG.debug("inside verifyPolicy");
     Promise<Boolean> promise = Promise.promise();
     String ownerId = user.getUserId();
     LOG.trace("What's the ownerId : " + ownerId);
-    Tuple tuple = Tuple.of(policyUuid);
-    Future<JsonObject> queryFuture = executeQuery(query, tuple);
+    JsonObject queryParam = new JsonObject().put(ID, policyUuid);
+    Future<JsonObject> queryFuture = postgresService.executePreparedQuery(query, queryParam);
     queryFuture
         .onSuccess(
             response -> {
@@ -181,21 +89,38 @@ public class DeletePolicy {
   }
 
   /**
-   * Acts as an entry point for count query and update query execution
+   * Executes delete policy by setting the status field in record to DELETED from ACTIVE and by
+   * checking if the policy is expired
    *
-   * @param policy to be deleted
-   * @return result of the execution as Json Object
+   * @param query SQL query to update the status of the policy
+   * @param policyId with type UUID
+   * @return The response of the query execution
    */
-  public Future<Response> initiateDeletePolicy(JsonObject policy, User user) {
-    UUID policyUuid = UUID.fromString(policy.getString("id"));
-    Future<Boolean> policyVerificationFuture =
-        verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
-    return policyVerificationFuture.compose(
-        isVerified -> {
-          if (isVerified) {
-            return executeUpdateQuery(Constants.DELETE_POLICY_QUERY, policyUuid);
-          }
-          return Future.failedFuture(policyVerificationFuture.cause().getMessage());
-        });
+  public Future<Void> executeDeletePolicy(String query, UUID policyId) {
+    LOG.debug("inside justDelete");
+    Promise<Void> promise = Promise.promise();
+    JsonObject queryParam = new JsonObject().put(ID, policyId);
+    postgresService
+        .executePreparedQuery(query, queryParam)
+        .onSuccess(
+            response -> {
+              /* policy has expired */
+              if (response.getJsonArray(RESULT).isEmpty()) {
+                String detail = FAILURE_MESSAGE + " , as policy is expired";
+                throw new DxRuntimeException(
+                    HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
+              } else {
+                LOG.info("update query succeeded");
+                promise.complete();
+              }
+            })
+        .onFailure(
+            throwable -> {
+              LOG.debug("update query failed");
+              String detail = FAILURE_MESSAGE + ", update query failed";
+              throw new DxRuntimeException(
+                  HttpStatusCode.BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
+            });
+    return promise.future();
   }
 }

@@ -11,26 +11,26 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Tuple;
+import iudx.apd.acl.server.database.postgres.service.PostgresService;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cdpg.dx.acl.policy.model.CreatePolicyRequest;
-import org.cdpg.dx.acl.policy.service.model.User;
 import org.cdpg.dx.acl.policy.util.ItemType;
 import org.cdpg.dx.acl.policy.util.Status;
 import org.cdpg.dx.catalogue.models.ResourceObj;
 import org.cdpg.dx.catalogue.service.CatalogueServiceImpl;
 import org.cdpg.dx.common.models.HttpStatusCode;
 import org.cdpg.dx.common.models.ResponseUrn;
-import org.cdpg.dx.database.postgres.service.PostgresqlService;
+import org.cdpg.dx.common.models.User;
 
 public class CreatePolicy {
   private static final Logger LOGGER = LogManager.getLogger(CreatePolicy.class);
-  private final PostgresqlService postgresqlService;
+  private final PostgresService postgresqlService;
   private final CatalogueServiceImpl catalogueServiceImpl;
 
-  public CreatePolicy(PostgresqlService postgresqlService, CatalogueServiceImpl catalogueServiceImpl) {
+  public CreatePolicy(PostgresService postgresqlService, CatalogueServiceImpl catalogueServiceImpl) {
     this.postgresqlService = postgresqlService;
     this.catalogueServiceImpl = catalogueServiceImpl;
   }
@@ -231,6 +231,7 @@ public class CreatePolicy {
       batch.add(Tuple.of(id, provider, resourceGroupId, itemType, resourceServerUrl));
     }
 
+    // TODO: how to execute batch operation? how to execute batch operations using RS like server related PostgresServiceImpl || new Postgres
     postgresqlService
         .getPool()
         .withConnection(
@@ -247,6 +248,8 @@ public class CreatePolicy {
                         dbSuccessHandler -> {
                           promise.complete(providerIdSet);
                         }));
+
+
     return promise.future();
   }
 

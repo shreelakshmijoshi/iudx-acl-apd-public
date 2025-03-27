@@ -1,20 +1,19 @@
 package iudx.apd.acl.server.apiserver;
 
-import io.vertx.core.http.*;
-import io.vertx.core.json.JsonArray;
-import io.vertx.serviceproxy.HelperUtils;
-import static iudx.apd.acl.server.common.response.ResponseUtil.generateResponse;
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 import static iudx.apd.acl.server.apiserver.util.Util.errorResponse;
 import static iudx.apd.acl.server.auditing.util.Constants.USERID;
 import static iudx.apd.acl.server.common.Constants.*;
 import static iudx.apd.acl.server.common.HttpStatusCode.BAD_REQUEST;
+import static iudx.apd.acl.server.common.response.ResponseUtil.generateResponse;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
+import io.vertx.core.http.*;
 import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
@@ -25,25 +24,26 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import io.vertx.ext.web.openapi.RouterBuilder;
+import io.vertx.serviceproxy.HelperUtils;
 import iudx.apd.acl.server.aaaService.AuthClient;
+import iudx.apd.acl.server.aclAuth.Authentication;
+import iudx.apd.acl.server.aclAuth.UserAccessHandler;
+import iudx.apd.acl.server.aclAuth.model.UserInfo;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.auditing.service.AuditingService;
-import iudx.apd.acl.server.authentication.service.AuthenticationService;
-import iudx.apd.acl.server.aclAuth.Authentication;
 import iudx.apd.acl.server.authentication.handler.authentication.AuthHandler;
 import iudx.apd.acl.server.authentication.handler.authentication.TokenIntrospectHandler;
 import iudx.apd.acl.server.authentication.handler.authorization.AuthorizationHandler;
-import iudx.apd.acl.server.aclAuth.UserAccessHandler;
+import iudx.apd.acl.server.authentication.service.AuthenticationService;
 import iudx.apd.acl.server.authentication.service.model.DxRole;
-import iudx.apd.acl.server.aclAuth.model.UserInfo;
 import iudx.apd.acl.server.common.Api;
+import iudx.apd.acl.server.common.FailureHandler;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
+import iudx.apd.acl.server.database.PostgresService;
 import iudx.apd.acl.server.notification.service.NotificationService;
 import iudx.apd.acl.server.policy.service.PolicyService;
-import iudx.apd.acl.server.database.PostgresService;
-import iudx.apd.acl.server.common.FailureHandler;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -399,9 +399,11 @@ public class ApiServerVerticle extends AbstractVerticle {
     JsonObject policy = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
 
+    String policyId = policy.getString("id");
     User user = RoutingContextHelper.getUser(routingContext);
+
     policyService
-        .deletePolicy(policy, user)
+        .deletePolicy(policyId, user)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {

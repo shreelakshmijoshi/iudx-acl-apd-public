@@ -1,12 +1,11 @@
-package org.cdpg.dx.acl.policy.service.model;
+package org.cdpg.dx.common.models;
 
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import java.util.Objects;
-import org.cdpg.dx.common.models.HttpStatusCode;
-import org.cdpg.dx.common.models.ResponseUrn;
+import org.cdpg.dx.acl.policy.service.model.ResponseConverter;
 
 @DataObject
 @JsonGen(publicConverter = false)
@@ -29,15 +28,6 @@ public class Response {
     ResponseConverter.fromJson(jsonObject, this);
   }
 
-  //    public PubSecKeyOptions(JsonObject json) {
-  //    PubSecKeyOptionsConverter.fromJson(json, this);
-  //  }
-  //
-  //  public JsonObject toJson() {
-  //    JsonObject json = new JsonObject();
-  //    PubSecKeyOptionsConverter.toJson(this, json);
-  //    return json;
-  //  }
   /**
    * Converts Data object or User class object to json object [Serialization]
    *
