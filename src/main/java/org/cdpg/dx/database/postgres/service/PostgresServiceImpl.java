@@ -47,4 +47,23 @@ public class PostgresServiceImpl implements PostgresService {
         return executeQuery(query.toSQL(), query.getQueryParams());
     }
 
+    @Override
+    public Future<QueryResult> insert(InsertQuery query) {
+        return executeQuery(query.toSQL(), query.getQueryParams());
+    }
+
+    @Override
+    public Future<QueryResult> update(UpdateQuery query) {
+        return executeQuery(query.toSQL(), query.getQueryParams());
+    }
+
+    @Override
+    public Future<QueryResult> delete(DeleteQuery query) {
+        return executeQuery(query.toSQL(), query.getQueryParams());
+    }
+
+    @Override
+    public Future<QueryResult> select(SelectQuery query) {
+        return executeQuery(query.toSQL(), query.getQueryParams());
+    }
 }

@@ -4,54 +4,40 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @DataObject(generateConverter = true)
 public class ConditionGroup implements ConditionComponent {
-    private List<ConditionComponent> conditions;
-    private LogicalOperator operator;
+    private final List<ConditionComponent> conditions;
+    private final LogicalOperator operator;
 
     public enum LogicalOperator {
         AND("AND"), OR("OR");
 
         private final String symbol;
-
-        LogicalOperator(String symbol) {
-            this.symbol = symbol;
-        }
-
-        public String getSymbol() {
-            return symbol;
-        }
+        LogicalOperator(String symbol) { this.symbol = symbol; }
+        public String getSymbol() { return symbol; }
     }
 
-    // Default constructor (Needed for deserialization)
-    public ConditionGroup() {}
-
-    // Constructor
     public ConditionGroup(List<ConditionComponent> conditions, LogicalOperator operator) {
-        this.conditions = conditions;
-        this.operator = operator;
+        this.conditions = Objects.requireNonNull(conditions, "Conditions cannot be null");
+        this.operator = Objects.requireNonNull(operator, "Operator cannot be null");
     }
 
-    // JSON Constructor
     public ConditionGroup(JsonObject json) {
-        ConditionGroupConverter.fromJson(json, this); // Use the generated converter
+        ConditionGroupConverter.fromJson(json, this);
+        this.conditions = json.getJsonArray("conditions").stream()
+                .map(obj -> (ConditionComponent) new Condition((JsonObject) obj))
+                .collect(Collectors.toList());
+        this.operator = LogicalOperator.valueOf(json.getString("operator"));
     }
 
-    // Convert to JSON
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
         ConditionGroupConverter.toJson(this, json);
         return json;
     }
-
-    // Getters & Setters
-    public List<ConditionComponent> getConditions() { return conditions; }
-    public void setConditions(List<ConditionComponent> conditions) { this.conditions = conditions; }
-
-    public LogicalOperator getOperator() { return operator; }
-    public void setOperator(LogicalOperator operator) { this.operator = operator; }
 
     @Override
     public String toSQL() {

@@ -4,13 +4,14 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @DataObject(generateConverter = true)
 public class Condition implements ConditionComponent {
-    private String column;
-    private Operator operator;
-    private List<Object> values;
+    private final String column;
+    private final Operator operator;
+    private final List<Object> values;
 
     public enum Operator {
         EQUALS("="), NOT_EQUALS("!="), GREATER(">"), LESS("<"), GREATER_EQUALS(">="), LESS_EQUALS("<="),
@@ -18,47 +19,28 @@ public class Condition implements ConditionComponent {
         IS_NULL("IS NULL"), IS_NOT_NULL("IS NOT NULL");
 
         private final String symbol;
-
-        Operator(String symbol) {
-            this.symbol = symbol;
-        }
-
-        public String getSymbol() {
-            return symbol;
-        }
+        Operator(String symbol) { this.symbol = symbol; }
+        public String getSymbol() { return symbol; }
     }
 
-    // Default constructor (Needed for deserialization)
-    public Condition() {}
-
-    // Constructor
     public Condition(String column, Operator operator, List<Object> values) {
-        this.column = column;
-        this.operator = operator;
-        this.values = values;
+        this.column = Objects.requireNonNull(column, "Column cannot be null");
+        this.operator = Objects.requireNonNull(operator, "Operator cannot be null");
+        this.values = values; // Can be null for IS NULL and IS NOT NULL cases
     }
 
-    // JSON Constructor
     public Condition(JsonObject json) {
-        ConditionConverter.fromJson(json, this); // Use the generated converter
+        ConditionConverter.fromJson(json, this);
+        this.column = json.getString("column");
+        this.operator = Operator.valueOf(json.getString("operator"));
+        this.values = json.containsKey("values") ? json.getJsonArray("values").getList() : null;
     }
 
-    // Convert to JSON
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
         ConditionConverter.toJson(this, json);
         return json;
     }
-
-    // Getters & Setters
-    public String getColumn() { return column; }
-    public void setColumn(String column) { this.column = column; }
-
-    public Operator getOperator() { return operator; }
-    public void setOperator(Operator operator) { this.operator = operator; }
-
-    public List<Object> getValues() { return values; }
-    public void setValues(List<Object> values) { this.values = values; }
 
     @Override
     public String toSQL() {
@@ -77,6 +59,6 @@ public class Condition implements ConditionComponent {
 
     @Override
     public List<Object> getQueryParams() {
-        return values;
+        return values == null ? List.of() : values;
     }
 }
