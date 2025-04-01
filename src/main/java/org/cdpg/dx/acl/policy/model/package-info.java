@@ -1,6 +1,6 @@
 @ModuleGen(
-    groupPackage = "org.cdpg.dx.acl.policy.service",
-    name = "org-cdpg-dx-acl-policy-service",
+    groupPackage = "org.cdpg.dx.acl.policy",
+    name = "org-cdpg-dx-acl-policy-model",
     useFutures = true)
 package org.cdpg.dx.acl.policy.model;
 

@@ -5,10 +5,10 @@ import static org.cdpg.dx.util.Constants.*;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.cdpg.dx.acl.policy.service.model.User;
 import org.cdpg.dx.common.models.JwtData;
 
 import java.util.Optional;
+import org.cdpg.dx.common.models.User;
 
 public final class RoutingContextHelper {
 

@@ -5,7 +5,6 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import java.util.Objects;
-import org.cdpg.dx.acl.policy.service.model.ResponseConverter;
 
 @DataObject
 @JsonGen(publicConverter = false)

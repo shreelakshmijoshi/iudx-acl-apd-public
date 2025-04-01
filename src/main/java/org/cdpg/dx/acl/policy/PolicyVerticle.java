@@ -12,7 +12,6 @@ import iudx.apd.acl.server.database.postgres.service.PostgresService;
 import org.cdpg.dx.acl.policy.service.*;
 import org.cdpg.dx.catalogue.client.CatalogueWebClient;
 import org.cdpg.dx.catalogue.service.CatalogueServiceImpl;
-import org.cdpg.dx.database.postgres.service.PostgresqlService;
 
 public class PolicyVerticle extends AbstractVerticle {
   private PostgresService postgresqlService;

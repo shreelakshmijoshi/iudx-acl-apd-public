@@ -11,6 +11,7 @@ import org.cdpg.dx.database.postgres.models.*;
 public interface PostgresService {
 
     Future<QueryResult> insert(InsertQuery query);
+//    Future<QueryResult> execute(Query query);
     Future<QueryResult> update(UpdateQuery query);
     Future<QueryResult> delete(DeleteQuery query);
     Future<QueryResult> select(SelectQuery query);
