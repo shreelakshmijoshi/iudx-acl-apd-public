@@ -1,83 +1,61 @@
 package org.cdpg.dx.acl.policy.model;
-
-import io.vertx.codegen.annotations.DataObject;
+import java.util.Optional;
+import java.util.UUID;
 import io.vertx.core.json.JsonObject;
-import java.util.Objects;
-import org.cdpg.dx.acl.policy.service.model.PolicyConverter;
+import org.cdpg.dx.acl.policy.util.Constants;
+import java.util.Map;
+import java.util.HashMap;
 
-@DataObject(generateConverter = true)
-public class Policy {
-    private final String policyId;
-    private final Role consumerEmailId;
-    private final String itemId;
-    private final String ownerId;
-    private final String policyStatus;
-    private final String expiryAt;
-    private final JsonObject constraints;
-
-    public Policy(JsonObject policyDetails) {
-      this.policyId = policyDetails.getString("_id");
-      this.consumerEmailId = Role.fromString(policyDetails.getString("user_emailid"));
-      this.itemId = policyDetails.getString("item_id");
-      this.ownerId = policyDetails.getString("owner_id");
-      this.policyStatus = policyDetails.getString("status");
-      this.expiryAt = policyDetails.getString("expiry_at");
-      this.constraints = policyDetails.getJsonObject("constraints");
-
-      /* Converts JsonObject to User class object or dataObject conversion [Deserialization] */
-      PolicyConverter.fromJson(policyDetails, this);
+public record Policy(
+        Optional<UUID> policyId,
+        String userEmailId,
+        UUID itemId,
+        UUID ownerId,
+        String status,
+        String expiryAt,
+        Optional<String> createdAt,
+        Optional<String> updatedAt,
+        JsonObject constraints
+) {
+    public static Policy fromJson(JsonObject policyDetails) {
+        return new Policy(
+                Optional.ofNullable(policyDetails.getString(Constants.POLICY_ID)).map(UUID::fromString),
+                policyDetails.getString(Constants.USER_EMAIL_ID),
+                UUID.fromString(policyDetails.getString(Constants.ITEM_ID)),
+                UUID.fromString(policyDetails.getString(Constants.OWNER_ID)),
+                policyDetails.getString(Constants.STATUS),
+                policyDetails.getString(Constants.EXPIRY_AT),
+                Optional.ofNullable(policyDetails.getString(Constants.CREATED_AT)),
+                Optional.ofNullable(policyDetails.getString(Constants.UPDATED_AT)),
+                policyDetails.getJsonObject(Constants.CONSTRAINTS, new JsonObject())
+        );
     }
 
-    /**
-     * Converts Data object or User class object to json object [Serialization]
-     *
-     * @return JsonObject
-     */
     public JsonObject toJson() {
-      JsonObject jsonObject = new JsonObject();
-      PolicyConverter.toJson(this, jsonObject);
-      return jsonObject;
+        return new JsonObject()
+                .put(Constants.POLICY_ID, policyId.map(UUID::toString).orElse(null))
+                .put(Constants.USER_EMAIL_ID, userEmailId)
+                .put(Constants.ITEM_ID, itemId.toString())
+                .put(Constants.OWNER_ID, ownerId.toString())
+                .put(Constants.STATUS, status)
+                .put(Constants.EXPIRY_AT, expiryAt)
+                .put(Constants.CREATED_AT, createdAt.orElse(null))
+                .put(Constants.UPDATED_AT, updatedAt.orElse(null))
+                .put(Constants.CONSTRAINTS, constraints);
     }
 
-  public String getPolicyId() {
-    return policyId;
-  }
+    public Map<String, Object> toNonEmptyFieldsMap() {
+        Map<String, Object> map = new HashMap<>();
+        policyId.ifPresent(id -> map.put(Constants.POLICY_ID, id.toString()));
+        if (userEmailId != null) map.put(Constants.USER_EMAIL_ID, userEmailId);
+        if (itemId != null) map.put(Constants.ITEM_ID, itemId.toString());
+        if (ownerId != null) map.put(Constants.OWNER_ID, ownerId.toString());
+        if (status != null) map.put(Constants.STATUS, status);
+        if (expiryAt != null) map.put(Constants.EXPIRY_AT, expiryAt);
+        createdAt.ifPresent(value -> map.put(Constants.CREATED_AT, value));
+        updatedAt.ifPresent(value -> map.put(Constants.UPDATED_AT, value));
+        if (constraints != null && !constraints.isEmpty()) map.put(Constants.CONSTRAINTS, constraints);
+        return map;
+    }
 
-  public Role getConsumerEmailId() {
-    return consumerEmailId;
-  }
-
-  public String getItemId() {
-    return itemId;
-  }
-
-  public String getOwnerId() {
-    return ownerId;
-  }
-
-  public String getPolicyStatus() {
-    return policyStatus;
-  }
-
-  public String getExpiryAt() {
-    return expiryAt;
-  }
-
-  public JsonObject getConstraints() {
-    return constraints;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof Policy policy)) return false;
-    return Objects.equals(policyId, policy.policyId) && consumerEmailId == policy.consumerEmailId &&
-        Objects.equals(itemId, policy.itemId) && Objects.equals(ownerId, policy.ownerId) &&
-        Objects.equals(policyStatus, policy.policyStatus) && Objects.equals(expiryAt, policy.expiryAt) &&
-        Objects.equals(constraints, policy.constraints);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(policyId, consumerEmailId, itemId, ownerId, policyStatus, expiryAt, constraints);
-  }
 }
