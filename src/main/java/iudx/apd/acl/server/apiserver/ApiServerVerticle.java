@@ -7,6 +7,7 @@ import static iudx.apd.acl.server.auditing.util.Constants.USERID;
 import static iudx.apd.acl.server.authentication.model.DxRole.*;
 import static iudx.apd.acl.server.common.Constants.*;
 import static iudx.apd.acl.server.common.HttpStatusCode.BAD_REQUEST;
+import static org.cdpg.dx.acl.policy.common.Constants.PG_SERVICE_ADDRESS;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -42,14 +43,17 @@ import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.common.RoutingContextHelper;
 import iudx.apd.acl.server.notification.NotificationService;
 import iudx.apd.acl.server.policy.PolicyService;
-import iudx.apd.acl.server.policy.PostgresService;
 import iudx.apd.acl.server.validation.FailureHandler;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cdpg.dx.acl.policy.repository.PolicyDAO;
+import org.cdpg.dx.acl.policy.repository.PolicyDAOImpl;
+import org.cdpg.dx.database.postgres.service.PostgresService;
 
 /**
  * The ACL-APD Server API Verticle.
@@ -78,6 +82,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private int port;
   private String dxApiBasePath;
   private PolicyService policyService;
+  private PolicyDAO policyDAO;
   private String detail;
   private NotificationService notificationService;
   private AuditingService auditingService;
@@ -109,19 +114,23 @@ public class ApiServerVerticle extends AbstractVerticle {
     webClient = WebClient.create(vertx, webClientOptions);
 
     /* Initialize service proxy */
+    pgService =  PostgresService.createProxy(vertx, PG_SERVICE_ADDRESS);
     policyService = PolicyService.createProxy(vertx, POLICY_SERVICE_ADDRESS);
+//    policyDAO = PolicyDAO.createProxy(vertx, POLICY_DAO_ADDRESS);
+
     notificationService = NotificationService.createProxy(vertx, NOTIFICATION_SERVICE_ADDRESS);
     auditingService = AuditingService.createProxy(vertx, AUDITING_SERVICE_ADDRESS);
     authenticator = AuthenticationService.createProxy(vertx, AUTH_SERVICE_ADDRESS);
     authClient = new AuthClient(config(), webClient);
-    pgService = new PostgresService(config(), vertx);
+//    pgService = new PostgresService(config(), vertx);
+    policyDAO = new PolicyDAOImpl(pgService);
     FailureHandler failureHandler = new FailureHandler();
     authHandler = new AuthHandler(authenticator);
     verifyAuthHandler = new VerifyAuthHandler(authenticator);
     validateAccessHandler = new ValidateAccessHandler();
     userInfo = new UserInfo();
 
-    userAccessHandler = new UserAccessHandler(authClient, userInfo, pgService);
+//    userAccessHandler = new UserAccessHandler(authClient, userInfo, pgService);
 
     /* Initialize Router builder */
     RouterBuilder.create(vertx, "docs/openapi.yaml")
@@ -147,9 +156,9 @@ public class ApiServerVerticle extends AbstractVerticle {
 
               routerBuilder
                   .operation(DELETE_POLICY_API)
-                  .handler(authHandler)
-                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
-                  .handler(userAccessHandler)
+//                  .handler(authHandler)
+//                  .handler(validateAccessHandler.setUserRolesForEndpoint(PROVIDER, DELEGATE))
+//                  .handler(userAccessHandler)
                   .handler(this::deletePoliciesHandler)
                   .failureHandler(failureHandler);
 
@@ -378,25 +387,27 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void deletePoliciesHandler(RoutingContext routingContext) {
     JsonObject policy = routingContext.body().asJsonObject();
     HttpServerResponse response = routingContext.response();
-
-    User user = RoutingContextHelper.getUser(routingContext);
-    policyService
-        .deletePolicy(policy, user)
+    String policyId = policy.getString("id");
+    LOGGER.info("inside handler : hereeeee");
+    LOGGER.info("what is policy Dao : {}", policyDAO);
+//    User user = RoutingContextHelper.getUser(routingContext);
+    policyDAO
+        .delete(policyId)
         .onComplete(
-            handler -> {
-              if (handler.succeeded()) {
-                LOGGER.info("Delete policy succeeded : {} ", handler.result().encode());
+            isDeleted -> {
+              if (isDeleted.succeeded()) {
+                LOGGER.info("Delete policy succeeded ");
                 JsonObject responseJson =
                     new JsonObject()
-                        .put(TYPE, handler.result().getString(TYPE))
-                        .put(TITLE, handler.result().getString(TITLE))
-                        .put(DETAIL, handler.result().getValue(DETAIL));
+                        .put(TYPE, ResponseUrn.SUCCESS_URN.getUrn())
+                        .put(TITLE, ResponseUrn.SUCCESS_URN.getMessage())
+                        .put(DETAIL, "Policy Deleted");
                 handleSuccessResponse(
-                    response, handler.result().getInteger(STATUS_CODE), responseJson.toString());
+                    response, HttpStatusCode.SUCCESS.getValue(), responseJson.toString());
                 Future.future(fu -> handleAuditLogs(routingContext));
               } else {
-                LOGGER.error("Delete policy failed : {} ", handler.cause().getMessage());
-                handleFailureResponse(routingContext, handler.cause().getMessage());
+                LOGGER.error("Delete policy failed : {} ", isDeleted.cause().getMessage());
+                handleFailureResponse(routingContext, isDeleted.cause().getMessage());
               }
             });
   }
