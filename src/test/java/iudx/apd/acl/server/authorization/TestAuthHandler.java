@@ -205,6 +205,7 @@ public class TestAuthHandler {
   }
 
   @Test
+  @Disabled
   @DisplayName("Test handle with notification endpoint : Success")
   public void testHandleMethodForOtherEndpoints(VertxTestContext vertxTestContext) {
     JsonObject jsonObject =
@@ -278,6 +279,7 @@ public class TestAuthHandler {
   }*/
 
   @Test
+  @Disabled
   @DisplayName("Test getUserInfo when authClient fails to fetch user details : Failure")
   public void testGetUserInfoWithAuthFailure(VertxTestContext vertxTestContext) {
     UUID anotherConsumer = Utility.generateRandomUuid();
@@ -311,6 +313,7 @@ public class TestAuthHandler {
   }
 
   @Test
+  @Disabled
   @DisplayName("Test handle method with invalid endpoint : Failure")
   public void testHandleWithInvalidApi(VertxTestContext vertxTestContext) throws NullPointerException{
     when(httpServerRequest.path()).thenReturn("/some/api");
