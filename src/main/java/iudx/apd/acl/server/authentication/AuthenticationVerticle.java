@@ -1,7 +1,6 @@
 package iudx.apd.acl.server.authentication;
 
-import static iudx.apd.acl.server.authentication.Constants.AUTH_CERTIFICATE_PATH;
-import static iudx.apd.acl.server.authentication.Constants.JWT_LEEWAY_TIME;
+import static iudx.apd.acl.server.authentication.util.Constants.*;
 import static iudx.apd.acl.server.common.Constants.AUTH_SERVICE_ADDRESS;
 
 import io.vertx.core.AbstractVerticle;
@@ -10,13 +9,13 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.serviceproxy.ServiceBinder;
-import iudx.apd.acl.server.common.Api;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,7 @@ import org.apache.logging.log4j.Logger;
  * <h1>Authentication Verticle</h1>
  *
  * <p>The Authentication Verticle implementation in the IUDX ACL-APD Server exposes the {@link
- * iudx.apd.acl.server.authenticator.AuthenticationService} over the Vert.x Event Bus.
+ * iudx.apd.acl.server.authentication.AuthenticationService} over the Vert.x Event Bus.
  *
  * @version 1.0
  * @since 2020-05-31
@@ -38,7 +37,6 @@ public class AuthenticationVerticle extends AbstractVerticle {
   private ServiceBinder binder;
   private MessageConsumer<JsonObject> consumer;
   private WebClient webClient;
-  private String dxApiBasePath;
 
   static WebClient createWebClient(Vertx vertx, JsonObject config) {
     return createWebClient(vertx, config, false);
@@ -65,13 +63,14 @@ public class AuthenticationVerticle extends AbstractVerticle {
 
     getJwtPublicKey(vertx, config())
         .onSuccess(
-            cert -> {
+            handler -> {
+              List<JsonObject> jwks = new ArrayList<>();
+              jwks.add(handler);
               binder = new ServiceBinder(vertx);
 
               JWTAuthOptions jwtAuthOptions = new JWTAuthOptions();
               jwtAuthOptions.getJWTOptions().setLeeway(JWT_LEEWAY_TIME);
-              jwtAuthOptions.addPubSecKey(
-                  new PubSecKeyOptions().setAlgorithm("ES256").setBuffer(cert));
+              jwtAuthOptions.setJwks(jwks);
               /*
                * Default jwtIgnoreExpiry is false. If set through config, then that value is taken
                */
@@ -84,12 +83,9 @@ public class AuthenticationVerticle extends AbstractVerticle {
                     "JWT ignore expiration set to true, "
                         + "do not set IgnoreExpiration in production!!");
               }
-
-              dxApiBasePath = config().getString("dxApiBasePath");
-              Api apis = Api.getInstance(dxApiBasePath);
+              jwtAuthOptions.getJWTOptions().setIssuer(config().getString("issuer"));
               JWTAuth jwtAuth = JWTAuth.create(vertx, jwtAuthOptions);
-
-              jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth, config(), apis);
+              jwtAuthenticationService = new JwtAuthenticationServiceImpl(jwtAuth);
 
               /* Publish the Authentication service with the Event Bus against an address. */
               consumer =
@@ -109,19 +105,21 @@ public class AuthenticationVerticle extends AbstractVerticle {
     binder.unregister(consumer);
   }
 
-  private Future<String> getJwtPublicKey(Vertx vertx, JsonObject config) {
-    Promise<String> promise = Promise.promise();
+  private Future<JsonObject> getJwtPublicKey(Vertx vertx, JsonObject config) {
+    Promise<JsonObject> promise = Promise.promise();
     webClient = createWebClient(vertx, config);
-    String authCert = config.getString("dxAuthBasePath") + AUTH_CERTIFICATE_PATH;
+    String authCert = config.getString("dxAuthBasePath") + AUTH_JWKS_PATH;
     webClient
         .get(443, config.getString("authHost"), authCert)
         .send(
             handler -> {
               if (handler.succeeded()) {
                 JsonObject json = handler.result().bodyAsJsonObject();
-                promise.complete(json.getString("cert"));
+                JsonObject keySet = json.getJsonArray("keys").getJsonObject(0);
+                promise.complete(keySet);
               } else {
-                promise.fail("fail to get JWT public key");
+                LOGGER.error("failed to get jwks : {}", handler.cause().getMessage());
+                promise.fail(handler.cause().getMessage());
               }
             });
     return promise.future();

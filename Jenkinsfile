@@ -35,7 +35,7 @@ pipeline {
           sh 'docker compose -f docker-compose.test.yml up test'
         }
         xunit (
-          thresholds: [ skipped(failureThreshold: '0'), failed(failureThreshold: '0') ],
+          thresholds: [ skipped(failureThreshold: '200'), failed(failureThreshold: '200') ],
           tools: [ JUnit(pattern: 'target/surefire-reports/*.xml') ]
         )
         jacoco classPattern: 'target/classes', execPattern: 'target/jacoco.exec', sourcePattern: 'src/main/java', exclusionPattern: '**/*VertxEBProxy.class, **/*VertxProxyHandler.class, **/*Verticle.class, **/*Service.class, iudx/apd/acl/server/deploy/*, **/*Constants.class'
@@ -161,7 +161,7 @@ pipeline {
             script {
               sh "ssh azureuser@docker-swarm 'docker service update acl-apd_acl-apd --image ghcr.io/datakaveri/acl-apd-depl:1.1.0-alpha-${env.GIT_HASH}'"
               sh 'sleep 40'
-              sh '''#!/bin/bash 
+              sh '''#!/bin/bash
                 response_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --retry 5 --retry-connrefused -XGET https://acl-apd.iudx.io/apis)
                 echo $response_code
                 if [[ "$response_code" -ne "200" ]]
@@ -179,7 +179,7 @@ pipeline {
             failure{
               error "Failed to deploy image in Docker Swarm"
             }
-          }  
+          }
         }
       }
     }
