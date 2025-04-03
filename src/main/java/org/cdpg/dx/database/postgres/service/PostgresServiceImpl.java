@@ -41,9 +41,6 @@ public class PostgresServiceImpl implements PostgresService {
     }
 
     private Future<QueryResult> executeQuery(String sql, List<Object> params) {
-        System.out.println("What is the query params hereeeeeee : " + Tuple.from(params));
-        System.out.println("What is the SQL hereeeeeee : " + sql);
-
         return client.preparedQuery(sql).execute(Tuple.from(params))
             .map(this::convertToQueryResult);
     }
@@ -65,9 +62,6 @@ public class PostgresServiceImpl implements PostgresService {
 
     @Override
     public Future<QueryResult> delete(DeleteQuery query) {
-        System.out.println("Delete from Postgres Service Impl >>>>>>>>>>>>>>>>>>>>>>>>> : " + query.toJson());
-    //        return Future.succeededFuture(null);
-    System.out.println("SQL QUERY IS : " + query.toSQL());
         return executeQuery(query.toSQL(), query.getQueryParams());
     }
 

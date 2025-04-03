@@ -23,7 +23,6 @@ public class AAAServiceImpl implements AAAService {
 
   @Override
   public Future<User> fetchUserInfo(UserInfo userInfo) {
-    System.out.println(userInfo.getClass().getName());
     String userId = userInfo.userId().toString();
     String role = userInfo.role().name();
     String resourceServer = userInfo.audience();

@@ -108,8 +108,6 @@ public class PolicyDAOImpl implements PolicyDAO {
 
     @Override
     public Future<Boolean> delete(String id) {
-      System.out.println("\n\nheree : >>>>>>>>>>>>>>>>>>>>>>>>>>\n\n");
-    //      return Future.succeededFuture(true);
 
     //         Create Condition for WHERE clause
 //        Condition condition = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS, List.of(id));
@@ -118,7 +116,6 @@ public class PolicyDAOImpl implements PolicyDAO {
         condition1.setValues(List.of(id));
         condition1.setOperator(Condition.Operator.EQUALS);
 
-    System.out.println("How is condition initialised : " + condition1);
 
         // Build the UpdateQuery
 //        DeleteQuery query = new DeleteQuery(Constants.POLICY_TABLE, component, null, null);
@@ -128,7 +125,6 @@ public class PolicyDAOImpl implements PolicyDAO {
         query.setLimit(null);
         query.setTable(Constants.POLICY_TABLE);
     query.setOrderBy(new ArrayList<>());
-    System.out.println("Query inside the delete method in Policy DAO : " + query.toJson().encode());
 
     return postgresService
         .delete(query)
