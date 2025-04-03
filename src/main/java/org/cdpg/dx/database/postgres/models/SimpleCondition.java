@@ -44,14 +44,12 @@ public class SimpleCondition implements ConditionComponent{
   }
   @Override
   public String toSQL() {
-    System.out.println("hereee : toSQL inside Simple Condition : "+ condition);
     return condition; // Example: "id = ?"
   }
 
 
   @Override
   public List<Object> getQueryParams() {
-    System.out.println("hereee : toSQL inside Simple Condition getQueryParams : "+ queryParams);
     return queryParams;
   }
 

@@ -23,14 +23,8 @@ public class DeleteQuery implements Query {
     public DeleteQuery(){}
     // Constructor (OrderBy & Limit are optional)
     public DeleteQuery(String table, Condition condition, List<OrderBy> orderBy, Integer limit) {
-        System.out.println("Inside Delete Query Constructor >>>>>>>>");
         this.table = Objects.requireNonNull(table, "Table name cannot be null");
-
         this.condition = condition;
-        if(condition != null){
-            System.out.println("What is condition component : " + condition);
-        }
-        System.out.println("What is this.condition  : " + this.condition);
         this.orderBy = orderBy != null ? List.copyOf(orderBy) : List.of();
         this.limit = limit; // Can be null (optional)
     }
@@ -88,9 +82,6 @@ public class DeleteQuery implements Query {
 
     public String getTable() { return table; }
     public Condition getCondition() {
-    System.out.println("condition inside getCondition method : " + condition);
-
-//        return condition;
         return condition;
     }
     public List<OrderBy> getOrderBy() { return orderBy; }
@@ -98,8 +89,6 @@ public class DeleteQuery implements Query {
 
     @Override
     public String toSQL() {
-        System.out.println("Delete Query's toSQL is called >>>>");
-    System.out.println("what is condition : "+ getCondition());
         StringBuilder query = new StringBuilder("DELETE FROM " + table + " WHERE " + getCondition().toSQL());
 
         if (!orderBy.isEmpty()) {
@@ -121,7 +110,6 @@ public class DeleteQuery implements Query {
 
     @Override
     public List<Object> getQueryParams() {
-    System.out.println("getQueryParams inside DeleteQuery is being called");
         return condition.getQueryParams();
     }
 }
