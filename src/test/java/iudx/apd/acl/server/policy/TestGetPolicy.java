@@ -89,7 +89,7 @@ public class TestGetPolicy {
 
                 assertEquals(utility.getPolicyId().toString(), actualResult.getString("policyId"));
                 assertEquals(utility.getConstraints(), actualResult.getJsonObject("constraints"));
-                  assertEquals("rs.iudx.io", actualResult.getString("resourceServerUrl"));
+                assertEquals("rs.iudx.io", actualResult.getString("resourceServerUrl"));
 
                 assertEquals(
                     utility.getConsumerId().toString(),
@@ -159,7 +159,7 @@ public class TestGetPolicy {
                 assertEquals(500, result.getInteger(TYPE));
                 assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "PolicyDTO could not be fetched, Failure while executing query",
+                    "Policy could not be fetched, Failure while executing query",
                     result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
@@ -189,7 +189,7 @@ public class TestGetPolicy {
                 JsonObject result = new JsonObject(handler.cause().getMessage());
                 assertEquals(404, result.getInteger(TYPE));
                 assertTrue(result.containsKey(TITLE));
-                assertEquals("PolicyDTO not found", result.getString(DETAIL));
+                assertEquals("Policy not found", result.getString(DETAIL));
                 vertxTestContext.completeNow();
               } else {
                 vertxTestContext.failNow(handler.cause().getMessage());
@@ -210,7 +210,7 @@ public class TestGetPolicy {
                     handler.result().getJsonObject(RESULT).getJsonArray(RESULT).getJsonObject(0);
                 assertEquals(utility.getPolicyId().toString(), actualResult.getString("policyId"));
                 assertEquals(utility.getConstraints(), actualResult.getJsonObject("constraints"));
-                  assertEquals("rs.iudx.io", actualResult.getString("resourceServerUrl"));
+                assertEquals("rs.iudx.io", actualResult.getString("resourceServerUrl"));
 
                 assertEquals(
                     utility.getConsumerId().toString(),
@@ -276,7 +276,7 @@ public class TestGetPolicy {
                 JsonObject result = new JsonObject(handler.cause().getMessage());
                 assertEquals(404, result.getInteger(TYPE));
                 assertTrue(result.containsKey(TITLE));
-                assertEquals("PolicyDTO not found", result.getString(DETAIL));
+                assertEquals("Policy not found", result.getString(DETAIL));
                 vertxTestContext.completeNow();
               } else {
                 vertxTestContext.failNow(handler.cause().getMessage());
@@ -309,7 +309,7 @@ public class TestGetPolicy {
                 assertEquals(500, result.getInteger(TYPE));
                 assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "PolicyDTO could not be fetched, Failure while executing query",
+                    "Policy could not be fetched, Failure while executing query",
                     result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }

@@ -6,9 +6,7 @@ import static iudx.apd.acl.server.common.HttpStatusCode.FORBIDDEN;
 import static iudx.apd.acl.server.policy.util.Constants.DELETE_POLICY_QUERY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
-import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
@@ -80,9 +78,8 @@ public class TestDeletePolicy {
             handler -> {
               if (handler.succeeded()) {
                 assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getType());
-                assertEquals(
-                    ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getTitle());
-                assertEquals("PolicyDTO deleted successfully", handler.result().getDetail());
+                assertEquals(ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getTitle());
+                assertEquals("Policy deleted successfully", handler.result().getDetail());
                 vertxTestContext.completeNow();
 
               } else {
@@ -106,7 +103,7 @@ public class TestDeletePolicy {
                 assertEquals(HttpStatusCode.NOT_FOUND.getValue(), result.getInteger(TYPE));
                 assertEquals(ResponseUrn.RESOURCE_NOT_FOUND_URN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "PolicyDTO could not be deleted, as it doesn't exist", result.getString(DETAIL));
+                    "Policy could not be deleted, as it doesn't exist", result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
             });
@@ -137,7 +134,7 @@ public class TestDeletePolicy {
                 assertEquals(FORBIDDEN.getValue(), result.getInteger(TYPE));
                 assertEquals(FORBIDDEN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "PolicyDTO could not be deleted, as policy doesn't belong to the user",
+                    "Policy could not be deleted, as policy doesn't belong to the user",
                     result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
@@ -166,19 +163,20 @@ public class TestDeletePolicy {
   @Test
   @DisplayName("Test executeQuery method with invalid tuple")
   public void testExecuteQueryWithInvalidTuple(VertxTestContext vertxTestContext) {
-    deletePolicy.executeQuery(
-        DELETE_POLICY_QUERY,
-        Tuple.tuple()).onComplete(handler -> {
-          if (handler.succeeded()) {
-            vertxTestContext.failNow("Succeeded for invalid tuple");
-          } else {
-            JsonObject result = new JsonObject(handler.cause().getMessage());
-            assertEquals(500, result.getInteger(TYPE));
-            assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
-            assertEquals("Failure while executing query", result.getString(DETAIL));
-            vertxTestContext.completeNow();
-          }
-        });
+    deletePolicy
+        .executeQuery(DELETE_POLICY_QUERY, Tuple.tuple())
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                vertxTestContext.failNow("Succeeded for invalid tuple");
+              } else {
+                JsonObject result = new JsonObject(handler.cause().getMessage());
+                assertEquals(500, result.getInteger(TYPE));
+                assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
+                assertEquals("Failure while executing query", result.getString(DETAIL));
+                vertxTestContext.completeNow();
+              }
+            });
   }
 
   @Test
@@ -219,7 +217,7 @@ public class TestDeletePolicy {
                 assertEquals(400, result.getInteger(TYPE));
                 assertEquals(ResponseUrn.BAD_REQUEST_URN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "PolicyDTO could not be deleted, as policy is not ACTIVE",
+                    "Policy could not be deleted, as policy is not ACTIVE",
                     result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
@@ -261,7 +259,7 @@ public class TestDeletePolicy {
                   assertEquals(400, result.getInteger(TYPE));
                   assertEquals(ResponseUrn.BAD_REQUEST_URN.getUrn(), result.getString(TITLE));
                   assertEquals(
-                      "PolicyDTO could not be deleted , as policy is expired", result.getString(DETAIL));
+                      "Policy could not be deleted , as policy is expired", result.getString(DETAIL));
                   vertxTestContext.completeNow();
                 }
               });
@@ -273,9 +271,7 @@ public class TestDeletePolicy {
   public void testExecuteQueryWithNullTuple(VertxTestContext vertxTestContext) {
     assertThrows(
         NullPointerException.class,
-        () ->
-            deletePolicy.executeQuery(
-                DELETE_POLICY_QUERY, Tuple.of(null, null)));
+        () -> deletePolicy.executeQuery(DELETE_POLICY_QUERY, Tuple.of(null, null)));
     vertxTestContext.completeNow();
   }
 
@@ -284,19 +280,20 @@ public class TestDeletePolicy {
   public void testExecuteQueryWithInvalidQuery(VertxTestContext vertxTestContext) {
     String query =
         "UPDATE abcd SET status='DELETED' WHERE _id = ANY ('{shjdfgsfhguergugr}'::uuid[])";
-    deletePolicy.executeQuery(
-        query,
-        Tuple.tuple()).onComplete(handler ->{
-          if (handler.succeeded()) {
-            vertxTestContext.failNow("Succeeded for non-existent relation or table");
-          } else {
-            JsonObject result = new JsonObject(handler.cause().getMessage());
-            assertEquals(500, result.getInteger(TYPE));
-            assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
-            assertEquals("Failure while executing query", result.getString(DETAIL));
-            vertxTestContext.completeNow();
-          }
-        });
+    deletePolicy
+        .executeQuery(query, Tuple.tuple())
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                vertxTestContext.failNow("Succeeded for non-existent relation or table");
+              } else {
+                JsonObject result = new JsonObject(handler.cause().getMessage());
+                assertEquals(500, result.getInteger(TYPE));
+                assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
+                assertEquals("Failure while executing query", result.getString(DETAIL));
+                vertxTestContext.completeNow();
+              }
+            });
   }
 
   @Test

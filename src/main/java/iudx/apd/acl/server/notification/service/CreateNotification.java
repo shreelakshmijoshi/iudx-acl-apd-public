@@ -1,6 +1,5 @@
 package iudx.apd.acl.server.notification.service;
 
-import io.vertx.sqlclient.Pool;
 import static iudx.apd.acl.server.apiserver.util.Constants.DETAIL;
 import static iudx.apd.acl.server.apiserver.util.Constants.RESULT;
 import static iudx.apd.acl.server.apiserver.util.Constants.STATUS_CODE;
@@ -18,16 +17,17 @@ import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 import iudx.apd.acl.server.aaaService.AuthClient;
+import iudx.apd.acl.server.aclAuth.model.UserInfo;
 import iudx.apd.acl.server.apiserver.util.ResourceObj;
 import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.authentication.service.model.DxRole;
-import iudx.apd.acl.server.aclAuth.model.UserInfo;
+import iudx.apd.acl.server.catalogueService.CatalogueClient;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.catalogueService.CatalogueClient;
 import iudx.apd.acl.server.database.PostgresService;
 import iudx.apd.acl.server.policy.util.ItemType;
 import java.util.*;
@@ -42,12 +42,12 @@ public class CreateNotification {
   private final PostgresService postgresService;
   private final CatalogueClient catalogueClient;
   private final EmailNotification emailNotification;
+  private final AuthClient authClient;
   private UUID resourceId;
   private UUID resourceGroupId;
   private ItemType resourceType;
   private User provider;
   private String resourceServerUrl;
-  private final AuthClient authClient;
   private String consumerRsUrl;
   private JsonObject additionalInfo = new JsonObject();
 
@@ -122,11 +122,11 @@ public class CreateNotification {
     Future<Boolean> validNotificationExistsFuture =
         validPolicyExistsFuture.compose(
             isValidPolicyExisting -> {
-              /* PolicyDTO with ACTIVE status already present */
+              /* Policy with ACTIVE status already present */
               if (isValidPolicyExisting) {
                 return Future.failedFuture(validPolicyExistsFuture.cause().getMessage());
               }
-              /* PolicyDTO doesn't exist, or is DELETED, or was expired */
+              /* Policy doesn't exist, or is DELETED, or was expired */
               return checkIfValidNotificationExists(GET_VALID_NOTIFICATION, resourceId, user);
             });
 
@@ -211,7 +211,7 @@ public class CreateNotification {
             if (isPolicyAbsent) {
               promise.complete(false);
             } else
-            /* An active policy for the consumer is present */ {
+              /* An active policy for the consumer is present */ {
               JsonObject failureMessage =
                   new JsonObject()
                       .put(TYPE, HttpStatusCode.CONFLICT.getValue())
@@ -418,13 +418,13 @@ public class CreateNotification {
               } else {
                 if (handler.cause().getMessage().equalsIgnoreCase("Item is not found")
                     || handler
-                        .cause()
-                        .getMessage()
-                        .equalsIgnoreCase("Id/Ids does not present in CAT")
+                    .cause()
+                    .getMessage()
+                    .equalsIgnoreCase("Id/Ids does not present in CAT")
                     || handler
-                        .cause()
-                        .getMessage()
-                        .equalsIgnoreCase("Item id given is not present")) {
+                    .cause()
+                    .getMessage()
+                    .equalsIgnoreCase("Item id given is not present")) {
                   /*id not present in the catalogue*/
                   JsonObject failureMessage =
                       new JsonObject()

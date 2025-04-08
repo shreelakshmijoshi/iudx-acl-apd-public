@@ -16,17 +16,16 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.*;
+import io.vertx.sqlclient.Pool;
 import iudx.apd.acl.server.Utility;
 import iudx.apd.acl.server.aaaService.AuthClient;
-import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.aclAuth.model.UserInfo;
+import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.notification.service.UpdateNotification;
 import iudx.apd.acl.server.database.PostgresService;
-
+import iudx.apd.acl.server.notification.service.UpdateNotification;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -85,7 +84,6 @@ public class TestUpdateNotifications {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-
 
                 userInfo = new UserInfo();
                 updateNotification = new UpdateNotification(pgService);
@@ -744,8 +742,6 @@ public class TestUpdateNotifications {
             });
   }
 
-
-
   @Test
   @DisplayName(
       "Test initiateTransaction method when there is a failure while creating policy: Failure")
@@ -971,10 +967,10 @@ public class TestUpdateNotifications {
                                                                     .succeeded()) {
                                                                   JsonArray
                                                                       approvedAccessRequestResponse =
-                                                                      approvedAccessRequestHandler
-                                                                          .result()
-                                                                          .getJsonArray(
-                                                                              "response");
+                                                                          approvedAccessRequestHandler
+                                                                              .result()
+                                                                              .getJsonArray(
+                                                                                  "response");
                                                                   assertTrue(
                                                                       approvedAccessRequestResponse
                                                                           .isEmpty());
@@ -991,7 +987,7 @@ public class TestUpdateNotifications {
                                                               });
                                                     } else {
                                                       vertxTestContext.failNow(
-                                                          "PolicyDTO is created and transaction is not rolled back");
+                                                          "Policy is created and transaction is not rolled back");
                                                     }
                                                   });
                                         } else {

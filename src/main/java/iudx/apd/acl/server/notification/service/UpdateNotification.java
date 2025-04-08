@@ -168,7 +168,7 @@ public class UpdateNotification {
                             UUID policyId =
                                 UUID.fromString(policyCreatedSuccessfully.get(0).getString("_id"));
                             setPolicyId(policyId);
-                            LOG.info("PolicyDTO created successfully with ID : {}", policyId);
+                            LOG.info("Policy created successfully with ID : {}", policyId);
                             UUID notificationId =
                                 UUID.fromString(notification.getString("requestId"));
 

@@ -14,7 +14,6 @@ import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.common.DxRuntimeException;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.common.response.RestResponse;
 import iudx.apd.acl.server.database.PostgresService;
 import iudx.apd.acl.server.policy.util.Constants;
 import java.util.List;
@@ -27,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class DeletePolicy {
   private static final Logger LOG = LoggerFactory.getLogger(DeletePolicy.class);
-  private static final String FAILURE_MESSAGE = "PolicyDTO could not be deleted";
+  private static final String FAILURE_MESSAGE = "Policy could not be deleted";
   private final PostgresService postgresService;
 
   public DeletePolicy(PostgresService postgresService) {
@@ -56,7 +55,7 @@ public class DeletePolicy {
                     BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
               } else {
                 LOG.info("update query succeeded");
-                String detail = "PolicyDTO deleted successfully";
+                String detail = "Policy deleted successfully";
                 Response restResponse =
                     new Response()
                         .setStatusCode(SUCCESS.getValue())
@@ -184,11 +183,11 @@ public class DeletePolicy {
   /**
    * Acts as an entry point for count query and update query execution
    *
-   * @param policyId to be deleted
+   * @param policy to be deleted
    * @return result of the execution as Json Object
    */
-  public Future<Response> initiateDeletePolicy(String policyId, User user) {
-    UUID policyUuid = UUID.fromString(policyId);
+  public Future<Response> initiateDeletePolicy(JsonObject policy, User user) {
+    UUID policyUuid = UUID.fromString(policy.getString("id"));
     Future<Boolean> policyVerificationFuture =
         verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
     return policyVerificationFuture.compose(
