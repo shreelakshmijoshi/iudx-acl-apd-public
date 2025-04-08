@@ -28,10 +28,10 @@ public enum ResponseUrn {
       "urn:dx:acl:invalidPayloadFormat", "Invalid json format in post request [schema mismatch]"),
   BAD_REQUEST_URN("urn:dx:acl:badRequest", "bad request parameter"),
   INVALID_HEADER_VALUE_URN("urn:dx:acl:invalidHeaderValue", "Invalid header value"),
-  POLICY_ALREADY_EXIST_URN("urn:dx:acl:conflict", "PolicyDTO already exist"),
+  POLICY_ALREADY_EXIST_URN("urn:dx:acl:conflict", "Policy already exist"),
   INTERNAL_SERVER_ERROR("urn:dx:acl:internalServerError", "Internal Server Error"),
 
-  VERIFY_FORBIDDEN_URN("urn:apd:Deny", "PolicyDTO does not exist"),
+  VERIFY_FORBIDDEN_URN("urn:apd:Deny", "Policy does not exist"),
   FORBIDDEN_URN("urn:dx:acl:forbidden", "Resource is forbidden to access"),
   NOT_YET_IMPLEMENTED_URN("urn:dx:acl:general", "urn not yet implemented in backend verticle."),
   BACKING_SERVICE_FORMAT_URN(

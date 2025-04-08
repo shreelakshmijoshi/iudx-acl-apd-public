@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class DeletePolicy {
   private static final Logger LOG = LoggerFactory.getLogger(DeletePolicy.class);
-  private static final String FAILURE_MESSAGE = "PolicyDTO could not be deleted";
+  private static final String FAILURE_MESSAGE = "Policy could not be deleted";
   private final PostgresService postgresService;
 
   public DeletePolicy(PostgresService postgresService) {
