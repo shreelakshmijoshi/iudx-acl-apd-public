@@ -266,11 +266,11 @@ public class ApiServerVerticle extends AbstractVerticle {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-                LOGGER.info("Policy verified successfully ");
+                LOGGER.info("PolicyDTO verified successfully ");
                 handleSuccessResponse(
                     response, HttpStatusCode.SUCCESS.getValue(), handler.result().toString());
               } else {
-                LOGGER.error("Policy could not be verified {}", handler.cause().getMessage());
+                LOGGER.error("PolicyDTO could not be verified {}", handler.cause().getMessage());
                 handleFailureResponse(routingContext, handler.cause().getMessage());
               }
             });
@@ -384,12 +384,12 @@ public class ApiServerVerticle extends AbstractVerticle {
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
-                LOGGER.info("Policy created successfully ");
+                LOGGER.info("PolicyDTO created successfully ");
                 handleSuccessResponse(
                     response, HttpStatusCode.SUCCESS.getValue(), handler.result().toString());
                 Future.future(fu -> handleAuditLogs(routingContext));
               } else {
-                LOGGER.error("Policy could not be created");
+                LOGGER.error("PolicyDTO could not be created");
                 handleFailureResponse(routingContext, handler.cause().getMessage());
               }
             });

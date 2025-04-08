@@ -54,7 +54,7 @@ public class CreatePolicy {
       if (itemType.contains(ItemType.RESOURCE_GROUP)) {
         LOGGER.debug("Contains resource group");
         return Future.failedFuture(
-            generateErrorResponse(BAD_REQUEST, "Policy creation for resource group is restricted"));
+            generateErrorResponse(BAD_REQUEST, "PolicyDTO creation for resource group is restricted"));
       }
 
       Future<Set<UUID>> checkIfItemPresent = checkForItemsInDb(itemIdList, itemType, user);
@@ -79,12 +79,12 @@ public class CreatePolicy {
                     .compose(
                         createPolicySuccessHandler -> {
                           JsonArray responseArray = createResponseArray(createPolicySuccessHandler);
-                          LOGGER.debug("Policy is created with info {}", responseArray);
+                          LOGGER.debug("PolicyDTO is created with info {}", responseArray);
                           JsonObject responseJson =
                               new JsonObject()
                                   .put("type", ResponseUrn.SUCCESS_URN.getUrn())
                                   .put("title", ResponseUrn.SUCCESS_URN.getMessage())
-                                  .put(DETAIL, "Policy created successfully");
+                                  .put(DETAIL, "PolicyDTO created successfully");
                           return Future.succeededFuture(responseJson);
                         });
               });
@@ -93,7 +93,7 @@ public class CreatePolicy {
           .onSuccess(promise::complete)
           .onFailure(
               f -> {
-                LOGGER.info("Policy could not be created {}", f.getLocalizedMessage());
+                LOGGER.info("PolicyDTO could not be created {}", f.getLocalizedMessage());
                 promise.fail(f);
               });
     } catch (IllegalArgumentException e) {
@@ -289,11 +289,11 @@ public class CreatePolicy {
                                  rowSet = rowSet.next()) {
                               rowSet.forEach(row -> responseArray.add(row.getUUID("_id")));
                             }
-                            LOGGER.error("Policy already Exist.");
+                            LOGGER.error("PolicyDTO already Exist.");
                             promise.fail(
                                 generateErrorResponse(
                                     CONFLICT,
-                                    "Policy already exist for some of the request objects "
+                                    "PolicyDTO already exist for some of the request objects "
                                         + responseArray));
                           } else {
                             promise.complete(false);

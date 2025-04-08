@@ -64,7 +64,7 @@ public class PolicyServiceImpl implements PolicyService {
         });
    return deleteFuture.compose(map -> {
       LOG.info("update query succeeded");
-      String detail = "Policy deleted successfully";
+      String detail = "PolicyDTO deleted successfully";
       Response restResponse =
           new Response()
               .setType(ResponseUrn.SUCCESS_URN.getUrn())

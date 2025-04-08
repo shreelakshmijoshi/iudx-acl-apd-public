@@ -991,7 +991,7 @@ public class TestUpdateNotifications {
                                                               });
                                                     } else {
                                                       vertxTestContext.failNow(
-                                                          "Policy is created and transaction is not rolled back");
+                                                          "PolicyDTO is created and transaction is not rolled back");
                                                     }
                                                   });
                                         } else {

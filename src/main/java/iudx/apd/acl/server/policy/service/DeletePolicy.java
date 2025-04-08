@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class DeletePolicy {
   private static final Logger LOG = LoggerFactory.getLogger(DeletePolicy.class);
-  private static final String FAILURE_MESSAGE = "Policy could not be deleted";
+  private static final String FAILURE_MESSAGE = "PolicyDTO could not be deleted";
   private final PostgresService postgresService;
 
   public DeletePolicy(PostgresService postgresService) {
@@ -56,7 +56,7 @@ public class DeletePolicy {
                     BAD_REQUEST.getValue(), ResponseUrn.BAD_REQUEST_URN, detail);
               } else {
                 LOG.info("update query succeeded");
-                String detail = "Policy deleted successfully";
+                String detail = "PolicyDTO deleted successfully";
                 Response restResponse =
                     new Response()
                         .setStatusCode(SUCCESS.getValue())

@@ -1,7 +1,7 @@
 package org.cdpg.dx.acl.policy.repository;
 
 import io.vertx.core.Future;
-import org.cdpg.dx.acl.policy.model.Policy;
+import org.cdpg.dx.acl.policy.model.PolicyDTO;
 import org.cdpg.dx.acl.policy.model.PolicyUpdateDTO;
 import org.cdpg.dx.acl.policy.util.Constants;
 import org.cdpg.dx.database.postgres.models.*;
@@ -19,8 +19,8 @@ public class PolicyDAOImpl implements PolicyDAO {
     }
 
     @Override
-    public Future<Policy> create(Policy policy) {
-        Map<String, Object> policyMap = policy.toNonEmptyFieldsMap();
+    public Future<PolicyDTO> create(PolicyDTO policyDTO) {
+        Map<String, Object> policyMap = policyDTO.toNonEmptyFieldsMap();
 
         List<String> columns = policyMap.keySet().stream().toList();
         List<Object> values = policyMap.values().stream().toList();
@@ -32,10 +32,10 @@ public class PolicyDAOImpl implements PolicyDAO {
                     if (result.getRows().isEmpty()) {
                         return Future.failedFuture("Insert query returned no rows.");
                     }
-                    return Future.succeededFuture(Policy.fromJson(result.getRows().getJsonObject(0)));
+                    return Future.succeededFuture(PolicyDTO.fromJson(result.getRows().getJsonObject(0)));
                 })
                 .recover(err -> {
-                    System.err.println("Error inserting policy: " + err.getMessage());
+                    System.err.println("Error inserting policyDTO: " + err.getMessage());
                     return Future.failedFuture(err);
                 });
     }
@@ -71,7 +71,7 @@ public class PolicyDAOImpl implements PolicyDAO {
                 });
     }
     @Override
-    public Future<Policy> getById(UUID id) {
+    public Future<PolicyDTO> getById(UUID id) {
 
         List<String> columns = Constants.ALL_POLICY_FIELDS;;
         // Create Condition for WHERE clause
@@ -85,7 +85,7 @@ public class PolicyDAOImpl implements PolicyDAO {
                     if (result.getRows().isEmpty()) {
                         return Future.failedFuture("select query returned no rows.");
                     }
-                    return Future.succeededFuture(Policy.fromJson(result.getRows().getJsonObject(0)));
+                    return Future.succeededFuture(PolicyDTO.fromJson(result.getRows().getJsonObject(0)));
                 })
                 .recover(err -> {
                     System.err.println("Error inserting policy: " + err.getMessage());

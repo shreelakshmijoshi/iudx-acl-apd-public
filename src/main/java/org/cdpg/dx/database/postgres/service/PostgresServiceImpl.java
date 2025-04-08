@@ -42,10 +42,10 @@ public class PostgresServiceImpl implements PostgresService {
             .map(this::convertToQueryResult);
     }
 
-    @Override
-    public Future<QueryResult> execute(Query query) {
-        return executeQuery(query.toSQL(), query.getQueryParams());
-    }
+//    @Override
+//    public Future<QueryResult> execute(Query query) {
+//        return executeQuery(query.toSQL(), query.getQueryParams());
+//    }
 
     @Override
     public Future<QueryResult> insert(InsertQuery query) {

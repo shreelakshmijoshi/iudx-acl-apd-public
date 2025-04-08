@@ -35,12 +35,13 @@ public class FetchPolicyModel {
     this.provider = other.getProvider();
 
   }
+  //Deserialization
   public FetchPolicyModel(JsonObject jsonObject){
     FetchPolicyModelConverter.fromJson(jsonObject, this);
   }
 
   /**
-   * Converts Data object or User class object to json object [Serialization]
+   * Converts Data object or Fetch Policy class object to json object [Serialization]
    *
    * @return JsonObject
    */

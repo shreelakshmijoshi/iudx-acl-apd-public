@@ -107,7 +107,7 @@ public class TestCreatePolicy {
                 assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getString(TYPE));
                 assertEquals(
                     ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getString(TITLE));
-                assertEquals("Policy created successfully", handler.result().getString(DETAIL));
+                assertEquals("PolicyDTO created successfully", handler.result().getString(DETAIL));
                 vertxTestContext.completeNow();
 
               } else {
@@ -192,7 +192,7 @@ public class TestCreatePolicy {
                 assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getString(TYPE));
                 assertEquals(
                     ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getString(TITLE));
-                assertEquals("Policy created successfully", handler.result().getString(DETAIL));
+                assertEquals("PolicyDTO created successfully", handler.result().getString(DETAIL));
                 vertxTestContext.completeNow();
 
               } else {
@@ -288,7 +288,7 @@ public class TestCreatePolicy {
                 assertEquals(BAD_REQUEST.getValue(), result.getInteger(TYPE));
                 assertEquals(BAD_REQUEST.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "Policy creation for resource group is restricted", result.getString("detail"));
+                    "PolicyDTO creation for resource group is restricted", result.getString("detail"));
                 vertxTestContext.completeNow();
               }
             });

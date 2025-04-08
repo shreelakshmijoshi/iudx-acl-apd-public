@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <b>CONSUMER</b> : A User for whom policy is made <br>
- * <b>PROVIDER</b> : Policy is created by the user who provides the resource, also known as owner
+ * <b>PROVIDER</b> : PolicyDTO is created by the user who provides the resource, also known as owner
  * <br>
  * <b>PROVIDER DELEGATE</b> : A user who acts on behalf of provider, having certain privileges of
  * Provider <br>
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GetPolicy {
   private static final Logger LOG = LoggerFactory.getLogger(GetPolicy.class);
-  private static final String FAILURE_MESSAGE = "Policy could not be fetched";
+  private static final String FAILURE_MESSAGE = "PolicyDTO could not be fetched";
   private final PostgresService postgresService;
 
   public GetPolicy(PostgresService postgresService) {
@@ -70,7 +70,7 @@ public class GetPolicy {
    *
    * @param provider Object of User type
    * @param query Query to be executed
-   * @return Policy details
+   * @return PolicyDTO details
    */
   public Future<JsonObject> getProviderPolicy(User provider, String query) {
     Promise<JsonObject> promise = Promise.promise();
@@ -110,7 +110,7 @@ public class GetPolicy {
    *
    * @param consumer Object of User type
    * @param query Query to be executed
-   * @return Policy details
+   * @return PolicyDTO details
    */
   public Future<JsonObject> getConsumerPolicy(User consumer, String query) {
     Promise<JsonObject> promise = Promise.promise();
@@ -186,7 +186,7 @@ public class GetPolicy {
                       new JsonObject()
                           .put(TYPE, HttpStatusCode.NOT_FOUND.getValue())
                           .put(TITLE, ResponseUrn.RESOURCE_NOT_FOUND_URN.getUrn())
-                          .put(DETAIL, "Policy not found");
+                          .put(DETAIL, "PolicyDTO not found");
                   LOG.error("No policy found!");
                   promise.fail(response.encode());
                 }

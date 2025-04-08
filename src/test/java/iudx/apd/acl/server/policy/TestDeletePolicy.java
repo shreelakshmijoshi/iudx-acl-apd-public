@@ -82,7 +82,7 @@ public class TestDeletePolicy {
                 assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getType());
                 assertEquals(
                     ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getTitle());
-                assertEquals("Policy deleted successfully", handler.result().getDetail());
+                assertEquals("PolicyDTO deleted successfully", handler.result().getDetail());
                 vertxTestContext.completeNow();
 
               } else {
@@ -106,7 +106,7 @@ public class TestDeletePolicy {
                 assertEquals(HttpStatusCode.NOT_FOUND.getValue(), result.getInteger(TYPE));
                 assertEquals(ResponseUrn.RESOURCE_NOT_FOUND_URN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "Policy could not be deleted, as it doesn't exist", result.getString(DETAIL));
+                    "PolicyDTO could not be deleted, as it doesn't exist", result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
             });
@@ -137,7 +137,7 @@ public class TestDeletePolicy {
                 assertEquals(FORBIDDEN.getValue(), result.getInteger(TYPE));
                 assertEquals(FORBIDDEN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "Policy could not be deleted, as policy doesn't belong to the user",
+                    "PolicyDTO could not be deleted, as policy doesn't belong to the user",
                     result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
@@ -219,7 +219,7 @@ public class TestDeletePolicy {
                 assertEquals(400, result.getInteger(TYPE));
                 assertEquals(ResponseUrn.BAD_REQUEST_URN.getUrn(), result.getString(TITLE));
                 assertEquals(
-                    "Policy could not be deleted, as policy is not ACTIVE",
+                    "PolicyDTO could not be deleted, as policy is not ACTIVE",
                     result.getString(DETAIL));
                 vertxTestContext.completeNow();
               }
@@ -261,7 +261,7 @@ public class TestDeletePolicy {
                   assertEquals(400, result.getInteger(TYPE));
                   assertEquals(ResponseUrn.BAD_REQUEST_URN.getUrn(), result.getString(TITLE));
                   assertEquals(
-                      "Policy could not be deleted , as policy is expired", result.getString(DETAIL));
+                      "PolicyDTO could not be deleted , as policy is expired", result.getString(DETAIL));
                   vertxTestContext.completeNow();
                 }
               });

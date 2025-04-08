@@ -122,11 +122,11 @@ public class CreateNotification {
     Future<Boolean> validNotificationExistsFuture =
         validPolicyExistsFuture.compose(
             isValidPolicyExisting -> {
-              /* Policy with ACTIVE status already present */
+              /* PolicyDTO with ACTIVE status already present */
               if (isValidPolicyExisting) {
                 return Future.failedFuture(validPolicyExistsFuture.cause().getMessage());
               }
-              /* Policy doesn't exist, or is DELETED, or was expired */
+              /* PolicyDTO doesn't exist, or is DELETED, or was expired */
               return checkIfValidNotificationExists(GET_VALID_NOTIFICATION, resourceId, user);
             });
 

@@ -41,14 +41,14 @@ public class AuthorizationHandler implements Handler<RoutingContext> {
      * @param allowedRoles Allowed roles for the API
      */
     private void authorizeUser(RoutingContext context, Set<DxRole> allowedRoles) {
-        Optional<JwtData> jwtDataOpt = RoutingContextHelper.getJwtData(context);
+        JwtData jwtData = RoutingContextHelper.getJwtData(context);
 
-        if (jwtDataOpt.isEmpty()) {
-            logAndFail(context, "JWT data missing in request context", "JWT data not found");
-            return;
-        }
+//        if (jwtDataOpt.isEmpty()) {
+//            logAndFail(context, "JWT data missing in request context", "JWT data not found");
+//            return;
+//        }
 
-        JwtData jwtData = jwtDataOpt.get();
+//        JwtData jwtData = jwtDataOpt.get();
         Optional<DxRole> userRoleOpt = DxRole.fromString(jwtData.role());
 
         if (userRoleOpt.isEmpty()) {
