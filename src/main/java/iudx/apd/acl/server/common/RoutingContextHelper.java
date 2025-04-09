@@ -50,7 +50,7 @@ public class RoutingContextHelper {
       token = tokenWithoutBearer[1].replaceAll("\\s", "");
       return token;
     }
-    return routingContext.request().headers().get(HEADER_TOKEN);
+    return token;
   }
 
   public static JsonObject getVerifyAuthInfo(RoutingContext routingContext) {
