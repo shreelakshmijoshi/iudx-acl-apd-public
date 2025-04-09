@@ -106,113 +106,113 @@ public class CreatePolicy {
       Set<UUID> itemIdList, Set<ItemType> itemTypeRequest, User user) {
     Promise<Set<UUID>> promise = Promise.promise();
 
-    postgresqlService
-        .getPool()
-        .withConnection(
-            sqlConnection ->
-                sqlConnection
-                    .preparedQuery(ENTITY_TABLE_CHECK)
-                    .execute(Tuple.of(itemIdList.toArray(UUID[]::new)))
-                    .onFailure(
-                        existingIdFailureHandler -> {
-                          LOGGER.error(
-                              "checkForItemsInDb db fail {}",
-                              existingIdFailureHandler.getLocalizedMessage());
-                          promise.fail(
-                              generateErrorResponse(
-                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
-                        })
-                    .onSuccess(
-                        existingIdSuccessHandler -> {
-                          Set<UUID> providerIdSet = new HashSet<>();
-                          Set<UUID> existingItemIds = new HashSet<>();
-                          Set<ItemType> itemTypeDb = new HashSet<>();
-                          Set<String> rsServerUrlSetDb = new HashSet<>();
-                          if (existingIdSuccessHandler.size() > 0) {
-                            for (Row row : existingIdSuccessHandler) {
-                              providerIdSet.add(row.getUUID("provider_id"));
-                              existingItemIds.add(row.getUUID("_id"));
-                              itemTypeDb.add(ItemType.valueOf(row.getString("item_type")));
-                              rsServerUrlSetDb.add(row.getString("resource_server_url"));
-                            }
-                            itemIdList.removeAll(existingItemIds);
-                          }
-                          if (!itemIdList.isEmpty()) {
-                            Future<List<ResourceObj>> resourceObjList =
-                                catalogueServiceImpl.fetchItems(itemIdList);
-                            Future<Set<UUID>> providerIdsFromCat =
-                                resourceObjList
-                                    .compose(
-                                        success -> {
-                                          Set<ItemType> itemTypeCat =
-                                              success.stream()
-                                                  .map(ResourceObj::getItemType)
-                                                  .collect(Collectors.toSet());
-                                          Set<String> rsServerUrlCat =
-                                              success.stream()
-                                                  .map(ResourceObj::resourceServerUrl)
-                                                  .collect(Collectors.toSet());
-                                          if (!itemTypeRequest.containsAll(itemTypeCat)) {
-                                            return Future.failedFuture("Invalid item type.");
-                                          } else if (!rsServerUrlCat.contains(
-                                              user.getResourceServerUrl())) {
-                                            return Future.failedFuture(generateErrorResponse(
-                                                FORBIDDEN,
-                                                "Access Denied: You do not have ownership rights for this resource."));
-                                          } else {
-                                            return insertItemsIntoDb(success);
-                                          }
-                                        })
-                                    .onFailure(
-                                        failureHandler -> {
-                                          String failureMessage = failureHandler.getMessage();
-                                          if (failureMessage.contains(TYPE)
-                                              && failureMessage.contains(TITLE)) {
-                                            promise.fail(failureHandler.getMessage());
-                                          } else {
-                                            promise.fail(
-                                                generateErrorResponse(BAD_REQUEST, failureMessage));
-                                          }
-                                        });
-                            providerIdsFromCat
-                                .onSuccess(
-                                    insertItemsSuccessHandler -> {
-                                      providerIdSet.addAll(insertItemsSuccessHandler);
-                                      promise.complete(providerIdSet);
-                                    })
-                                .onFailure(
-                                    insertItemsFailureHandler -> {
-                                      LOGGER.error(
-                                          "insertItemInDbFail "
-                                              + insertItemsFailureHandler.getLocalizedMessage());
-
-                                      promise.tryFail(
-                                          insertItemsFailureHandler
-                                              .getLocalizedMessage()
-                                              .equalsIgnoreCase(
-                                                  "Access Denied: You do not have "
-                                                      + "ownership rights for this resource.")
-                                              ? generateErrorResponse(
-                                              FORBIDDEN,
-                                              insertItemsFailureHandler.getLocalizedMessage())
-                                              : generateErrorResponse(
-                                              BAD_REQUEST,
-                                              insertItemsFailureHandler.getLocalizedMessage()));
-                                    });
-                          } else {
-                            if (!itemTypeDb.containsAll(itemTypeRequest)) {
-                              promise.fail(
-                                  generateErrorResponse(BAD_REQUEST, "Invalid item type."));
-                            } else if (!rsServerUrlSetDb.contains(user.getResourceServerUrl())) {
-                              promise.fail(
-                                  generateErrorResponse(
-                                      FORBIDDEN,
-                                      "Access Denied: You do not have ownership rights for this resource."));
-                            } else {
-                              promise.complete(providerIdSet);
-                            }
-                          }
-                        }));
+//    postgresqlService
+//        .getPool()
+//        .withConnection(
+//            sqlConnection ->
+//                sqlConnection
+//                    .preparedQuery(ENTITY_TABLE_CHECK)
+//                    .execute(Tuple.of(itemIdList.toArray(UUID[]::new)))
+//                    .onFailure(
+//                        existingIdFailureHandler -> {
+//                          LOGGER.error(
+//                              "checkForItemsInDb db fail {}",
+//                              existingIdFailureHandler.getLocalizedMessage());
+//                          promise.fail(
+//                              generateErrorResponse(
+//                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
+//                        })
+//                    .onSuccess(
+//                        existingIdSuccessHandler -> {
+//                          Set<UUID> providerIdSet = new HashSet<>();
+//                          Set<UUID> existingItemIds = new HashSet<>();
+//                          Set<ItemType> itemTypeDb = new HashSet<>();
+//                          Set<String> rsServerUrlSetDb = new HashSet<>();
+//                          if (existingIdSuccessHandler.size() > 0) {
+//                            for (Row row : existingIdSuccessHandler) {
+//                              providerIdSet.add(row.getUUID("provider_id"));
+//                              existingItemIds.add(row.getUUID("_id"));
+//                              itemTypeDb.add(ItemType.valueOf(row.getString("item_type")));
+//                              rsServerUrlSetDb.add(row.getString("resource_server_url"));
+//                            }
+//                            itemIdList.removeAll(existingItemIds);
+//                          }
+//                          if (!itemIdList.isEmpty()) {
+//                            Future<List<ResourceObj>> resourceObjList =
+//                                catalogueServiceImpl.fetchItems(itemIdList);
+//                            Future<Set<UUID>> providerIdsFromCat =
+//                                resourceObjList
+//                                    .compose(
+//                                        success -> {
+//                                          Set<ItemType> itemTypeCat =
+//                                              success.stream()
+//                                                  .map(ResourceObj::getItemType)
+//                                                  .collect(Collectors.toSet());
+//                                          Set<String> rsServerUrlCat =
+//                                              success.stream()
+//                                                  .map(ResourceObj::resourceServerUrl)
+//                                                  .collect(Collectors.toSet());
+//                                          if (!itemTypeRequest.containsAll(itemTypeCat)) {
+//                                            return Future.failedFuture("Invalid item type.");
+//                                          } else if (!rsServerUrlCat.contains(
+//                                              user.getResourceServerUrl())) {
+//                                            return Future.failedFuture(generateErrorResponse(
+//                                                FORBIDDEN,
+//                                                "Access Denied: You do not have ownership rights for this resource."));
+//                                          } else {
+//                                            return insertItemsIntoDb(success);
+//                                          }
+//                                        })
+//                                    .onFailure(
+//                                        failureHandler -> {
+//                                          String failureMessage = failureHandler.getMessage();
+//                                          if (failureMessage.contains(TYPE)
+//                                              && failureMessage.contains(TITLE)) {
+//                                            promise.fail(failureHandler.getMessage());
+//                                          } else {
+//                                            promise.fail(
+//                                                generateErrorResponse(BAD_REQUEST, failureMessage));
+//                                          }
+//                                        });
+//                            providerIdsFromCat
+//                                .onSuccess(
+//                                    insertItemsSuccessHandler -> {
+//                                      providerIdSet.addAll(insertItemsSuccessHandler);
+//                                      promise.complete(providerIdSet);
+//                                    })
+//                                .onFailure(
+//                                    insertItemsFailureHandler -> {
+//                                      LOGGER.error(
+//                                          "insertItemInDbFail "
+//                                              + insertItemsFailureHandler.getLocalizedMessage());
+//
+//                                      promise.tryFail(
+//                                          insertItemsFailureHandler
+//                                              .getLocalizedMessage()
+//                                              .equalsIgnoreCase(
+//                                                  "Access Denied: You do not have "
+//                                                      + "ownership rights for this resource.")
+//                                              ? generateErrorResponse(
+//                                              FORBIDDEN,
+//                                              insertItemsFailureHandler.getLocalizedMessage())
+//                                              : generateErrorResponse(
+//                                              BAD_REQUEST,
+//                                              insertItemsFailureHandler.getLocalizedMessage()));
+//                                    });
+//                          } else {
+//                            if (!itemTypeDb.containsAll(itemTypeRequest)) {
+//                              promise.fail(
+//                                  generateErrorResponse(BAD_REQUEST, "Invalid item type."));
+//                            } else if (!rsServerUrlSetDb.contains(user.getResourceServerUrl())) {
+//                              promise.fail(
+//                                  generateErrorResponse(
+//                                      FORBIDDEN,
+//                                      "Access Denied: You do not have ownership rights for this resource."));
+//                            } else {
+//                              promise.complete(providerIdSet);
+//                            }
+//                          }
+//                        }));
     return promise.future();
   }
 
@@ -232,22 +232,22 @@ public class CreatePolicy {
     }
 
     // TODO: how to execute batch operation? how to execute batch operations using RS like server related PostgresServiceImpl || new Postgres
-    postgresqlService
-        .getPool()
-        .withConnection(
-            sqlConnection ->
-                sqlConnection
-                    .preparedQuery(INSERT_ENTITY_TABLE)
-                    .executeBatch(batch)
-                    .onFailure(
-                        dbHandler -> {
-                          LOGGER.error(
-                              "insertItemsIntoDb db fail " + dbHandler.getLocalizedMessage());
-                        })
-                    .onSuccess(
-                        dbSuccessHandler -> {
-                          promise.complete(providerIdSet);
-                        }));
+//    postgresqlService
+//        .getPool()
+//        .withConnection(
+//            sqlConnection ->
+//                sqlConnection
+//                    .preparedQuery(INSERT_ENTITY_TABLE)
+//                    .executeBatch(batch)
+//                    .onFailure(
+//                        dbHandler -> {
+//                          LOGGER.error(
+//                              "insertItemsIntoDb db fail " + dbHandler.getLocalizedMessage());
+//                        })
+//                    .onSuccess(
+//                        dbSuccessHandler -> {
+//                          promise.complete(providerIdSet);
+//                        }));
 
 
     return promise.future();
@@ -266,39 +266,39 @@ public class CreatePolicy {
                         createPolicyRequest.getUserEmail()))
             .collect(Collectors.toList());
     Promise<Boolean> promise = Promise.promise();
-    postgresqlService
-        .getPool()
-        .withTransaction(
-            conn ->
-                conn.preparedQuery(CHECK_EXISTING_POLICY)
-                    .executeBatch(selectTuples)
-                    .onFailure(
-                        failureHandler -> {
-                          LOGGER.error(
-                              "isPolicyForIdExist fail :: " + failureHandler.getLocalizedMessage());
-                          promise.fail(
-                              generateErrorResponse(
-                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
-                        })
-                    .onSuccess(
-                        policyExists -> {
-                          if (policyExists.size() > 0) {
-                            List<UUID> responseArray = new ArrayList<>();
-                            for (RowSet<Row> rowSet = policyExists;
-                                 rowSet != null;
-                                 rowSet = rowSet.next()) {
-                              rowSet.forEach(row -> responseArray.add(row.getUUID("_id")));
-                            }
-                            LOGGER.error("Policy already Exist.");
-                            promise.fail(
-                                generateErrorResponse(
-                                    CONFLICT,
-                                    "Policy already exist for some of the request objects "
-                                        + responseArray));
-                          } else {
-                            promise.complete(false);
-                          }
-                        }));
+//    postgresqlService
+//        .getPool()
+//        .withTransaction(
+//            conn ->
+//                conn.preparedQuery(CHECK_EXISTING_POLICY)
+//                    .executeBatch(selectTuples)
+//                    .onFailure(
+//                        failureHandler -> {
+//                          LOGGER.error(
+//                              "isPolicyForIdExist fail :: " + failureHandler.getLocalizedMessage());
+//                          promise.fail(
+//                              generateErrorResponse(
+//                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
+//                        })
+//                    .onSuccess(
+//                        policyExists -> {
+//                          if (policyExists.size() > 0) {
+//                            List<UUID> responseArray = new ArrayList<>();
+//                            for (RowSet<Row> rowSet = policyExists;
+//                                 rowSet != null;
+//                                 rowSet = rowSet.next()) {
+//                              rowSet.forEach(row -> responseArray.add(row.getUUID("_id")));
+//                            }
+//                            LOGGER.error("Policy already Exist.");
+//                            promise.fail(
+//                                generateErrorResponse(
+//                                    CONFLICT,
+//                                    "Policy already exist for some of the request objects "
+//                                        + responseArray));
+//                          } else {
+//                            promise.complete(false);
+//                          }
+//                        }));
 
     return promise.future();
   }
@@ -316,25 +316,25 @@ public class CreatePolicy {
                         createPolicyRequest.getExpiryTime(),
                         createPolicyRequest.getConstraints()))
             .collect(Collectors.toList());
-
-    postgresqlService
-        .getPool()
-        .withTransaction(
-            conn -> {
-              // Execute the batch query to create policies
-              return conn.preparedQuery(CREATE_POLICY_QUERY)
-                  .executeBatch(createPolicyTuple)
-                  .onFailure(
-                      failureHandler -> {
-                        LOGGER.error(
-                            "createPolicy fail :: " + failureHandler.getLocalizedMessage());
-                        // Fail the promise with an error response
-                        promise.fail(
-                            generateErrorResponse(
-                                INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
-                      })
-                  .onSuccess(promise::complete);
-            });
+//
+//    postgresqlService
+//        .getPool()
+//        .withTransaction(
+//            conn -> {
+//              // Execute the batch query to create policies
+//              return conn.preparedQuery(CREATE_POLICY_QUERY)
+//                  .executeBatch(createPolicyTuple)
+//                  .onFailure(
+//                      failureHandler -> {
+//                        LOGGER.error(
+//                            "createPolicy fail :: " + failureHandler.getLocalizedMessage());
+//                        // Fail the promise with an error response
+//                        promise.fail(
+//                            generateErrorResponse(
+//                                INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
+//                      })
+//                  .onSuccess(promise::complete);
+//            });
 
     return promise.future();
   }

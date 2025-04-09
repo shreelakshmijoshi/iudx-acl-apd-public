@@ -100,35 +100,35 @@ public class VerifyPolicy {
       UUID itemId, UUID ownerId, String userEmailId) {
     Tuple selectTuples = Tuple.of(itemId, ownerId, Status.ACTIVE, userEmailId);
     Promise<JsonObject> promise = Promise.promise();
-    postgresqlService
-        .getPool()
-        .withConnection(
-            conn ->
-                conn.preparedQuery(CHECK_EXISTING_POLICY)
-                    .execute(selectTuples)
-                    .onFailure(
-                        failureHandler -> {
-                          LOGGER.error(
-                              "isPolicyForIdExist fail :: " + failureHandler.getLocalizedMessage());
-                          promise.fail(
-                              generateErrorResponse(
-                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
-                        })
-                    .onSuccess(
-                        policyExists -> {
-                          if (policyExists.size() > 0) {
-                            JsonObject policyConstraints = new JsonObject();
-                            for (Row row : policyExists) {
-                              policyConstraints.put(
-                                  "constraints", row.getJsonObject("constraints"));
-                              policyConstraints.put("id", row.getValue("_id"));
-                            }
-                            promise.complete(policyConstraints);
-                          } else {
-                            LOGGER.trace("No policy found");
-                            promise.complete(new JsonObject());
-                          }
-                        }));
+//    postgresqlService
+//        .getPool()
+//        .withConnection(
+//            conn ->
+//                conn.preparedQuery(CHECK_EXISTING_POLICY)
+//                    .execute(selectTuples)
+//                    .onFailure(
+//                        failureHandler -> {
+//                          LOGGER.error(
+//                              "isPolicyForIdExist fail :: " + failureHandler.getLocalizedMessage());
+//                          promise.fail(
+//                              generateErrorResponse(
+//                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
+//                        })
+//                    .onSuccess(
+//                        policyExists -> {
+//                          if (policyExists.size() > 0) {
+//                            JsonObject policyConstraints = new JsonObject();
+//                            for (Row row : policyExists) {
+//                              policyConstraints.put(
+//                                  "constraints", row.getJsonObject("constraints"));
+//                              policyConstraints.put("id", row.getValue("_id"));
+//                            }
+//                            promise.complete(policyConstraints);
+//                          } else {
+//                            LOGGER.trace("No policy found");
+//                            promise.complete(new JsonObject());
+//                          }
+//                        }));
 
     return promise.future();
   }

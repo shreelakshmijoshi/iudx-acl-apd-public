@@ -183,11 +183,11 @@ public class DeletePolicy {
   /**
    * Acts as an entry point for count query and update query execution
    *
-   * @param policy to be deleted
+   * @param policyId to be deleted
    * @return result of the execution as Json Object
    */
-  public Future<Response> initiateDeletePolicy(JsonObject policy, User user) {
-    UUID policyUuid = UUID.fromString(policy.getString("id"));
+  public Future<Response> initiateDeletePolicy(String policyId, User user) {
+    UUID policyUuid = UUID.fromString(policyId);
     Future<Boolean> policyVerificationFuture =
         verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
     return policyVerificationFuture.compose(
