@@ -3,12 +3,12 @@ package org.cdpg.dx.database.postgres;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import iudx.apd.acl.server.policy.TestCreatePolicy;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.cdpg.dx.database.postgres.models.DeleteQuery;
-import org.cdpg.dx.database.postgres.models.InsertQuery;
-import org.cdpg.dx.database.postgres.models.SelectQuery;
-import org.cdpg.dx.database.postgres.models.UpdateQuery;
+import org.cdpg.dx.acl.policy.util.Constants;
+import org.cdpg.dx.database.postgres.models.*;
 import org.cdpg.dx.database.postgres.service.PostgresService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +33,12 @@ public class TestPostgresServiceImpl {
   DeleteQuery deleteQuery;
   @Mock
   SelectQuery selectQuery;
+  Util util;
   @Container
   PostgreSQLContainer container = new PostgreSQLContainer<>("postgres:12.11");
   @BeforeEach
   public void setUp(VertxTestContext vertxTestContext){
-    Util util = new Util();
+    util = new Util();
     postgresService = util.setUp(container);
     vertxTestContext.completeNow();
   }
@@ -51,6 +52,18 @@ public class TestPostgresServiceImpl {
   @Test
   @DisplayName("Test delete method")
   public void testDelete(VertxTestContext vertxTestContext){
+    Condition condition1 = new Condition();
+    condition1.setColumn(Constants.POLICY_ID);
+
+    String id = String.valueOf(util.getPolicyId());
+    condition1.setValues(List.of(id));
+    condition1.setOperator(Condition.Operator.EQUALS);
+    DeleteQuery query = new DeleteQuery();
+    query.setCondition(condition1);
+    query.setLimit(null);
+    query.setTable(Constants.POLICY_TABLE);
+    query.setOrderBy(new ArrayList<>());
+
     postgresService.delete(deleteQuery);
     vertxTestContext.completeNow();
   }

@@ -1,7 +1,7 @@
 package org.cdpg.dx.database.postgres.service;
 
 import io.vertx.core.Future;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Tuple;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Row;
@@ -11,13 +11,11 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class PostgresServiceImpl implements PostgresService {
-    private final PgPool client;
+    private final Pool client;
 
-    public PostgresServiceImpl(PgPool client) {
+    public PostgresServiceImpl(Pool client) {
         this.client = client;
     }
 
