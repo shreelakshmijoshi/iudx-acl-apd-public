@@ -12,12 +12,10 @@ public class InsertQuery implements Query {
 
     // Default constructor (Needed for deserialization)
     public InsertQuery() {}
-
-    // Constructor
-    public InsertQuery(String table, List<String> columns, List<Object> values) {
-        this.table = table;
-        this.columns = columns;
-        this.values = values;
+    public InsertQuery(InsertQuery other){
+        this.table = other.getTable();
+        this.columns = other.getColumns();
+        this.values = other.getValues();
     }
 
     // JSON Constructor

@@ -25,19 +25,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class TestPostgresServiceImpl {
   private static final Logger LOGGER = LogManager.getLogger(TestCreatePolicy.class);
   PostgresService postgresService;
-  @Mock
-  InsertQuery insertQuery;
-  @Mock
-  UpdateQuery updateQuery;
-  @Mock
-  DeleteQuery deleteQuery;
-  @Mock
-  SelectQuery selectQuery;
+  @Mock InsertQuery insertQuery;
+  @Mock UpdateQuery updateQuery;
+  @Mock DeleteQuery deleteQuery;
+  @Mock SelectQuery selectQuery;
   Util util;
-  @Container
-  PostgreSQLContainer container = new PostgreSQLContainer<>("postgres:12.11");
+  @Container PostgreSQLContainer container = new PostgreSQLContainer<>("postgres:12.11");
+
   @BeforeEach
-  public void setUp(VertxTestContext vertxTestContext){
+  public void setUp(VertxTestContext vertxTestContext) {
     util = new Util();
     postgresService = util.setUp(container);
     vertxTestContext.completeNow();
@@ -45,13 +41,14 @@ public class TestPostgresServiceImpl {
 
   @Test
   @DisplayName("Test insert method")
-  public void testInsert(VertxTestContext vertxTestContext){
+  public void testInsert(VertxTestContext vertxTestContext) {
     postgresService.insert(insertQuery);
     vertxTestContext.completeNow();
   }
+
   @Test
   @DisplayName("Test delete method")
-  public void testDelete(VertxTestContext vertxTestContext){
+  public void testDelete(VertxTestContext vertxTestContext) {
     Condition condition1 = new Condition();
     condition1.setColumn(Constants.POLICY_ID);
 
@@ -63,19 +60,30 @@ public class TestPostgresServiceImpl {
     query.setLimit(null);
     query.setTable(Constants.POLICY_TABLE);
     query.setOrderBy(new ArrayList<>());
-
-    postgresService.delete(deleteQuery);
-    vertxTestContext.completeNow();
+    postgresService
+        .delete(deleteQuery)
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                LOGGER.info("Query result : {}", handler);
+                vertxTestContext.completeNow();
+              } else {
+                LOGGER.info("Failure : {}", handler.cause().getMessage());
+                vertxTestContext.failNow("Failed to delete");
+              }
+            });
   }
+
   @Test
   @DisplayName("Test update method")
-  public void testUpdate(VertxTestContext vertxTestContext){
+  public void testUpdate(VertxTestContext vertxTestContext) {
     postgresService.update(updateQuery);
     vertxTestContext.completeNow();
   }
+
   @Test
   @DisplayName("Test select method")
-  public void testSelect(VertxTestContext vertxTestContext){
+  public void testSelect(VertxTestContext vertxTestContext) {
     postgresService.select(selectQuery);
     vertxTestContext.completeNow();
   }

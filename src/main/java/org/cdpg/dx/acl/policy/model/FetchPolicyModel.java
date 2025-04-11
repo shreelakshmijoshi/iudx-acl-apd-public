@@ -180,11 +180,4 @@ public class FetchPolicyModel {
       this.lastName = lastName;
     }
   }
-
-   public static class Constraints {
-    private String[] access;
-
-    public String[] getAccess() { return access; }
-    public void setAccess(String[] value) { this.access = value; }
-  }
 }

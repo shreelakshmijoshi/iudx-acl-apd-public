@@ -11,13 +11,14 @@ public class QueryResult {
   private boolean hasMore;
   private boolean rowsAffected;
 
-  // Constructor
-  public QueryResult(JsonArray rows, int totalCount, boolean hasMore, boolean rowsAffected) {
-    this.rows = rows;
-    this.totalCount = totalCount;
-    this.hasMore = hasMore;
-    this.rowsAffected = rowsAffected;
+  public QueryResult(QueryResult other){
+    this.rows = other.getRows();
+    this.totalCount = other.getTotalCount();
+    this.hasMore = other.isHasMore();
+    this.rowsAffected = other.isRowsAffected();
   }
+
+ public QueryResult(){}
 
   // JSON Constructor
   public QueryResult(JsonObject json) {

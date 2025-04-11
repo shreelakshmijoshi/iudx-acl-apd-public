@@ -15,40 +15,28 @@ public class SelectQuery implements Query {
   private Integer limit;
   private Integer offset;
 
-  // Default constructor (Needed for deserialization)
   public SelectQuery() {}
 
-  // Constructor
-  public SelectQuery(
-      String table,
-      List<String> columns,
-      ConditionComponent condition,
-      List<String> groupBy,
-      List<OrderBy> orderBy,
-      Integer limit,
-      Integer offset) {
-    this.table = table;
-    this.columns = columns;
-    this.condition = condition;
-    this.groupBy = groupBy;
-    this.orderBy = orderBy;
-    this.limit = limit;
-    this.offset = offset;
+  public SelectQuery(SelectQuery other){
+    this.table = other.getTable();
+    this.columns = other.getColumns();
+    this.condition = other.getCondition();
+    this.groupBy = other.getGroupBy();
+    this.orderBy = other.getOrderBy();
+    this.limit = other.getLimit();
+    this.offset = other.getOffset();
   }
 
-  // JSON Constructor
   public SelectQuery(JsonObject json) {
     SelectQueryConverter.fromJson(json, this); // Use the generated converter
   }
 
-  // Convert to JSON
   public JsonObject toJson() {
     JsonObject json = new JsonObject();
     SelectQueryConverter.toJson(this, json);
     return json;
   }
 
-  // Getters & Setters
   public String getTable() {
     return table;
   }

@@ -15,6 +15,10 @@ public class OrderBy {
         this.column = column;
         this.direction = direction;
     }
+    public OrderBy(OrderBy other){
+        this.column = other.getColumn();
+        this.direction = other.getDirection();
+    }
 
     // JSON Constructor
     public OrderBy(JsonObject json) {

@@ -32,7 +32,12 @@ public class PostgresServiceImpl implements PostgresService {
 
         boolean rowsAffected = rowSet.rowCount() > 0; // Check if any rows were affected
 
-        return new QueryResult(jsonArray, jsonArray.size(), false, rowsAffected);
+        QueryResult result = new QueryResult();
+        result.setRows(jsonArray);
+        result.setHasMore(false);
+        result.setTotalCount(jsonArray.size());
+        result.setRowsAffected(rowsAffected);
+        return result;
     }
 
     private Future<QueryResult> executeQuery(String sql, List<Object> params) {

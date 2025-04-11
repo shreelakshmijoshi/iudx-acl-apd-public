@@ -11,9 +11,9 @@ public class ConditionGroup implements ConditionComponent {
     private  List<ConditionComponent> conditions;
     private  LogicalOperator operator;
 
-    public ConditionGroup(List<ConditionComponent> conditions, LogicalOperator operator) {
-        this.conditions = Objects.requireNonNull(conditions, "Conditions cannot be null");
-        this.operator = Objects.requireNonNull(operator, "Operator cannot be null");
+    public ConditionGroup(ConditionGroup other) {
+        this.conditions = other.getConditions();
+        this.operator = other.getOperator();
     }
 
     public ConditionGroup(JsonObject json) {

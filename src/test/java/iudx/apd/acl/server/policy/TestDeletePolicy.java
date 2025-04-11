@@ -73,7 +73,7 @@ public class TestDeletePolicy {
   @DisplayName("Test initiateDeletePolicy : Success")
   public void testInitiateDeletePolicy(VertxTestContext vertxTestContext) {
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", utility.getPolicyId()), owner)
+        .initiateDeletePolicy(utility.getPolicyId().toString(), owner)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -93,7 +93,7 @@ public class TestDeletePolicy {
   public void testInitiateDeletePolicy4InvalidPolicy(VertxTestContext vertxTestContext) {
 
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", utility.getOwnerId()), owner)
+        .initiateDeletePolicy(utility.getPolicyId().toString(), owner)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -124,7 +124,7 @@ public class TestDeletePolicy {
     User consumer = new User(jsonObject);
 
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", utility.getPolicyId()), consumer)
+        .initiateDeletePolicy(utility.getPolicyId().toString(), consumer)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -149,7 +149,7 @@ public class TestDeletePolicy {
         NullPointerException.class,
         () ->
             deletePolicy.initiateDeletePolicy(
-                new JsonObject().put("id", utility.getPolicyId()), null));
+                utility.getPolicyId().toString(), null));
     vertxTestContext.completeNow();
   }
 
@@ -207,7 +207,7 @@ public class TestDeletePolicy {
             LocalDateTime.of(2024, 1, 1, 1, 1, 1, 1));
     utility.executeQuery(tuple, INSERT_INTO_POLICY_TABLE);
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", policy), new User(jsonObject))
+        .initiateDeletePolicy(utility.getPolicyId().toString(), new User(jsonObject))
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -328,7 +328,7 @@ public class TestDeletePolicy {
             insertionHandler -> {
               if (insertionHandler.succeeded()) {
                 deletePolicy
-                    .initiateDeletePolicy(new JsonObject().put("id", policy), new User(jsonObject))
+                    .initiateDeletePolicy(utility.getPolicyId().toString(), new User(jsonObject))
                     .onComplete(
                         handler -> {
                           if (handler.succeeded()) {

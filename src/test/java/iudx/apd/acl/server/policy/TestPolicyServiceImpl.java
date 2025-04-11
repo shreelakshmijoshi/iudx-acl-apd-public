@@ -131,7 +131,7 @@ public class TestPolicyServiceImpl {
   public void testDeletePolicySuccess(VertxTestContext vertxTestContext) {
 
     service
-        .deletePolicy(request, consumer)
+        .deletePolicy(utility.getPolicyId().toString(), consumer)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -204,7 +204,7 @@ public class TestPolicyServiceImpl {
   public void testDeletePolicyFailure(VertxTestContext vertxTestContext) {
     callFailureMocks();
     service
-        .deletePolicy(request, consumer)
+        .deletePolicy(utility.getPolicyId().toString(), consumer)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
