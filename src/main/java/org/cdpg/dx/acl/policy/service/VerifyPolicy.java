@@ -11,6 +11,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
+import iudx.apd.acl.server.database.postgres.service.PostgresService;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -21,14 +22,13 @@ import org.cdpg.dx.acl.policy.util.Status;
 import org.cdpg.dx.catalogue.service.CatalogueServiceImpl;
 import org.cdpg.dx.common.models.HttpStatusCode;
 import org.cdpg.dx.common.models.ResponseUrn;
-import org.cdpg.dx.database.postgres.service.PostgresqlService;
 
 public class VerifyPolicy {
   private static final Logger LOGGER = LogManager.getLogger(VerifyPolicy.class);
-  private final PostgresqlService postgresqlService;
+  private final PostgresService postgresqlService;
   private final CatalogueServiceImpl catalogueServiceImpl;
 
-  public VerifyPolicy(PostgresqlService postgresqlService, CatalogueServiceImpl catalogueServiceImpl) {
+  public VerifyPolicy(PostgresService postgresqlService, CatalogueServiceImpl catalogueServiceImpl) {
     this.postgresqlService = postgresqlService;
     this.catalogueServiceImpl = catalogueServiceImpl;
   }
@@ -100,35 +100,35 @@ public class VerifyPolicy {
       UUID itemId, UUID ownerId, String userEmailId) {
     Tuple selectTuples = Tuple.of(itemId, ownerId, Status.ACTIVE, userEmailId);
     Promise<JsonObject> promise = Promise.promise();
-    postgresqlService
-        .getPool()
-        .withConnection(
-            conn ->
-                conn.preparedQuery(CHECK_EXISTING_POLICY)
-                    .execute(selectTuples)
-                    .onFailure(
-                        failureHandler -> {
-                          LOGGER.error(
-                              "isPolicyForIdExist fail :: " + failureHandler.getLocalizedMessage());
-                          promise.fail(
-                              generateErrorResponse(
-                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
-                        })
-                    .onSuccess(
-                        policyExists -> {
-                          if (policyExists.size() > 0) {
-                            JsonObject policyConstraints = new JsonObject();
-                            for (Row row : policyExists) {
-                              policyConstraints.put(
-                                  "constraints", row.getJsonObject("constraints"));
-                              policyConstraints.put("id", row.getValue("_id"));
-                            }
-                            promise.complete(policyConstraints);
-                          } else {
-                            LOGGER.trace("No policy found");
-                            promise.complete(new JsonObject());
-                          }
-                        }));
+//    postgresqlService
+//        .getPool()
+//        .withConnection(
+//            conn ->
+//                conn.preparedQuery(CHECK_EXISTING_POLICY)
+//                    .execute(selectTuples)
+//                    .onFailure(
+//                        failureHandler -> {
+//                          LOGGER.error(
+//                              "isPolicyForIdExist fail :: " + failureHandler.getLocalizedMessage());
+//                          promise.fail(
+//                              generateErrorResponse(
+//                                  INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription()));
+//                        })
+//                    .onSuccess(
+//                        policyExists -> {
+//                          if (policyExists.size() > 0) {
+//                            JsonObject policyConstraints = new JsonObject();
+//                            for (Row row : policyExists) {
+//                              policyConstraints.put(
+//                                  "constraints", row.getJsonObject("constraints"));
+//                              policyConstraints.put("id", row.getValue("_id"));
+//                            }
+//                            promise.complete(policyConstraints);
+//                          } else {
+//                            LOGGER.trace("No policy found");
+//                            promise.complete(new JsonObject());
+//                          }
+//                        }));
 
     return promise.future();
   }

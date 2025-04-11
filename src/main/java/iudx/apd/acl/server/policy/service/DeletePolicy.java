@@ -14,14 +14,13 @@ import iudx.apd.acl.server.apiserver.util.User;
 import iudx.apd.acl.server.common.DxRuntimeException;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
-import iudx.apd.acl.server.common.response.RestResponse;
 import iudx.apd.acl.server.database.PostgresService;
 import iudx.apd.acl.server.policy.util.Constants;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import org.cdpg.dx.acl.policy.service.model.Response;
+import org.cdpg.dx.common.models.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,11 +183,11 @@ public class DeletePolicy {
   /**
    * Acts as an entry point for count query and update query execution
    *
-   * @param policy to be deleted
+   * @param policyId to be deleted
    * @return result of the execution as Json Object
    */
-  public Future<Response> initiateDeletePolicy(JsonObject policy, User user) {
-    UUID policyUuid = UUID.fromString(policy.getString("id"));
+  public Future<Response> initiateDeletePolicy(String policyId, User user) {
+    UUID policyUuid = UUID.fromString(policyId);
     Future<Boolean> policyVerificationFuture =
         verifyPolicy(user, Constants.CHECK_IF_POLICY_PRESENT_QUERY, policyUuid);
     return policyVerificationFuture.compose(

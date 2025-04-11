@@ -1,7 +1,7 @@
 package org.cdpg.dx.database.postgres.service;
 
 import io.vertx.core.Future;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Tuple;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Row;
@@ -11,13 +11,11 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class PostgresServiceImpl implements PostgresService {
-    private final PgPool client;
+    private final Pool client;
 
-    public PostgresServiceImpl(PgPool client) {
+    public PostgresServiceImpl(Pool client) {
         this.client = client;
     }
 
@@ -34,7 +32,12 @@ public class PostgresServiceImpl implements PostgresService {
 
         boolean rowsAffected = rowSet.rowCount() > 0; // Check if any rows were affected
 
-        return new QueryResult(jsonArray, jsonArray.size(), false, rowsAffected);
+        QueryResult result = new QueryResult();
+        result.setRows(jsonArray);
+        result.setHasMore(false);
+        result.setTotalCount(jsonArray.size());
+        result.setRowsAffected(rowsAffected);
+        return result;
     }
 
     private Future<QueryResult> executeQuery(String sql, List<Object> params) {
@@ -42,10 +45,10 @@ public class PostgresServiceImpl implements PostgresService {
             .map(this::convertToQueryResult);
     }
 
-    @Override
-    public Future<QueryResult> execute(Query query) {
-        return executeQuery(query.toSQL(), query.getQueryParams());
-    }
+//    @Override
+//    public Future<QueryResult> execute(Query query) {
+//        return executeQuery(query.toSQL(), query.getQueryParams());
+//    }
 
     @Override
     public Future<QueryResult> insert(InsertQuery query) {

@@ -304,7 +304,7 @@ public class ApiServerVerticle extends AbstractVerticle {
   private void printDeployedEndpoints(Router router) {
     for (Route route : router.getRoutes()) {
       if (route.getPath() != null) {
-        LOGGER.debug("API Endpoints deployed : {} : {}",  route.methods() , route.getPath());
+        LOGGER.debug("API Endpoints deployed : {} : {}", route.methods(), route.getPath());
       }
     }
   }
@@ -606,7 +606,7 @@ public class ApiServerVerticle extends AbstractVerticle {
     auditLog.put(RESPONSE_SIZE, size);
 
     Promise<Void> promise = Promise.promise();
-    LOGGER.debug("AuditLog: {}" , auditLog);
+    LOGGER.debug("AuditLog: {}", auditLog);
     auditingService
         .insertAuditlogIntoRmq(auditLog)
         .onComplete(
@@ -615,7 +615,7 @@ public class ApiServerVerticle extends AbstractVerticle {
                 LOGGER.info("Audit data published into RMQ.");
                 promise.complete();
               } else {
-                LOGGER.error("failed: {}",  handler.cause().getMessage());
+                LOGGER.error("failed: {}", handler.cause().getMessage());
                 promise.complete();
               }
             });

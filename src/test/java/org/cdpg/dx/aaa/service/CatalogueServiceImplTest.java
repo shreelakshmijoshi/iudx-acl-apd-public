@@ -50,12 +50,12 @@ class AAAServiceImplTest {
         assertTrue(futureUser.succeeded());
         User user = futureUser.result();
         assertNotNull(user);
-        assertEquals(userInfo.userId().toString(), user.userId());
-        assertEquals(DxRole.CONSUMER, user.userRole());
-        assertEquals("user@example.com", user.emailId());
-        assertEquals("John", user.firstName());
-        assertEquals("Doe", user.lastName());
-        assertEquals("resource-server", user.resourceServerUrl());
+        assertEquals(userInfo.userId().toString(), user.getUserId());
+        assertEquals(DxRole.CONSUMER, user.getUserRole());
+        assertEquals("user@example.com", user.getEmailId());
+        assertEquals("John", user.getFirstName());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("resource-server", user.getResourceServerUrl());
     }
 
     @Test

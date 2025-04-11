@@ -2,27 +2,22 @@ package org.cdpg.dx.database.postgres.models;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @DataObject(generateConverter = true)
 public class Condition implements ConditionComponent {
-    private final String column;
-    private final Operator operator;
-    private final List<Object> values;
+    private String column;
+    private Operator operator;
+    private List<Object> values;
 
-    public enum Operator {
-        EQUALS("="), NOT_EQUALS("!="), GREATER(">"), LESS("<"), GREATER_EQUALS(">="), LESS_EQUALS("<="),
-        LIKE("LIKE"), IN("IN"), NOT_IN("NOT IN"), BETWEEN("BETWEEN"),
-        IS_NULL("IS NULL"), IS_NOT_NULL("IS NOT NULL");
-
-        private final String symbol;
-        Operator(String symbol) { this.symbol = symbol; }
-        public String getSymbol() { return symbol; }
+    public Condition(){}
+    public Condition(Condition other){
+        this.column = other.getColumn();
+        this.values = other.getValues();
+        this.operator = other.getOperator();
     }
-
     public Condition(String column, Operator operator, List<Object> values) {
         this.column = Objects.requireNonNull(column, "Column cannot be null");
         this.operator = Objects.requireNonNull(operator, "Operator cannot be null");
@@ -36,6 +31,30 @@ public class Condition implements ConditionComponent {
         this.values = json.containsKey("values") ? json.getJsonArray("values").getList() : null;
     }
 
+    public String getColumn() {
+        return column;
+    }
+
+    public void setColumn(String column) {
+        this.column = column;
+    }
+
+    public List<Object> getValues() {
+        return values;
+    }
+
+    public void setValues(List<Object> values) {
+        this.values = values;
+    }
+
+    public Operator getOperator() {
+        return operator;
+    }
+
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
+
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
         ConditionConverter.toJson(this, json);
@@ -46,19 +65,29 @@ public class Condition implements ConditionComponent {
     public String toSQL() {
         return switch (operator) {
             case EQUALS, NOT_EQUALS, GREATER, LESS, GREATER_EQUALS, LESS_EQUALS, LIKE ->
-                    column + " " + operator.getSymbol() + " ?";
+                column + " " + operator.getSymbol() + " $1";
             case IN, NOT_IN ->
-                    column + " " + operator.getSymbol() + " (" +
-                            values.stream().map(v -> "?").collect(Collectors.joining(", ")) + ")";
+                column + " " + operator.getSymbol() + " (" +
+                    values.stream().map(v -> "?").collect(Collectors.joining(", ")) + ")";
             case BETWEEN ->
-                    column + " BETWEEN ? AND ?";
+                column + " BETWEEN ? AND ?";
             case IS_NULL, IS_NOT_NULL ->
-                    column + " " + operator.getSymbol();
+                column + " " + operator.getSymbol();
         };
     }
 
     @Override
     public List<Object> getQueryParams() {
         return values == null ? List.of() : values;
+    }
+
+    public enum Operator {
+        EQUALS("="), NOT_EQUALS("!="), GREATER(">"), LESS("<"), GREATER_EQUALS(">="), LESS_EQUALS("<="),
+        LIKE("LIKE"), IN("IN"), NOT_IN("NOT IN"), BETWEEN("BETWEEN"),
+        IS_NULL("IS NULL"), IS_NOT_NULL("IS NOT NULL");
+
+        private final String symbol;
+        Operator(String symbol) { this.symbol = symbol; }
+        public String getSymbol() { return symbol; }
     }
 }

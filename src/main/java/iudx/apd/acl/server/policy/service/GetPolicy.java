@@ -1,6 +1,5 @@
 package iudx.apd.acl.server.policy.service;
 
-import io.vertx.sqlclient.Pool;
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 import static iudx.apd.acl.server.common.HttpStatusCode.BAD_REQUEST;
 import static iudx.apd.acl.server.policy.util.Constants.*;
@@ -8,6 +7,7 @@ import static iudx.apd.acl.server.policy.util.Constants.*;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 import iudx.apd.acl.server.apiserver.util.Role;

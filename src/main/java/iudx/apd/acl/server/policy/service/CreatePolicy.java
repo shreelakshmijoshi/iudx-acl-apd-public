@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-//TODO: either need a tuple builder or a postgres method that can take list of queries or tuples
+// TODO: either need a tuple builder or a postgres method that can take list of queries or tuples
 public class CreatePolicy {
   private static final Logger LOGGER = LogManager.getLogger(CreatePolicy.class);
   private final PostgresService postgresService;
@@ -157,9 +157,10 @@ public class CreatePolicy {
                                             return Future.failedFuture("Invalid item type.");
                                           } else if (!rsServerUrlCat.contains(
                                               user.getResourceServerUrl())) {
-                                            return Future.failedFuture(generateErrorResponse(
-                                                FORBIDDEN,
-                                                "Access Denied: You do not have ownership rights for this resource."));
+                                            return Future.failedFuture(
+                                                generateErrorResponse(
+                                                    FORBIDDEN,
+                                                    "Access Denied: You do not have ownership rights for this resource."));
                                           } else {
                                             return insertItemsIntoDb(success);
                                           }
@@ -189,16 +190,16 @@ public class CreatePolicy {
 
                                       promise.tryFail(
                                           insertItemsFailureHandler
-                                              .getLocalizedMessage()
-                                              .equalsIgnoreCase(
-                                                  "Access Denied: You do not have "
-                                                      + "ownership rights for this resource.")
+                                                  .getLocalizedMessage()
+                                                  .equalsIgnoreCase(
+                                                      "Access Denied: You do not have "
+                                                          + "ownership rights for this resource.")
                                               ? generateErrorResponse(
-                                              FORBIDDEN,
-                                              insertItemsFailureHandler.getLocalizedMessage())
+                                                  FORBIDDEN,
+                                                  insertItemsFailureHandler.getLocalizedMessage())
                                               : generateErrorResponse(
-                                              BAD_REQUEST,
-                                              insertItemsFailureHandler.getLocalizedMessage()));
+                                                  BAD_REQUEST,
+                                                  insertItemsFailureHandler.getLocalizedMessage()));
                                     });
                           } else {
                             if (!itemTypeDb.containsAll(itemTypeRequest)) {
@@ -283,8 +284,8 @@ public class CreatePolicy {
                           if (policyExists.size() > 0) {
                             List<UUID> responseArray = new ArrayList<>();
                             for (RowSet<Row> rowSet = policyExists;
-                                 rowSet != null;
-                                 rowSet = rowSet.next()) {
+                                rowSet != null;
+                                rowSet = rowSet.next()) {
                               rowSet.forEach(row -> responseArray.add(row.getUUID("_id")));
                             }
                             LOGGER.error("Policy already Exist.");

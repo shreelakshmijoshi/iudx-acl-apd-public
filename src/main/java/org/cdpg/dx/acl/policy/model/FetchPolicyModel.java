@@ -3,7 +3,6 @@ package org.cdpg.dx.acl.policy.model;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
-import org.cdpg.dx.acl.policy.service.model.ResponseConverter;
 import org.cdpg.dx.acl.policy.util.ItemType;
 import org.cdpg.dx.common.models.Response;
 
@@ -14,7 +13,7 @@ public class FetchPolicyModel {
   String itemId;
   ItemType itemType;
   String expiryAt;
-  JsonObject constraints;
+  Constraints constraints;
   String status;
   String updatedAt;
   String createdAt;
@@ -36,12 +35,13 @@ public class FetchPolicyModel {
     this.provider = other.getProvider();
 
   }
+  //Deserialization
   public FetchPolicyModel(JsonObject jsonObject){
     FetchPolicyModelConverter.fromJson(jsonObject, this);
   }
 
   /**
-   * Converts Data object or User class object to json object [Serialization]
+   * Converts Data object or Fetch Policy class object to json object [Serialization]
    *
    * @return JsonObject
    */
@@ -82,11 +82,11 @@ public class FetchPolicyModel {
     this.expiryAt = expiryAt;
   }
 
-  public JsonObject getConstraints() {
+  public Constraints getConstraints() {
     return constraints;
   }
 
-  public void setConstraints(JsonObject constraints) {
+  public void setConstraints(Constraints constraints) {
     this.constraints = constraints;
   }
 
@@ -130,16 +130,54 @@ public class FetchPolicyModel {
     this.status = status;
   }
 
-  public static class User{
+  private static class User{
     String email;
     Name name;
     String id;
+
+    public String getEmail() {
+      return email;
+    }
+
+    public void setEmail(String email) {
+      this.email = email;
+    }
+
+    public Name getName() {
+      return name;
+    }
+
+    public void setName(Name name) {
+      this.name = name;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public void setId(String id) {
+      this.id = id;
+    }
   }
 
-  public static class Name{
+  private static class Name{
     String firstName;
     String lastName;
+
+    public String getFirstName() {
+      return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+      this.firstName = firstName;
+    }
+
+    public String getLastName() {
+      return lastName;
+    }
+
+    public void setLastName(String lastName) {
+      this.lastName = lastName;
+    }
   }
-
-
 }

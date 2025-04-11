@@ -6,9 +6,7 @@ import static iudx.apd.acl.server.common.HttpStatusCode.FORBIDDEN;
 import static iudx.apd.acl.server.policy.util.Constants.DELETE_POLICY_QUERY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
-import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
@@ -75,13 +73,12 @@ public class TestDeletePolicy {
   @DisplayName("Test initiateDeletePolicy : Success")
   public void testInitiateDeletePolicy(VertxTestContext vertxTestContext) {
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", utility.getPolicyId()), owner)
+        .initiateDeletePolicy(utility.getPolicyId().toString(), owner)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
                 assertEquals(ResponseUrn.SUCCESS_URN.getUrn(), handler.result().getType());
-                assertEquals(
-                    ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getTitle());
+                assertEquals(ResponseUrn.SUCCESS_URN.getMessage(), handler.result().getTitle());
                 assertEquals("Policy deleted successfully", handler.result().getDetail());
                 vertxTestContext.completeNow();
 
@@ -96,7 +93,7 @@ public class TestDeletePolicy {
   public void testInitiateDeletePolicy4InvalidPolicy(VertxTestContext vertxTestContext) {
 
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", utility.getOwnerId()), owner)
+        .initiateDeletePolicy(utility.getPolicyId().toString(), owner)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -127,7 +124,7 @@ public class TestDeletePolicy {
     User consumer = new User(jsonObject);
 
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", utility.getPolicyId()), consumer)
+        .initiateDeletePolicy(utility.getPolicyId().toString(), consumer)
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -152,7 +149,7 @@ public class TestDeletePolicy {
         NullPointerException.class,
         () ->
             deletePolicy.initiateDeletePolicy(
-                new JsonObject().put("id", utility.getPolicyId()), null));
+                utility.getPolicyId().toString(), null));
     vertxTestContext.completeNow();
   }
 
@@ -166,19 +163,20 @@ public class TestDeletePolicy {
   @Test
   @DisplayName("Test executeQuery method with invalid tuple")
   public void testExecuteQueryWithInvalidTuple(VertxTestContext vertxTestContext) {
-    deletePolicy.executeQuery(
-        DELETE_POLICY_QUERY,
-        Tuple.tuple()).onComplete(handler -> {
-          if (handler.succeeded()) {
-            vertxTestContext.failNow("Succeeded for invalid tuple");
-          } else {
-            JsonObject result = new JsonObject(handler.cause().getMessage());
-            assertEquals(500, result.getInteger(TYPE));
-            assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
-            assertEquals("Failure while executing query", result.getString(DETAIL));
-            vertxTestContext.completeNow();
-          }
-        });
+    deletePolicy
+        .executeQuery(DELETE_POLICY_QUERY, Tuple.tuple())
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                vertxTestContext.failNow("Succeeded for invalid tuple");
+              } else {
+                JsonObject result = new JsonObject(handler.cause().getMessage());
+                assertEquals(500, result.getInteger(TYPE));
+                assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
+                assertEquals("Failure while executing query", result.getString(DETAIL));
+                vertxTestContext.completeNow();
+              }
+            });
   }
 
   @Test
@@ -209,7 +207,7 @@ public class TestDeletePolicy {
             LocalDateTime.of(2024, 1, 1, 1, 1, 1, 1));
     utility.executeQuery(tuple, INSERT_INTO_POLICY_TABLE);
     deletePolicy
-        .initiateDeletePolicy(new JsonObject().put("id", policy), new User(jsonObject))
+        .initiateDeletePolicy(utility.getPolicyId().toString(), new User(jsonObject))
         .onComplete(
             handler -> {
               if (handler.succeeded()) {
@@ -273,9 +271,7 @@ public class TestDeletePolicy {
   public void testExecuteQueryWithNullTuple(VertxTestContext vertxTestContext) {
     assertThrows(
         NullPointerException.class,
-        () ->
-            deletePolicy.executeQuery(
-                DELETE_POLICY_QUERY, Tuple.of(null, null)));
+        () -> deletePolicy.executeQuery(DELETE_POLICY_QUERY, Tuple.of(null, null)));
     vertxTestContext.completeNow();
   }
 
@@ -284,19 +280,20 @@ public class TestDeletePolicy {
   public void testExecuteQueryWithInvalidQuery(VertxTestContext vertxTestContext) {
     String query =
         "UPDATE abcd SET status='DELETED' WHERE _id = ANY ('{shjdfgsfhguergugr}'::uuid[])";
-    deletePolicy.executeQuery(
-        query,
-        Tuple.tuple()).onComplete(handler ->{
-          if (handler.succeeded()) {
-            vertxTestContext.failNow("Succeeded for non-existent relation or table");
-          } else {
-            JsonObject result = new JsonObject(handler.cause().getMessage());
-            assertEquals(500, result.getInteger(TYPE));
-            assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
-            assertEquals("Failure while executing query", result.getString(DETAIL));
-            vertxTestContext.completeNow();
-          }
-        });
+    deletePolicy
+        .executeQuery(query, Tuple.tuple())
+        .onComplete(
+            handler -> {
+              if (handler.succeeded()) {
+                vertxTestContext.failNow("Succeeded for non-existent relation or table");
+              } else {
+                JsonObject result = new JsonObject(handler.cause().getMessage());
+                assertEquals(500, result.getInteger(TYPE));
+                assertEquals(ResponseUrn.DB_ERROR_URN.getUrn(), result.getString(TITLE));
+                assertEquals("Failure while executing query", result.getString(DETAIL));
+                vertxTestContext.completeNow();
+              }
+            });
   }
 
   @Test
@@ -331,7 +328,7 @@ public class TestDeletePolicy {
             insertionHandler -> {
               if (insertionHandler.succeeded()) {
                 deletePolicy
-                    .initiateDeletePolicy(new JsonObject().put("id", policy), new User(jsonObject))
+                    .initiateDeletePolicy(utility.getPolicyId().toString(), new User(jsonObject))
                     .onComplete(
                         handler -> {
                           if (handler.succeeded()) {
