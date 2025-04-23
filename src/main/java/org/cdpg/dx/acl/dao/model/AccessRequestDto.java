@@ -3,10 +3,9 @@ package org.cdpg.dx.acl.dao.model;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import org.cdpg.dx.acl.policy.model.Constraints;
-import org.cdpg.dx.acl.policy.model.FetchPolicyModel;
 
 @DataObject(generateConverter = true)
-public class RequestDto {
+public class AccessRequestDto {
   String id;
   String consumerId;
   String ownerId;
@@ -18,8 +17,8 @@ public class RequestDto {
   JsonObject additionalInfo;
   Constraints constraints;
 
-  public RequestDto(){}
-  public RequestDto(RequestDto other){
+  public AccessRequestDto(){}
+  public AccessRequestDto(AccessRequestDto other){
     this.id = other.getId();
     this.additionalInfo = other.getAdditionalInfo();
     this.itemId = other.getItemId();
@@ -32,9 +31,9 @@ public class RequestDto {
     this.status = other.getStatus();
 
   }
-  public RequestDto(JsonObject jsonObject) {
+  public AccessRequestDto(JsonObject jsonObject) {
     /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
-    RequestDtoConverter.fromJson(jsonObject, this);
+    AccessRequestDtoConverter.fromJson(jsonObject, this);
   }
 
   /**
@@ -44,7 +43,7 @@ public class RequestDto {
    */
   public JsonObject toJson() {
     JsonObject jsonObject = new JsonObject();
-    RequestDtoConverter.toJson(this, jsonObject);
+    AccessRequestDtoConverter.toJson(this, jsonObject);
     return jsonObject;
   }
 
