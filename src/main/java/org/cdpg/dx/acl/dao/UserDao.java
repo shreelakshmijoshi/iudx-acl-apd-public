@@ -2,14 +2,14 @@ package org.cdpg.dx.acl.dao;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import java.util.List;
 import org.cdpg.dx.acl.dao.model.ResourceEntityDto;
 import org.cdpg.dx.acl.dao.model.UserDto;
 
 public interface UserDao {
-  //TODO: Change json object info or the method param with the required type according to the classes
-  public Future<UserDto> getResourceFromDb(JsonObject info);
-  public Future<UserDto> createResourceInDb(JsonObject entry);
-  public Future<UserDto> deleteResourceInDb(String policyId);
-  public Future<UserDto> updateResourceInDb(JsonObject info);
+  public Future<UserDto> getUserFromDb(String userId);
+  public Future<UserDto> createUserInDb(String userId, String emailId, String firstName, String lastName);
+  public Future<List<UserDto>> getUsersFromDb(String emailId, String userId);
+
 
 }

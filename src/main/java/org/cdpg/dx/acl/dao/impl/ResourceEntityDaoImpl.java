@@ -1,14 +1,16 @@
-package org.cdpg.dx.acl.dao;
+package org.cdpg.dx.acl.dao.impl;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import java.util.List;
+import org.cdpg.dx.acl.dao.ResourceEntityDao;
 import org.cdpg.dx.acl.dao.model.ResourceEntityDto;
 import org.cdpg.dx.database.postgres.models.Condition;
 import org.cdpg.dx.database.postgres.models.InsertQuery;
 import org.cdpg.dx.database.postgres.models.SelectQuery;
 import org.cdpg.dx.database.postgres.models.UpdateQuery;
 
-public class ResourceEntityDaoImpl implements ResourceEntityDao{
+public class ResourceEntityDaoImpl implements ResourceEntityDao {
   SelectQuery selectQuery;
   InsertQuery insertQuery;
   UpdateQuery updateQuery;
@@ -26,23 +28,22 @@ public class ResourceEntityDaoImpl implements ResourceEntityDao{
     this.updateQuery = updateQuery;
     this.insertQuery = insertQuery;
   }
+
   @Override
-  public Future<ResourceEntityDto> getResourceFromDb(JsonObject info) {
+  public Future<List<ResourceEntityDto>> getResourceFromDb(String resourceId, String resourceServerUrl,
+                                                           String providerId) {
     return null;
   }
 
   @Override
-  public Future<ResourceEntityDto> createResourceInDb(JsonObject entry) {
+  public Future<ResourceEntityDto> createResourceInDb(String resourceId, String providerId, String resourceGroupId,
+                                                      String itemType, String resourceServerUrl,
+                                                      boolean onConflictDoNothing) {
     return null;
   }
 
   @Override
-  public Future<ResourceEntityDto> deleteResourceInDb(String policyId) {
-    return null;
-  }
-
-  @Override
-  public Future<ResourceEntityDto> updateResourceInDb(JsonObject info) {
+  public Future<List<ResourceEntityDto>> checkResourcesFromDb(List<String> resourceId) {
     return null;
   }
 }

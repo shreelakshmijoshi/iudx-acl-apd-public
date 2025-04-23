@@ -1,4 +1,4 @@
-package org.cdpg.dx.acl.dao;
+package org.cdpg.dx.acl.dao.impl;
 
 import static org.cdpg.dx.acl.dao.util.Constants.*;
 
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.cdpg.dx.acl.dao.PolicyDao;
 import org.cdpg.dx.acl.dao.model.PolicyDto;
 import org.cdpg.dx.database.postgres.models.Condition;
 import org.cdpg.dx.database.postgres.models.InsertQuery;
@@ -20,7 +21,7 @@ import org.cdpg.dx.database.postgres.service.PostgresService;
  * What are the arguments required to query the table
  * what is the output type
  */
-public class PolicyDaoImpl implements PolicyDao{
+public class PolicyDaoImpl implements PolicyDao {
   SelectQuery selectQuery;
   InsertQuery insertQuery;
   UpdateQuery updateQuery;
@@ -42,7 +43,8 @@ public class PolicyDaoImpl implements PolicyDao{
     this.insertQuery = insertQuery;
   }
   @Override
-  public Future<PolicyDto> getPolicyFromDb(String policyId, String ownerId, String consumerEmailId) {
+  public Future<List<PolicyDto>> getPolicyFromDb(String policyId, String ownerId, String consumerEmailId, String status,
+                                                 String itemId, String expiryAt, boolean isUpdatedAtDesc) {
     condition.setOperator(Condition.Operator.EQUALS);
     if(policyId != null){
       condition.setColumn("_id");
@@ -74,13 +76,17 @@ public class PolicyDaoImpl implements PolicyDao{
     return null;
   }
 
+
   @Override
-  public Future<PolicyDto> createPolicyInDb(JsonObject entry) {
+  public Future<PolicyDto> createPolicyInDb(String consumerEmailId, String itemId, String ownerId, String expiryAt,
+                                            JsonObject constraints, String status) {
     return null;
   }
 
   @Override
-  public Future<PolicyDto> deletePolicyInDb(String policyId) {
+  public Future<PolicyDto> deletePolicyInDb(String policyId, String expiryAt) {
     return null;
   }
+
+
 }
