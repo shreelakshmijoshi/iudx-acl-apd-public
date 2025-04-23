@@ -1,12 +1,14 @@
 package org.cdpg.dx.database.postgres.models;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen
 public class ConditionGroup implements ConditionComponent {
     private  List<ConditionComponent> conditions;
     private  LogicalOperator operator;

@@ -1,10 +1,12 @@
 package org.cdpg.dx.acl.dao.model;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import org.cdpg.dx.acl.policy.model.Constraints;
 
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen
 public class AccessRequestDto {
   String id;
   String consumerId;
@@ -17,8 +19,9 @@ public class AccessRequestDto {
   JsonObject additionalInfo;
   Constraints constraints;
 
-  public AccessRequestDto(){}
-  public AccessRequestDto(AccessRequestDto other){
+  public AccessRequestDto() {}
+
+  public AccessRequestDto(AccessRequestDto other) {
     this.id = other.getId();
     this.additionalInfo = other.getAdditionalInfo();
     this.itemId = other.getItemId();
@@ -29,10 +32,10 @@ public class AccessRequestDto {
     this.consumerId = other.getConsumerId();
     this.ownerId = other.getOwnerId();
     this.status = other.getStatus();
-
   }
+
   public AccessRequestDto(JsonObject jsonObject) {
-    /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
+    /* Converts JsonObject to AccessRequestDto class object or dataObject conversion [Deserialization] */
     AccessRequestDtoConverter.fromJson(jsonObject, this);
   }
 
@@ -51,79 +54,89 @@ public class AccessRequestDto {
     return id;
   }
 
-  public void setId(String id) {
+  public AccessRequestDto setId(String id) {
     this.id = id;
+    return this;
   }
 
   public String getConsumerId() {
     return consumerId;
   }
 
-  public void setConsumerId(String consumerId) {
+  public AccessRequestDto setConsumerId(String consumerId) {
     this.consumerId = consumerId;
+    return this;
   }
 
   public String getOwnerId() {
     return ownerId;
   }
 
-  public void setOwnerId(String ownerId) {
+  public AccessRequestDto setOwnerId(String ownerId) {
     this.ownerId = ownerId;
+    return this;
   }
 
   public String getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public AccessRequestDto setStatus(String status) {
     this.status = status;
+    return this;
   }
 
   public String getItemId() {
     return itemId;
   }
 
-  public void setItemId(String itemId) {
+  public AccessRequestDto setItemId(String itemId) {
     this.itemId = itemId;
+    return this;
   }
 
   public String getExpiryAt() {
     return expiryAt;
   }
 
-  public void setExpiryAt(String expiryAt) {
+  public AccessRequestDto setExpiryAt(String expiryAt) {
     this.expiryAt = expiryAt;
+    return this;
   }
 
   public String getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(String createdAt) {
+  public AccessRequestDto setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
+    return this;
   }
 
   public String getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(String updatedAt) {
+  public AccessRequestDto setUpdatedAt(String updatedAt) {
     this.updatedAt = updatedAt;
+    return this;
   }
 
   public JsonObject getAdditionalInfo() {
     return additionalInfo;
   }
 
-  public void setAdditionalInfo(JsonObject additionalInfo) {
+  public AccessRequestDto setAdditionalInfo(JsonObject additionalInfo) {
     this.additionalInfo = additionalInfo;
+    return this;
   }
 
   public Constraints getConstraints() {
     return constraints;
   }
 
-  public void setConstraints(Constraints constraints) {
+  public AccessRequestDto setConstraints(Constraints constraints) {
     this.constraints = constraints;
+    return this;
   }
 }

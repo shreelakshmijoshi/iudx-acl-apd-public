@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DataObject(generateConverter = true)
+@DataObject
 @JsonGen(inheritConverter = true, publicConverter = false)
 public class DeleteQuery implements Query {
     private static final Logger LOG = LoggerFactory.getLogger(DeleteQuery.class);

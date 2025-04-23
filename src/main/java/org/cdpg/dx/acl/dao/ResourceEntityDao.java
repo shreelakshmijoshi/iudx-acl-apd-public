@@ -1,9 +1,13 @@
 package org.cdpg.dx.acl.dao;
 
+import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.Future;
 import java.util.List;
 import org.cdpg.dx.acl.dao.model.ResourceEntityDto;
 
+@DataObject
+@JsonGen
 public interface ResourceEntityDao {
 
   public Future<List<ResourceEntityDto>> getResourceFromDb(

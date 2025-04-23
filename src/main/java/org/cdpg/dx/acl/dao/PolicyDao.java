@@ -1,14 +1,15 @@
 package org.cdpg.dx.acl.dao;
 
+import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
 import org.cdpg.dx.acl.dao.model.PolicyDto;
 
+@DataObject
+@JsonGen
 public interface PolicyDao {
-
-  // TODO: Change json object info or the method param with the required type according to the
-  // classes
 
   /**
    * Returns the policy info by querying with either policyId, ownerId or consumerId

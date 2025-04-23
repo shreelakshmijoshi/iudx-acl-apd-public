@@ -3,14 +3,16 @@ package org.cdpg.dx.acl.dao.model;
 import static org.cdpg.dx.acl.dao.util.Constants.*;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.templates.annotations.Column;
 import io.vertx.sqlclient.templates.annotations.RowMapped;
 import java.util.Objects;
 import org.cdpg.dx.acl.policy.model.Role;
 
-@DataObject(generateConverter = true)
+@DataObject
 @RowMapped
+@JsonGen
 public class PolicyDto {
   @Column(name = DB_ID)
   private String policyId;
@@ -65,56 +67,63 @@ public class PolicyDto {
     return policyId;
   }
 
-  public void setPolicyId(String policyId) {
+  public PolicyDto setPolicyId(String policyId) {
     this.policyId = policyId;
+    return this;
   }
 
   public Role getConsumerEmailId() {
     return consumerEmailId;
   }
 
-  public void setConsumerEmailId(Role consumerEmailId) {
+  public PolicyDto setConsumerEmailId(Role consumerEmailId) {
     this.consumerEmailId = consumerEmailId;
+    return this;
   }
 
   public String getItemId() {
     return itemId;
   }
 
-  public void setItemId(String itemId) {
+  public PolicyDto setItemId(String itemId) {
     this.itemId = itemId;
+    return this;
   }
 
   public String getOwnerId() {
     return ownerId;
   }
 
-  public void setOwnerId(String ownerId) {
+  public PolicyDto setOwnerId(String ownerId) {
     this.ownerId = ownerId;
+    return this;
   }
 
   public String getPolicyStatus() {
     return policyStatus;
   }
 
-  public void setPolicyStatus(String policyStatus) {
+  public PolicyDto setPolicyStatus(String policyStatus) {
     this.policyStatus = policyStatus;
+    return this;
   }
 
   public String getExpiryAt() {
     return expiryAt;
   }
 
-  public void setExpiryAt(String expiryAt) {
+  public PolicyDto setExpiryAt(String expiryAt) {
     this.expiryAt = expiryAt;
+    return this;
   }
 
   public JsonObject getConstraints() {
     return constraints;
   }
 
-  public void setConstraints(JsonObject constraints) {
+  public PolicyDto setConstraints(JsonObject constraints) {
     this.constraints = constraints;
+    return this;
   }
 
   @Override

@@ -1,9 +1,11 @@
 package org.cdpg.dx.acl.dao.model;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen
 public class ApprovedAccessRequestDto {
   String id;
   String policyId;
@@ -41,39 +43,44 @@ public class ApprovedAccessRequestDto {
     return id;
   }
 
-  public void setId(String id) {
+  public ApprovedAccessRequestDto setId(String id) {
     this.id = id;
+    return this;
   }
 
   public String getPolicyId() {
     return policyId;
   }
 
-  public void setPolicyId(String policyId) {
+  public ApprovedAccessRequestDto setPolicyId(String policyId) {
     this.policyId = policyId;
+    return this;
   }
 
   public String getRequestId() {
     return requestId;
   }
 
-  public void setRequestId(String requestId) {
+  public ApprovedAccessRequestDto setRequestId(String requestId) {
     this.requestId = requestId;
+    return this;
   }
 
   public String getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(String createdAt) {
+  public ApprovedAccessRequestDto setCreatedAt(String createdAt) {
     this.createdAt = createdAt;
+    return this;
   }
 
   public String getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(String updatedAt) {
+  public ApprovedAccessRequestDto setUpdatedAt(String updatedAt) {
     this.updatedAt = updatedAt;
+    return this;
   }
 }

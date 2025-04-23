@@ -148,7 +148,7 @@ public class PolicyDAOImpl implements PolicyDAO {
     condition1.setOperator(Condition.Operator.EQUALS);
 
     // Build the UpdateQuery
-    //        DeleteQuery query = new DeleteQuery(Constants.POLICY_TABLE, component, null, null);
+//            DeleteQuery query = new DeleteQuery(Constants.POLICY_TABLE, component, null, null);
     //        DeleteQuery query = new DeleteQuery(new JsonObject().put("table",
     // Constants.POLICY_TABLE).put("condition", component).put("orderBy", null).put("limit", null));
     DeleteQuery query = new DeleteQuery();

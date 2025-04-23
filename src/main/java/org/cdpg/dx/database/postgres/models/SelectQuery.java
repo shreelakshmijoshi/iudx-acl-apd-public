@@ -1,11 +1,13 @@
 package org.cdpg.dx.database.postgres.models;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@DataObject(generateConverter = true)
+@DataObject
+@JsonGen
 public class SelectQuery implements Query {
   private String table;
   private List<String> columns;
