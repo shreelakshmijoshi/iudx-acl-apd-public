@@ -23,14 +23,22 @@ public interface PolicyDao {
    * @param isUpdatedAtDesc Optional parameter
    * @return List of PolicyDto
    */
+//  public Future<List<PolicyDto>> getPolicyFromDb(
+//      String policyId,
+//      String ownerId,
+//      String consumerEmailId,
+//      String status,
+//      String itemId,
+//      String expiryAt,
+//      boolean isUpdatedAtDesc);
   public Future<List<PolicyDto>> getPolicyFromDb(
-      String policyId,
-      String ownerId,
-      String consumerEmailId,
-      String status,
-      String itemId,
-      String expiryAt,
+      PolicyDto policyDto,
       boolean isUpdatedAtDesc);
+
+//  public Future<List<PolicyDto>> getPolicyForUserFromDb(String ownerId, String itemId, String consumerEmailId, boolean isUpdatedAtDesc);
+//  public Future<PolicyDto> checkExistingPolicyFromDb(String ownerId, String itemId, String consumerEmailId, String status, String expiryAt, String constraints);
+//public Future<List<PolicyDto>> getActiveConsumerPolicyFromDB(String itemId, String consumerEmailId, String expiryAt, String status);
+
 
   public Future<PolicyDto> createPolicyInDb(
       String consumerEmailId,

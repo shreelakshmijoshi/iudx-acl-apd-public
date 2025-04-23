@@ -28,7 +28,7 @@ public class ResourceEntityDto {
   }
 
   public ResourceEntityDto(JsonObject jsonObject) {
-    /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
+    /* Converts JsonObject to ResourceEntityDto class object or dataObject conversion [Deserialization] */
     ResourceEntityDtoConverter.fromJson(jsonObject, this);
   }
 

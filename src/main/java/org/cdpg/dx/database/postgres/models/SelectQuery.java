@@ -43,56 +43,63 @@ public class SelectQuery implements Query {
     return table;
   }
 
-  public void setTable(String table) {
+  public SelectQuery setTable(String table) {
     this.table = table;
+    return this;
   }
 
   public List<String> getColumns() {
     return columns;
   }
 
-  public void setColumns(List<String> columns) {
+  public SelectQuery setColumns(List<String> columns) {
     this.columns = columns;
+    return this;
   }
 
   public ConditionComponent getCondition() {
     return condition;
   }
 
-  public void setCondition(ConditionComponent condition) {
+  public SelectQuery setCondition(ConditionComponent condition) {
     this.condition = condition;
+    return this;
   }
 
   public List<String> getGroupBy() {
     return groupBy;
   }
 
-  public void setGroupBy(List<String> groupBy) {
+  public SelectQuery setGroupBy(List<String> groupBy) {
     this.groupBy = groupBy;
+    return this;
   }
 
   public List<OrderBy> getOrderBy() {
     return orderBy;
   }
 
-  public void setOrderBy(List<OrderBy> orderBy) {
+  public SelectQuery setOrderBy(List<OrderBy> orderBy) {
     this.orderBy = orderBy;
+    return this;
   }
 
   public Integer getLimit() {
     return limit;
   }
 
-  public void setLimit(Integer limit) {
+  public SelectQuery setLimit(Integer limit) {
     this.limit = limit;
+    return this;
   }
 
   public Integer getOffset() {
     return offset;
   }
 
-  public void setOffset(Integer offset) {
+  public SelectQuery setOffset(Integer offset) {
     this.offset = offset;
+    return this;
   }
 
   @Override

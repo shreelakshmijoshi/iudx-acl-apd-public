@@ -8,7 +8,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.templates.annotations.Column;
 import io.vertx.sqlclient.templates.annotations.RowMapped;
 import java.util.Objects;
-import org.cdpg.dx.acl.policy.model.Role;
 
 @DataObject
 @RowMapped
@@ -18,7 +17,7 @@ public class PolicyDto {
   private String policyId;
 
   @Column(name = DB_CONSUMER_EMAIL)
-  private Role consumerEmailId;
+  private String consumerEmailId;
 
   @Column(name = DB_ITEM_ID)
   private String itemId;
@@ -49,6 +48,13 @@ public class PolicyDto {
 
   public PolicyDto(JsonObject jsonObject) {
     /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
+    setPolicyId(jsonObject.getString(DB_POLICY_ID));
+    setPolicyStatus(jsonObject.getString(DB_STATUS));
+    setConstraints(jsonObject.getJsonObject(DB_CONSTRAINTS));
+    setConsumerEmailId(jsonObject.getString(DB_CONSUMER_EMAIL));
+    setItemId(jsonObject.getString(DB_ITEM_ID));
+    setPolicyStatus(jsonObject.getString(DB_STATUS));
+    setExpiryAt(jsonObject.getString(DB_EXPIRY_AT));
     PolicyDtoConverter.fromJson(jsonObject, this);
   }
 
@@ -58,7 +64,15 @@ public class PolicyDto {
    * @return JsonObject
    */
   public JsonObject toJson() {
-    JsonObject jsonObject = new JsonObject();
+    JsonObject jsonObject =
+        new JsonObject()
+            .put(DB_ID, this.getPolicyId())
+            .put(DB_CONSUMER_EMAIL, getConsumerEmailId())
+            .put(DB_ITEM_ID, getItemId())
+            .put(DB_OWNER_ID, getOwnerId())
+            .put(DB_STATUS, getPolicyStatus())
+            .put(DB_EXPIRY_AT, getExpiryAt())
+            .put(DB_CONSTRAINTS, getConstraints());
     PolicyDtoConverter.toJson(this, jsonObject);
     return jsonObject;
   }
@@ -72,11 +86,11 @@ public class PolicyDto {
     return this;
   }
 
-  public Role getConsumerEmailId() {
+  public String getConsumerEmailId() {
     return consumerEmailId;
   }
 
-  public PolicyDto setConsumerEmailId(Role consumerEmailId) {
+  public PolicyDto setConsumerEmailId(String consumerEmailId) {
     this.consumerEmailId = consumerEmailId;
     return this;
   }
@@ -130,7 +144,7 @@ public class PolicyDto {
   public boolean equals(Object o) {
     if (!(o instanceof PolicyDto policy)) return false;
     return Objects.equals(policyId, policy.policyId)
-        && consumerEmailId == policy.consumerEmailId
+        && Objects.equals(consumerEmailId, policy.consumerEmailId)
         && Objects.equals(itemId, policy.itemId)
         && Objects.equals(ownerId, policy.ownerId)
         && Objects.equals(policyStatus, policy.policyStatus)
