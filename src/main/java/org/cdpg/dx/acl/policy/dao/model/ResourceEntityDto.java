@@ -1,11 +1,9 @@
-package org.cdpg.dx.acl.dao.model;
+package org.cdpg.dx.acl.policy.dao.model;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 
-@DataObject
-@JsonGen
 public class ResourceEntityDto {
   String id;
   String providerId;
@@ -27,21 +25,21 @@ public class ResourceEntityDto {
     this.createdAt = other.getCreatedAt();
   }
 
-  public ResourceEntityDto(JsonObject jsonObject) {
-    /* Converts JsonObject to ResourceEntityDto class object or dataObject conversion [Deserialization] */
-    ResourceEntityDtoConverter.fromJson(jsonObject, this);
-  }
+//  public ResourceEntityDto(JsonObject jsonObject) {
+//    /* Converts JsonObject to ResourceEntityDto class object or dataObject conversion [Deserialization] */
+//    ResourceEntityDtoConverter.fromJson(jsonObject, this);
+//  }
 
   /**
    * Converts Data object or Policy class object to json object [Serialization]
    *
    * @return JsonObject
    */
-  public JsonObject toJson() {
-    JsonObject jsonObject = new JsonObject();
-    ResourceEntityDtoConverter.toJson(this, jsonObject);
-    return jsonObject;
-  }
+//  public JsonObject toJson() {
+//    JsonObject jsonObject = new JsonObject();
+//    ResourceEntityDtoConverter.toJson(this, jsonObject);
+//    return jsonObject;
+//  }
 
   public String getId() {
     return id;

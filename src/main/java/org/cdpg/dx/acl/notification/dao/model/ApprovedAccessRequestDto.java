@@ -1,11 +1,10 @@
-package org.cdpg.dx.acl.dao.model;
+package org.cdpg.dx.acl.notification.dao.model;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 
-@DataObject
-@JsonGen
+
 public class ApprovedAccessRequestDto {
   String id;
   String policyId;
@@ -25,7 +24,7 @@ public class ApprovedAccessRequestDto {
 
   public ApprovedAccessRequestDto(JsonObject jsonObject) {
     /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
-    ApprovedAccessRequestDtoConverter.fromJson(jsonObject, this);
+//    ApprovedAccessRequestDtoConverter.fromJson(jsonObject, this);
   }
 
   /**
@@ -35,7 +34,7 @@ public class ApprovedAccessRequestDto {
    */
   public JsonObject toJson() {
     JsonObject jsonObject = new JsonObject();
-    ApprovedAccessRequestDtoConverter.toJson(this, jsonObject);
+//    ApprovedAccessRequestDtoConverter.toJson(this, jsonObject);
     return jsonObject;
   }
 

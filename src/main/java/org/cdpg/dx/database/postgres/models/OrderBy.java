@@ -1,11 +1,9 @@
 package org.cdpg.dx.database.postgres.models;
 
 import io.vertx.codegen.annotations.DataObject;
-import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 
-@DataObject
-@JsonGen
+@DataObject(generateConverter = true)
 public class OrderBy {
     private String column;
     private Direction direction;

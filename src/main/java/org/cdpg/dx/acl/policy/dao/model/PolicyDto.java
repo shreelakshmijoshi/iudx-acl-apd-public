@@ -1,6 +1,6 @@
-package org.cdpg.dx.acl.dao.model;
+package org.cdpg.dx.acl.policy.dao.model;
 
-import static org.cdpg.dx.acl.dao.util.Constants.*;
+import static org.cdpg.dx.acl.policy.dao.util.Constants.*;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
@@ -9,9 +9,7 @@ import io.vertx.sqlclient.templates.annotations.Column;
 import io.vertx.sqlclient.templates.annotations.RowMapped;
 import java.util.Objects;
 
-@DataObject
-@RowMapped
-@JsonGen
+
 public class PolicyDto {
   @Column(name = DB_ID)
   private String policyId;
@@ -49,13 +47,14 @@ public class PolicyDto {
   public PolicyDto(JsonObject jsonObject) {
     /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
     setPolicyId(jsonObject.getString(DB_POLICY_ID));
-    setPolicyStatus(jsonObject.getString(DB_STATUS));
-    setConstraints(jsonObject.getJsonObject(DB_CONSTRAINTS));
-    setConsumerEmailId(jsonObject.getString(DB_CONSUMER_EMAIL));
-    setItemId(jsonObject.getString(DB_ITEM_ID));
-    setPolicyStatus(jsonObject.getString(DB_STATUS));
-    setExpiryAt(jsonObject.getString(DB_EXPIRY_AT));
-    PolicyDtoConverter.fromJson(jsonObject, this);
+//    setPolicyStatus(jsonObject.getString(DB_STATUS));
+//    setConstraints(jsonObject.getJsonObject(DB_CONSTRAINTS));
+//    setConsumerEmailId(jsonObject.getString(DB_CONSUMER_EMAIL));
+//    setItemId(jsonObject.getString(DB_ITEM_ID));
+//    setPolicyStatus(jsonObject.getString(DB_STATUS));
+//    setExpiryAt(jsonObject.getString(DB_EXPIRY_AT));
+
+//    PolicyDtoConverter.fromJson(jsonObject, this);
   }
 
   /**
@@ -73,7 +72,7 @@ public class PolicyDto {
             .put(DB_STATUS, getPolicyStatus())
             .put(DB_EXPIRY_AT, getExpiryAt())
             .put(DB_CONSTRAINTS, getConstraints());
-    PolicyDtoConverter.toJson(this, jsonObject);
+//    PolicyDtoConverter.toJson(this, jsonObject);
     return jsonObject;
   }
 

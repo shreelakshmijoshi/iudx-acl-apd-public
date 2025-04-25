@@ -1,11 +1,10 @@
-package org.cdpg.dx.acl.dao.model;
+package org.cdpg.dx.acl.policy.dao.model;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 
-@DataObject
-@JsonGen
+
 public class UserDto {
   String id;
   String emailId;
@@ -25,21 +24,21 @@ public class UserDto {
     this.id = other.getId();
   }
 
-  public UserDto(JsonObject jsonObject) {
-    /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
-    UserDtoConverter.fromJson(jsonObject, this);
-  }
+//  public UserDto(JsonObject jsonObject) {
+//    /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
+//    UserDtoConverter.fromJson(jsonObject, this);
+//  }
 
   /**
    * Converts Data object or Policy class object to json object [Serialization]
    *
    * @return JsonObject
    */
-  public JsonObject toJson() {
-    JsonObject jsonObject = new JsonObject();
-    UserDtoConverter.toJson(this, jsonObject);
-    return jsonObject;
-  }
+//  public JsonObject toJson() {
+//    JsonObject jsonObject = new JsonObject();
+//    UserDtoConverter.toJson(this, jsonObject);
+//    return jsonObject;
+//  }
 
   public String getId() {
     return id;

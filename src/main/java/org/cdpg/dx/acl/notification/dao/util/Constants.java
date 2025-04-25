@@ -1,4 +1,4 @@
-package org.cdpg.dx.acl.dao.util;
+package org.cdpg.dx.acl.notification.dao.util;
 
 import java.util.List;
 

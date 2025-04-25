@@ -1,12 +1,11 @@
-package org.cdpg.dx.acl.dao.model;
+package org.cdpg.dx.acl.notification.dao.model;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
 import org.cdpg.dx.acl.policy.model.Constraints;
 
-@DataObject
-@JsonGen
+
 public class AccessRequestDto {
   String id;
   String consumerId;
@@ -36,7 +35,7 @@ public class AccessRequestDto {
 
   public AccessRequestDto(JsonObject jsonObject) {
     /* Converts JsonObject to AccessRequestDto class object or dataObject conversion [Deserialization] */
-    AccessRequestDtoConverter.fromJson(jsonObject, this);
+//    AccessRequestDtoConverter.fromJson(jsonObject, this);
   }
 
   /**
@@ -46,7 +45,7 @@ public class AccessRequestDto {
    */
   public JsonObject toJson() {
     JsonObject jsonObject = new JsonObject();
-    AccessRequestDtoConverter.toJson(this, jsonObject);
+//    AccessRequestDtoConverter.toJson(this, jsonObject);
     return jsonObject;
   }
 

@@ -1,12 +1,10 @@
 package org.cdpg.dx.database.postgres.models;
 
 import io.vertx.codegen.annotations.DataObject;
-import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-@DataObject
-@JsonGen
+@DataObject(generateConverter = true)
 public class QueryResult {
   private JsonArray rows;
   private int totalCount;
@@ -20,7 +18,7 @@ public class QueryResult {
     this.rowsAffected = other.isRowsAffected();
   }
 
- public QueryResult(){}
+  public QueryResult(){}
 
   // JSON Constructor
   public QueryResult(JsonObject json) {

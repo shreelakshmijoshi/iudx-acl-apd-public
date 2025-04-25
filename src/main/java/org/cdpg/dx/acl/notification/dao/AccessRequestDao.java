@@ -1,13 +1,13 @@
-package org.cdpg.dx.acl.dao;
+package org.cdpg.dx.acl.notification.dao;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
-import org.cdpg.dx.acl.dao.model.AccessRequestDto;
-@DataObject
-@JsonGen
+import org.cdpg.dx.acl.notification.dao.model.AccessRequestDto;
+
+
 public interface AccessRequestDao {
   public Future<List<AccessRequestDto>> getAccessRequestFromDb(
       String requestId,
