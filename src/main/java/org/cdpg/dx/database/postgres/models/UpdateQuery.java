@@ -50,21 +50,6 @@ public class UpdateQuery implements Query {
         return json;
     }
 
-//    @Override
-//    public String toSQL() {
-//        StringBuilder query = new StringBuilder("UPDATE ").append(table).append(" SET ");
-//        query.append(columns.stream().map(column -> column + " = ?").collect(Collectors.joining(", ")));
-//
-//        if (condition != null) query.append(" WHERE ").append(condition.toSQL());
-//
-//        if (orderBy != null && !orderBy.isEmpty()) {
-//            query.append(" ORDER BY ")
-//                    .append(orderBy.stream().map(OrderBy::toSQL).collect(Collectors.joining(", ")));
-//        }
-//        if (limit != null) query.append(" LIMIT ").append(limit);
-//
-//        return query.toString();
-//    }
 
   @Override
   public String toSQL() {
@@ -96,7 +81,7 @@ public class UpdateQuery implements Query {
     }
 
     query.append(" RETURNING *");
-    LOGGER.error("Query is : {}", query.toString());
+    LOGGER.info("Query is : {}", query.toString());
 
 //    String q = query.toString().replace("$1", "'$1'::uuid");
 

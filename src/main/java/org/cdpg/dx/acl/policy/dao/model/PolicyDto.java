@@ -11,25 +11,18 @@ import java.util.Objects;
 
 
 public class PolicyDto {
-  @Column(name = DB_ID)
   private String policyId;
 
-  @Column(name = DB_CONSUMER_EMAIL)
   private String consumerEmailId;
 
-  @Column(name = DB_ITEM_ID)
   private String itemId;
 
-  @Column(name = DB_OWNER_ID)
   private String ownerId;
 
-  @Column(name = DB_STATUS)
   private String policyStatus;
 
-  @Column(name = DB_EXPIRY_AT)
   private String expiryAt;
 
-  @Column(name = DB_CONSTRAINTS)
   private JsonObject constraints;
 
   public PolicyDto() {}
@@ -47,14 +40,13 @@ public class PolicyDto {
   public PolicyDto(JsonObject jsonObject) {
     /* Converts JsonObject to PolicyDto class object or dataObject conversion [Deserialization] */
     setPolicyId(jsonObject.getString(DB_POLICY_ID));
-//    setPolicyStatus(jsonObject.getString(DB_STATUS));
-//    setConstraints(jsonObject.getJsonObject(DB_CONSTRAINTS));
-//    setConsumerEmailId(jsonObject.getString(DB_CONSUMER_EMAIL));
-//    setItemId(jsonObject.getString(DB_ITEM_ID));
-//    setPolicyStatus(jsonObject.getString(DB_STATUS));
-//    setExpiryAt(jsonObject.getString(DB_EXPIRY_AT));
+    setPolicyStatus(jsonObject.getString(DB_STATUS));
+    setConstraints(new JsonObject(jsonObject.getString(DB_CONSTRAINTS)));
+    setConsumerEmailId(jsonObject.getString(DB_CONSUMER_EMAIL));
+    setItemId(jsonObject.getString(DB_ITEM_ID));
+    setPolicyStatus(jsonObject.getString(DB_STATUS));
+    setExpiryAt(jsonObject.getString(DB_EXPIRY_AT));
 
-//    PolicyDtoConverter.fromJson(jsonObject, this);
   }
 
   /**
@@ -155,5 +147,18 @@ public class PolicyDto {
   public int hashCode() {
     return Objects.hash(
         policyId, consumerEmailId, itemId, ownerId, policyStatus, expiryAt, constraints);
+  }
+
+  @Override
+  public String toString() {
+    return "PolicyDto{" +
+        "policyId='" + policyId + '\'' +
+        ", consumerEmailId='" + consumerEmailId + '\'' +
+        ", itemId='" + itemId + '\'' +
+        ", ownerId='" + ownerId + '\'' +
+        ", policyStatus='" + policyStatus + '\'' +
+        ", expiryAt='" + expiryAt + '\'' +
+        ", constraints=" + constraints +
+        '}';
   }
 }

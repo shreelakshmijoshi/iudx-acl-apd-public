@@ -12,22 +12,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cdpg.dx.acl.policy.dao.PolicyDao;
 import org.cdpg.dx.acl.policy.dao.model.PolicyDto;
-import org.cdpg.dx.acl.policy.model.Constraints;
 import org.cdpg.dx.acl.policy.util.Status;
 import org.cdpg.dx.database.postgres.models.*;
 import org.cdpg.dx.database.postgres.service.PostgresService;
 
-/**
- * Check where is the policy related queries to the table are done What are the arguments required
- * to query the table what is the output type
- */
 public class PolicyDaoImpl implements PolicyDao {
+  private static final Logger LOGGER = LogManager.getLogger(PolicyDao.class);
   SelectQuery selectQuery;
   InsertQuery insertQuery;
   UpdateQuery updateQuery;
   Condition condition;
   PostgresService postgresService;
-  private static final Logger LOGGER = LogManager.getLogger(PolicyDao.class);
 
   public PolicyDaoImpl(
       PostgresService postgresService,
@@ -47,43 +42,11 @@ public class PolicyDaoImpl implements PolicyDao {
 
   @Override
   public Future<PolicyDto> getActiveConsumerPolicyFromDB(String itemId, String consumerEmailId) {
- condition = new Condition(List.of(
-     new Condition()
-         .setColumn(DB_CONSUMER_EMAIL)
-         .setValues(List.of(consumerEmailId))
-         .setOperator(Condition.Operator.EQUALS),
-     new Condition()
-         .setColumn(DB_ITEM_ID)
-         .setValues(List.of(itemId))
-         .setOperator(Condition.Operator.EQUALS),
-     new Condition()
-         .setColumn(DB_EXPIRY_AT)
-         .setValues(List.of(LocalDateTime.now()))
-         .setOperator(Condition.Operator.GREATER),
-     new Condition()
-         .setColumn(DB_STATUS)
-         .setValues(List.of(Status.ACTIVE))
-         .setOperator(Condition.Operator.EQUALS)), Condition.LogicalOperator.AND);
-//    condition.setConditions(
-//        List.of(
-//            new Condition()
-//                .setColumn(DB_CONSUMER_EMAIL)
-//                .setValues(List.of(consumerEmailId))
-//                .setOperator(Condition.Operator.EQUALS),
-//            new Condition()
-//                .setColumn(DB_ITEM_ID)
-//                .setValues(List.of(itemId))
-//                .setOperator(Condition.Operator.EQUALS),
-//            new Condition()
-//                .setColumn(DB_EXPIRY_AT)
-//                .setValues(List.of("NOW()"))
-//                .setOperator(Condition.Operator.GREATER),
-//            new Condition()
-//                .setColumn(DB_STATUS)
-//                .setValues(List.of(Status.ACTIVE))
-//                .setOperator(Condition.Operator.EQUALS)));
-
-    //    condition.setValues(List.of(consumerEmailId, itemId, "NOW()", Status.ACTIVE));
+    Condition condition1 = new Condition(DB_CONSUMER_EMAIL,Condition.Operator.EQUALS,List.of(consumerEmailId));
+    Condition condition2 = new Condition(DB_ITEM_ID, Condition.Operator.EQUALS,List.of(itemId));
+    Condition condition3 = new Condition(DB_EXPIRY_AT, Condition.Operator.GREATER, List.of(LocalDateTime.now()));
+    Condition condition4 = new Condition(DB_STATUS, Condition.Operator.EQUALS,List.of(Status.ACTIVE.toString()));
+    condition = new Condition((List.of(condition1,condition2,condition3,condition4)), Condition.LogicalOperator.AND);
     selectQuery.setColumns(List.of("*")).setCondition(condition);
     return postgresService
         .select(selectQuery)
@@ -94,6 +57,7 @@ public class PolicyDaoImpl implements PolicyDao {
             })
         .recover(
             throwable -> {
+              throwable.printStackTrace();
               return Future.failedFuture(throwable.getMessage());
             });
   }
@@ -101,28 +65,12 @@ public class PolicyDaoImpl implements PolicyDao {
   @Override
   public Future<PolicyDto> checkExistingPolicyFromDb(
       String itemId, String ownerId, Status status, String consumerEmailId) {
-    condition.setConditions(
-        List.of(
-            new Condition()
-                .setColumn(DB_CONSUMER_EMAIL)
-                .setValues(List.of(consumerEmailId))
-                .setOperator(Condition.Operator.EQUALS),
-            new Condition()
-                .setColumn(DB_OWNER_ID)
-                .setValues(List.of(ownerId))
-                .setOperator(Condition.Operator.EQUALS),
-            new Condition()
-                .setColumn(DB_ITEM_ID)
-                .setValues(List.of(itemId))
-                .setOperator(Condition.Operator.EQUALS),
-            new Condition()
-                .setColumn(DB_EXPIRY_AT)
-                .setValues(List.of("NOW()"))
-                .setOperator(Condition.Operator.GREATER),
-            new Condition()
-                .setColumn(DB_STATUS)
-                .setValues(List.of(status))
-                .setOperator(Condition.Operator.EQUALS)));
+    Condition condition1 = new Condition(DB_CONSUMER_EMAIL,Condition.Operator.EQUALS,List.of(consumerEmailId));
+    Condition condition2 = new Condition(DB_OWNER_ID, Condition.Operator.EQUALS,List.of(ownerId));
+    Condition condition3 = new Condition(DB_ITEM_ID, Condition.Operator.EQUALS, List.of(itemId));
+    Condition condition4 = new Condition(DB_EXPIRY_AT, Condition.Operator.GREATER,List.of(LocalDateTime.now()));
+    Condition condition5 = new Condition(DB_STATUS, Condition.Operator.EQUALS,List.of(status));
+    condition = new Condition((List.of(condition1,condition2,condition3,condition4,condition5)), Condition.LogicalOperator.AND);
     selectQuery.setColumns(List.of("*")).setCondition(condition);
     return postgresService
         .select(selectQuery)
@@ -142,8 +90,8 @@ public class PolicyDaoImpl implements PolicyDao {
       String consumerEmailId,
       String itemId,
       String ownerId,
-      String expiryAt,
-      Constraints constraints) {
+      LocalDateTime expiryAt,
+      JsonObject constraints) {
     Map<String, Object> queryParam =
         Map.of(
             DB_CONSUMER_EMAIL, consumerEmailId,
@@ -170,24 +118,15 @@ public class PolicyDaoImpl implements PolicyDao {
 
   @Override
   public Future<PolicyDto> deletePolicyInDb(String policyId) {
-//    condition
-//        .setColumn(DB_EXPIRY_AT)
-//        .setOperator(Condition.Operator.GREATER)
-//        .setValues(List.of("NOW()"));
-//    updateQuery.setCondition(condition).setColumns(List.of(DB_ID)).setValues(List.of(policyId));
-//    UpdateQuery updateQuery1 = new UpdateQuery(POLICY_TABLE, List.of(DB_STATUS), List.of("DELETED"),null, null,null);
     updateQuery.setColumns(List.of(DB_STATUS)).setValues(List.of(Status.DELETED)).setCondition(condition.setColumn(DB_POLICY_ID).setValues(List.of(policyId)).setOperator(
-        Condition.Operator.EQUALS));
-
-    LOGGER.error("Update query is : {}", updateQuery.toSQL());
-//        LOGGER.error("Select query is : {}", selectQuery.toSQL());
-
+        Condition.Operator.EQUALS)).setCondition(condition.setColumn(DB_EXPIRY_AT).setValues(List.of(LocalDateTime.now())).setOperator(
+        Condition.Operator.GREATER));
+    LOGGER.info("Update query is : {}", updateQuery.toSQL());
     return postgresService
         .update(updateQuery)
         .compose(
             queryResult -> {
-              LOGGER.error("Result is : {}", queryResult.getRows());
-              PolicyDto policyDto = new PolicyDto(new JsonObject().put("_id","klfjkfgjfg"));
+              PolicyDto policyDto = new PolicyDto(queryResult.getRows().getJsonObject(0));
               return Future.succeededFuture(policyDto);
             })
         .recover(failure -> Future.failedFuture(failure.getMessage()));

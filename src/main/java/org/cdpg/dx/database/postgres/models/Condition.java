@@ -59,7 +59,7 @@ public class Condition {
     this.isGroup = false;
   }
 
-  // Constructor for condition group
+//  // Constructor for condition group
   public Condition(List<Condition> conditions, LogicalOperator logicalOperator) {
     this.conditions = Objects.requireNonNull(conditions, "Conditions cannot be null");
     this.logicalOperator = Objects.requireNonNull(logicalOperator, "Logical operator cannot be null");
@@ -139,6 +139,7 @@ public class Condition {
   }
 
   public String toSQL(List<Object> params) {
+    System.out.println("hereeee 3 : is group" + isGroup);
     if (isGroup) {
       return conditions.stream()
         .map(cond -> "(" + cond.toSQL(params) + ")") // Recursively build condition strings
@@ -239,4 +240,15 @@ public class Condition {
     return isGroup;
   }
 
+  @Override
+  public String toString() {
+    return "Condition{" +
+        "column='" + column + '\'' +
+        ", operator=" + operator +
+        ", values=" + values +
+        ", conditions=" + conditions +
+        ", logicalOperator=" + logicalOperator +
+        ", isGroup=" + isGroup +
+        '}';
+  }
 }

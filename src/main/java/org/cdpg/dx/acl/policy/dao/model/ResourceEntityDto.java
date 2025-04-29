@@ -25,10 +25,9 @@ public class ResourceEntityDto {
     this.createdAt = other.getCreatedAt();
   }
 
-//  public ResourceEntityDto(JsonObject jsonObject) {
-//    /* Converts JsonObject to ResourceEntityDto class object or dataObject conversion [Deserialization] */
+  public ResourceEntityDto(JsonObject jsonObject) {
 //    ResourceEntityDtoConverter.fromJson(jsonObject, this);
-//  }
+  }
 
   /**
    * Converts Data object or Policy class object to json object [Serialization]

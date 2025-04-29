@@ -3,7 +3,6 @@ package org.cdpg.dx.acl.notification.dao.model;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.json.annotations.JsonGen;
 import io.vertx.core.json.JsonObject;
-import org.cdpg.dx.acl.policy.model.Constraints;
 
 
 public class AccessRequestDto {
@@ -16,7 +15,7 @@ public class AccessRequestDto {
   String createdAt;
   String updatedAt;
   JsonObject additionalInfo;
-  Constraints constraints;
+  JsonObject constraints;
 
   public AccessRequestDto() {}
 
@@ -130,11 +129,11 @@ public class AccessRequestDto {
     return this;
   }
 
-  public Constraints getConstraints() {
+  public JsonObject getConstraints() {
     return constraints;
   }
 
-  public AccessRequestDto setConstraints(Constraints constraints) {
+  public AccessRequestDto setConstraints(JsonObject constraints) {
     this.constraints = constraints;
     return this;
   }

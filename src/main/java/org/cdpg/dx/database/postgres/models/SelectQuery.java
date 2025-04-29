@@ -11,7 +11,7 @@ public class SelectQuery implements Query {
     private String table;
     private String tableAlias;  // New field for table alias
     private List<String> columns;
-    private org.cdpg.dx.database.postgres.models.Condition condition;
+    private Condition condition;
     private List<String> groupBy;
     private List<OrderBy> orderBy;
     private Integer limit;
@@ -188,6 +188,7 @@ public class SelectQuery implements Query {
                 query.append(" ").append(join.toSQL());
             }
         }
+        System.out.println("hereeee 1 : " + condition);
 
         // Adding condition (WHERE clause)
         if (condition != null) {
@@ -214,6 +215,7 @@ public class SelectQuery implements Query {
         if (offset != null) {
             query.append(" OFFSET ").append(offset);
         }
+        System.out.println("hereeeeee : " + query);
 
         return query.toString();
     }

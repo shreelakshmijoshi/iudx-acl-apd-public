@@ -1,9 +1,11 @@
 package org.cdpg.dx.acl.policy.dao;
 
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
+import java.time.LocalDateTime;
 import org.cdpg.dx.acl.policy.dao.model.PolicyDto;
-import org.cdpg.dx.acl.policy.model.Constraints;
 import org.cdpg.dx.acl.policy.util.Status;
+
 
 /** Handles sql queries without joins like insert query, update query to policy table */
 public interface PolicyDao {
@@ -44,8 +46,8 @@ public interface PolicyDao {
       String consumerEmailId,
       String itemId,
       String ownerId,
-      String expiryAt,
-      Constraints constraints);
+      LocalDateTime expiryAt,
+      JsonObject constraints);
 
   /**
    * Performs soft delete on active policy by setting the `status` of the policy to DELETED where

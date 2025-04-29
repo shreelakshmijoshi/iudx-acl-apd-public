@@ -21,7 +21,6 @@ public class PostgresServiceImpl implements PostgresService {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresServiceImpl.class);
 
     public PostgresServiceImpl(Pool client) {
-        System.out.println("inside the constructor : hereee");
         this.client = client;
     }
 
@@ -126,30 +125,6 @@ public class PostgresServiceImpl implements PostgresService {
     }
   }
 
-
-
-//    private Future<QueryResult> executeQuery(String sql, List<Object> params) {
-//      System.out.println("SQL: "+sql);
-//      try
-//      {
-//        System.out.println(Tuple.from(params));
-//        return client.preparedQuery(sql).execute(Tuple.from(params))
-//          .map(this::convertToQueryResult);
-//      }
-//      catch(Exception e)
-//      {
-//        return Future.failedFuture("Error found in postgresImpl"+e.getMessage());
-//      }
-
-
-//      return client.preparedQuery(sql).execute(Tuple.from(params))
-//            .map(this::convertToQueryResult);
-  //  }
-
-//    @Override
-//    public Future<QueryResult> execute(Query query) {
-//        return executeQuery(query.toSQL(), query.getQueryParams());
-//    }
 
     @Override
     public Future<QueryResult> insert(InsertQuery query) {

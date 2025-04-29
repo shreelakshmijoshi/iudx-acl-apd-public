@@ -64,10 +64,11 @@ public class PolicyDAOImpl implements PolicyDAO {
     // Create Condition for WHERE clause
     //    Condition condition = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS,
     // List.of(id));
-    Condition condition = new Condition();
-    condition.setColumn(Constants.POLICY_ID);
-    condition.setValues(List.of(id));
-    condition.setOperator(Condition.Operator.EQUALS);
+//    Condition condition = new Condition();
+//    condition.setColumn(Constants.POLICY_ID);
+//    condition.setValues(List.of(id));
+//    condition.setOperator(Condition.Operator.EQUALS);
+    Condition condition = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS,List.of(id));
 
     // Build the UpdateQuery
     //    UpdateQuery query = new UpdateQuery(Constants.POLICY_TABLE, columns, values, condition,
@@ -105,7 +106,7 @@ public class PolicyDAOImpl implements PolicyDAO {
     // Create Condition for WHERE clause
     //    Condition condition = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS,
     // List.of(id));
-    Condition condition = new Condition();
+    Condition condition = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS, List.of(id));
     condition.setColumn(Constants.POLICY_ID);
     condition.setValues(List.of(id));
     condition.setOperator(Condition.Operator.EQUALS);
@@ -142,10 +143,10 @@ public class PolicyDAOImpl implements PolicyDAO {
     //         Create Condition for WHERE clause
     //        Condition condition = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS,
     // List.of(id));
-    Condition condition1 = new Condition();
-    condition1.setColumn(Constants.POLICY_ID);
-    condition1.setValues(List.of(id));
-    condition1.setOperator(Condition.Operator.EQUALS);
+    Condition condition1 = new Condition(Constants.POLICY_ID, Condition.Operator.EQUALS, List.of(id));
+//    condition1.setColumn(Constants.POLICY_ID);
+//    condition1.setValues(List.of(id));
+//    condition1.setOperator(Condition.Operator.EQUALS);
 
     // Build the UpdateQuery
 //            DeleteQuery query = new DeleteQuery(Constants.POLICY_TABLE, component, null, null);
