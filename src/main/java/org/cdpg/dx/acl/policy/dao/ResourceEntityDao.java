@@ -10,7 +10,7 @@ import org.cdpg.dx.acl.policy.dao.model.ResourceEntityDto;
 public interface ResourceEntityDao {
 
   public Future<List<ResourceEntityDto>> getResourceFromDb(
-      String resourceId, String resourceServerUrl, String providerId);
+      String... resourceIds);
 
   public Future<ResourceEntityDto> createResourceInDb(
       String resourceId,
