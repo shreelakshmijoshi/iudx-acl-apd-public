@@ -1,27 +1,21 @@
 package org.cdpg.dx.acl.policy.dao.impl;
 
 import static org.cdpg.dx.acl.policy.dao.util.Constants.*;
-import static org.cdpg.dx.acl.policy.dao.util.Constants.DB_CONSTRAINTS;
-import static org.cdpg.dx.acl.policy.dao.util.Constants.DB_EXPIRY_AT;
-import static org.cdpg.dx.acl.policy.dao.util.Constants.DB_STATUS;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.cdpg.dx.acl.policy.dao.ResourceEntityDao;
-import org.cdpg.dx.acl.policy.dao.model.FetchPolicyDto;
-import org.cdpg.dx.acl.policy.dao.model.PolicyDto;
 import org.cdpg.dx.acl.policy.dao.model.ResourceEntityDto;
-import org.cdpg.dx.acl.policy.util.Status;
 import org.cdpg.dx.database.postgres.models.Condition;
 import org.cdpg.dx.database.postgres.models.InsertQuery;
 import org.cdpg.dx.database.postgres.models.SelectQuery;
 import org.cdpg.dx.database.postgres.models.UpdateQuery;
 import org.cdpg.dx.database.postgres.service.PostgresService;
+
+
 
 public class ResourceEntityDaoImpl implements ResourceEntityDao {
   SelectQuery selectQuery;
@@ -53,7 +47,7 @@ public class ResourceEntityDaoImpl implements ResourceEntityDao {
   //  // ($1::UUID[]);";
   @Override
   public Future<List<ResourceEntityDto>> getResourceFromDb(String... resourceIds) {
-    Condition condition1 = new Condition(DB_ITEM_TYPE,Condition.Operator.ANY, List.of(resourceIds));
+    Condition condition1 = new Condition(DB_ITEM_TYPE,Condition.Operator.IN, List.of(resourceIds));
     selectQuery
         .setColumns(List.of("*"))
         .setCondition(condition1);
@@ -99,7 +93,7 @@ public class ResourceEntityDaoImpl implements ResourceEntityDao {
             DB_ITEM_TYPE, itemType,
             DB_RESOURCE_SERVER_URL, resourceServerUrl);
 
-    
+
     insertQuery
         .setColumns(new ArrayList<>(queryParam.keySet()))
         .setValues(new ArrayList<>(queryParam.values()));
@@ -120,21 +114,17 @@ public class ResourceEntityDaoImpl implements ResourceEntityDao {
   //    public static final String OWNERSHIP_CHECK_QUERY =
   //          "SELECT * FROM resource_entity WHERE _id = $1::uuid AND provider_id = $2::uuid";
   @Override
-  public Future<List<ResourceEntityDto>> checkResourcesFromDb(List<String> resourceId) {
-//    Condition condition1 = new Condition(DB_CONSUMER_EMAIL,Condition.Operator.EQUALS,List.of(consumerEmailId));
-//    Condition condition2 = new Condition(DB_OWNER_ID, Condition.Operator.EQUALS,List.of(ownerId));
-//    Condition condition3 = new Condition(DB_ITEM_ID, Condition.Operator.EQUALS, List.of(itemId));
-//    Condition condition4 = new Condition(DB_EXPIRY_AT, Condition.Operator.GREATER,List.of(LocalDateTime.now()));
-//    Condition condition5 = new Condition(DB_STATUS, Condition.Operator.EQUALS,List.of(status));
-//    condition = new Condition((List.of(condition1,condition2,condition3,condition4,condition5)), Condition.LogicalOperator.AND);
-//    selectQuery.setColumns(List.of("*")).setCondition(condition);
+  public Future<ResourceEntityDto> checkResourcesFromDb(String resourceId, String providerId) {
+    Condition resourceIdCondition = new Condition(DB_ID,Condition.Operator.EQUALS,List.of(resourceId));
+    Condition providerIdCondition = new Condition(DB_PROVIDER_ID, Condition.Operator.EQUALS,List.of(providerId));
+    condition = new Condition((List.of(resourceIdCondition,providerIdCondition)), Condition.LogicalOperator.AND);
+    selectQuery.setColumns(List.of("*")).setCondition(condition);
     return postgresService
         .select(selectQuery)
         .compose(
             queryResult -> {
-              List<ResourceEntityDto> list =
-                  queryResult.getRows().stream().map(e -> new ResourceEntityDto(JsonObject.mapFrom(e))).toList();
-              return Future.succeededFuture(list);
+              ResourceEntityDto resourceEntityDto = new ResourceEntityDto(queryResult.getRows().getJsonObject(0));
+              return Future.succeededFuture(resourceEntityDto);
             })
         .recover(
             throwable -> {
