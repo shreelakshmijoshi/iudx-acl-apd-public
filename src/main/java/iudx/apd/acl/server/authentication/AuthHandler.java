@@ -35,6 +35,7 @@ import iudx.apd.acl.server.common.Api;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.policy.PostgresService;
+import java.util.Arrays;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,6 +67,7 @@ public class AuthHandler implements Handler<RoutingContext> {
     String token = request.headers().get(AUTHORIZATION_KEY);
     final String method = context.request().method().toString();
     final String path = getNormalizedPath(request.path());
+    LOGGER.debug("path: {}, method: {}, token: {}",path, method, token);
 
     JsonObject authInfo =
         new JsonObject().put(API_ENDPOINT, path).put(HEADER_TOKEN, token).put(API_METHOD, method);
@@ -205,6 +207,7 @@ public class AuthHandler implements Handler<RoutingContext> {
   private String getNormalizedPath(String url) {
     LOGGER.debug("URL: " + url);
     String[] urlsToMatch = {api.getPoliciesUrl(), api.getRequestPoliciesUrl(), api.getVerifyUrl()};
+    LOGGER.debug("urlsToMatch: " + Arrays.toString(urlsToMatch));
 
     for (String apiUrl : urlsToMatch) {
       if (url.matches(apiUrl)) {
