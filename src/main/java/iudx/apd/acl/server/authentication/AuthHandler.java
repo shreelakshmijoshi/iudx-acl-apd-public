@@ -175,13 +175,13 @@ public class AuthHandler implements Handler<RoutingContext> {
     Promise<Void> promise = Promise.promise();
     Tuple tuple =
         Tuple.of(user.getUserId(), user.getEmailId(), user.getFirstName(), user.getLastName());
-
+String insertQuery = INSERT_USER_TABLE.replace("user_table", pgService.getSchemaName()+"."+"user_table");
     pgService
         .getPool()
         .withConnection(
             sqlConnection ->
                 sqlConnection
-                    .preparedQuery(INSERT_USER_TABLE)
+                    .preparedQuery(insertQuery)
                     .execute(tuple)
                     .onFailure(
                         existingIdFailureHandler -> {

@@ -12,12 +12,13 @@ import java.util.Map;
 
 public class PostgresService {
   private final PgPool pool;
+  private final String databaseSchema;
 
   public PostgresService(JsonObject config, Vertx vertx) {
     /* Database Properties */
     String databaseIp = config.getString("databaseIP");
     int databasePort = config.getInteger("databasePort");
-    String databaseSchema = config.getString("databaseSchema");
+    databaseSchema = config.getString("databaseSchema");
     String databaseName = config.getString("databaseName");
     String databaseUserName = config.getString("databaseUserName");
     String databasePassword = config.getString("databasePassword");
@@ -45,5 +46,8 @@ public class PostgresService {
 
   public PgPool getPool() {
     return pool;
+  }
+  public String getSchemaName(){
+    return this.databaseSchema;
   }
 }
