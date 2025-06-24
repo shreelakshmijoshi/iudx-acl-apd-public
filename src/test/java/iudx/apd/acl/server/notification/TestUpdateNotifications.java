@@ -738,8 +738,6 @@ public class TestUpdateNotifications {
             });
   }
 
-
-
   @Test
   @DisplayName(
       "Test initiateTransaction method when there is a failure while creating policy: Failure")
@@ -885,6 +883,7 @@ public class TestUpdateNotifications {
         .onComplete(
             vertxTestContext.succeeding(
                 successfulInsertion -> {
+                  LOG.info("Test setup successful");
                   UpdateNotification updateNotification = new UpdateNotification(postgresService);
 
                   UUID itemId = utility.getResourceId();
@@ -895,7 +894,7 @@ public class TestUpdateNotifications {
                   JsonObject failureMessage =
                       new JsonObject()
                           .put(TYPE, 500)
-                          .put(TITLE, ResponseUrn.DB_ERROR_URN.getUrn())
+                          .put(TITLE, DB_ERROR_URN.getUrn())
                           .put(DETAIL, "Something went wrong while approving access request");
                   JsonObject notification = mock(JsonObject.class);
                   updateNotification.setConsumerEmailId("someEmailId");
@@ -904,7 +903,7 @@ public class TestUpdateNotifications {
                   updateNotification.setPolicyId(somePolicyId);
                   updateNotification.setOwnerId(ownerId);
                   updateNotification.setExpiryAt(LocalDateTime.of(2025, 3, 3, 3, 3, 3));
-                  when(notification.getJsonObject("constraints"))
+                  when(notification.getJsonObject("constraints", new JsonObject()))
                       .thenReturn(new JsonObject().put("something", "someDummyValue"));
                   when(notification.getString("requestId")).thenReturn(requestId, "ksadjfskfdjg");
 
@@ -913,8 +912,6 @@ public class TestUpdateNotifications {
                       .onComplete(
                           handler -> {
                             if (handler.succeeded()) {
-                              System.out.println(
-                                  "handler.result().encode()" + handler.result().encode());
                               vertxTestContext.failNow(
                                   "Succeeded when there was a failure in approve notification");
 
@@ -955,8 +952,8 @@ public class TestUpdateNotifications {
                                                       /*check if no record is present in approved access request table*/
                                                       utility
                                                           .executeQuery(
-                                                              Tuple.of(requestId),
-                                                              "SELECT * FROM approved_access_requests WHERE request_id = $1 ")
+                                                              Tuple.of(requestId, somePolicyId),
+                                                              "SELECT * FROM approved_access_requests WHERE request_id = $1 AND policy_id = $2::uuid")
                                                           .onComplete(
                                                               approvedAccessRequestHandler -> {
                                                                 if (approvedAccessRequestHandler
