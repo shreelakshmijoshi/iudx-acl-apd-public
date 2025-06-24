@@ -29,6 +29,8 @@ public class Utility {
       "INSERT INTO user_table(_id, email_id, first_name, last_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING _id;";
   public static final String INSERT_INTO_REQUEST_TABLE =
       "INSERT INTO request(_id, user_id, item_id, owner_id, status, created_at, updated_at, constraints) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING _id;";
+  public static final String INSERT_INTO_APPROVED_ACCESS_REQUESTS =
+      "INSERT INTO approved_access_requests(policy_id, request_id) VALUES ($1, $2) RETURNING policy_id;";
   private static final Logger LOG = LoggerFactory.getLogger(Utility.class);
   private PgPool pool;
   private String resourceType;
@@ -214,16 +216,38 @@ public class Utility {
                                                         .onComplete(
                                                             policyHandler -> {
                                                               if (policyHandler.succeeded()) {
-                                                                LOG.info(
-                                                                    "Succeeded in inserting all the queries");
-                                                                LOG.info(
-                                                                    "Result from the insertion : {}, {}, {}, {}",
-                                                                    handler.result(),
-                                                                    resourceHandler.result(),
-                                                                    policyHandler.result(),
-                                                                    requestInsertionHandler
-                                                                        .result());
-                                                                promise.complete(true);
+                                                                Tuple tuple =
+                                                                    Tuple.of(policyId, requestId);
+                                                                executeQuery(
+                                                                        tuple,
+                                                                        INSERT_INTO_APPROVED_ACCESS_REQUESTS)
+                                                                    .onComplete(
+                                                                        finalHandler -> {
+                                                                          if (finalHandler
+                                                                              .succeeded()) {
+                                                                            LOG.info(
+                                                                                "Succeeded in inserting all the queries");
+                                                                            LOG.info(
+                                                                                "Result from the insertion : {}, {}, {}, {}, {}",
+                                                                                handler.result(),
+                                                                                resourceHandler
+                                                                                    .result(),
+                                                                                policyHandler
+                                                                                    .result(),
+                                                                                requestInsertionHandler
+                                                                                    .result(),
+                                                                                finalHandler
+                                                                                    .result());
+                                                                            promise.complete(true);
+                                                                          } else {
+                                                                            LOG.error(
+                                                                                "Failed to insert into approved access requests: {}",
+                                                                                finalHandler
+                                                                                    .cause());
+                                                                            hasFailed = true;
+                                                                          }
+                                                                        });
+
                                                               } else {
                                                                 hasFailed = true;
                                                               }
