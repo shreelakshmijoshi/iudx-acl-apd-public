@@ -879,7 +879,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"request\": [\n    {\n      \"userEmail\": \"consumer@dummyId.com\",\n      \"itemId\": \"{{item_id}}\",\n      \"itemType\": \"RESOURCE\",\n      \"expiryTime\": \"3000-08-04T20:00:19\",\n      \"constraints\": {\n        \"access\": [\n          \"sub\"\n        ]\n      }\n    }\n  ]\n}",
+							"raw": "{\n  \"request\": [\n    {\n      \"userEmail\": \"consumer@dummyId.com\",\n      \"itemId\": \"{{item_id}}\",\n      \"itemType\": \"RESOURCE\",\n      \"expiryTime\": \"3000-08-04T20:00:19\",\n      \"constraints\": {\n        \"access\": [\n          \"sub\"\n        ]\n      },\n    \"additionalInfo\": {\n          \"key\": \"dummyValue\" \n      },\n      \"providerComment\": \"This is a sample provider comment\",\n      \"feedbackToConsumer\": \"This is a sample consumer comment\"\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3098,7 +3098,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"requestId\": \"{{requestId}}\",\n  \"status\": \"granted\",\n  \"expiryAt\": \"3000-03-05T20:00:19\",\n  \"constraints\": {\n    \"access\": [\n      \"api\",\n      \"sub\",\n      \"file\"\n    ]\n  }\n}",
+							"raw": "{\n  \"requestId\": \"{{requestId}}\",\n  \"status\": \"granted\",\n  \"expiryAt\": \"3000-03-05T20:00:19\",\n  \"constraints\": {\n    \"access\": [\n      \"api\",\n      \"sub\",\n      \"file\"\n    ]\n  },\n  \"providerComment\": \"This resource is related to transportation data analysis\",\n  \"feedbackToConsumer\": \"This resource could be used for testing\"\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
