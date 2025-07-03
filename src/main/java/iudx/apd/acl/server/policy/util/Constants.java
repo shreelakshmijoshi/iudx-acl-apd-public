@@ -64,6 +64,7 @@ public class Constants {
           + "AND P.user_emailid = $1 "
           + "AND RE.resource_server_url = $2 "
           + " ORDER BY P.updated_at DESC";
+
   public static final String DELETE_POLICY_QUERY =
       "UPDATE policy SET status='DELETED' "
           + "WHERE _id = $1::uuid AND expiry_at > NOW() RETURNING _id";
