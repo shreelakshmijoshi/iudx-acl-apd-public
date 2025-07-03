@@ -35,8 +35,8 @@ public class Constants {
   public static final String OWNERSHIP_CHECK_QUERY =
           "SELECT * FROM resource_entity WHERE _id = $1::uuid AND provider_id = $2::uuid";
   public static final String CREATE_POLICY_QUERY = "INSERT INTO policy"
-          + "(user_emailid, item_id, owner_id, status, expiry_at, constraints)"
-          + " VALUES ($1, $2, $3, $4, $5,$6) RETURNING _id;";
+          + "(user_emailid, item_id, owner_id, status, expiry_at, constraints, additional_info, provider_comment, feedback_to_consumer)"
+          + " VALUES ($1, $2, $3, $4, $5,$6, $7, $8, $9) RETURNING _id;";
   public static final String INSERT_IN_APPROVED_ACCESS_REQUESTS_QUERY =
           "INSERT INTO approved_access_requests(request_id, policy_id) VALUES ($1, $2) RETURNING _id";
   public static final String APPROVE_REQUEST_QUERY = "UPDATE request SET status = 'GRANTED', expiry_at = $1,"
