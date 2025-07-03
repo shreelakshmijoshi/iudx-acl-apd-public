@@ -109,13 +109,26 @@ public class UpdateNotification {
                   }
                   return checkOwner4GivenResource(OWNERSHIP_CHECK_QUERY);
                 });
-        Future<JsonObject> approvedRequestFuture =
+
+        /* Get additionalInfo from request for the given notification ID */
+        Future<JsonObject> additionalInfoFetchFuture =
             ownershipCheckFuture.compose(
                 ownerOwningTheResource -> {
                   if (ownerOwningTheResource) {
-                    return initiateTransactions(notification);
+                    return getAdditionalInfoFromRequest(notificationId);
                   }
                   return Future.failedFuture(ownershipCheckFuture.cause().getMessage());
+                });
+
+        Future<JsonObject> approvedRequestFuture =
+            additionalInfoFetchFuture.compose(
+                additionalInfo -> {
+                  if (additionalInfo != null) {
+                    notification.put("additionalInfo", additionalInfo);
+                  } else {
+                    LOG.warn("No additional info found for notification ID: {}", notificationId);
+                  }
+                  return initiateTransactions(notification);
                 });
 
         return approvedRequestFuture;
@@ -127,6 +140,34 @@ public class UpdateNotification {
                 .put(DETAIL, "Invalid request status, request can be either rejected or granted");
         return Future.failedFuture(failureMessage.encode());
     }
+  }
+
+  public Future<JsonObject> getAdditionalInfoFromRequest(UUID notificationId){
+    LOG.debug("inside getAdditionalInfoFromRequest method");
+    Promise<JsonObject> promise = Promise.promise();
+    Tuple tuple = Tuple.of(notificationId);
+    executeQuery(
+        GET_REQUEST,
+        tuple,
+        handler -> {
+          if (handler.succeeded()) {
+            JsonArray result = handler.result().getJsonArray(RESULT);
+            if (!result.isEmpty()) {
+              JsonObject additionalInfo = result.getJsonObject(0).getJsonObject("additional_info", null);
+              promise.complete(additionalInfo);
+            } else {
+              JsonObject failureMessage =
+                  new JsonObject()
+                      .put(TYPE, NOT_FOUND.getValue())
+                      .put(TITLE, RESOURCE_NOT_FOUND_URN.getUrn())
+                      .put(DETAIL, "Request not found for the given notification ID");
+              promise.fail(failureMessage.encode());
+            }
+          } else {
+            promise.fail(handler.cause().getMessage());
+          }
+        });
+    return promise.future();
   }
 
   /**
@@ -150,6 +191,12 @@ public class UpdateNotification {
         pool.withTransaction(
             sqlConnection -> {
               JsonObject constraints = notification.getJsonObject("constraints", new JsonObject());
+              /* additional query parameters for creating the policy like
+              additionalInfo, providerComment, feedbackToConsumer*/
+              String providerComment = notification.getString("providerComment", null);
+              String feedbackToConsumer = notification.getString("feedbackToConsumer", null);
+              JsonObject additionalInfo =
+                  notification.getJsonObject("additionalInfo", null);
 
               Tuple createPolicyTuple =
                   Tuple.of(
@@ -158,7 +205,11 @@ public class UpdateNotification {
                       getOwnerId(),
                       "ACTIVE",
                       getExpiryAt(),
-                      constraints);
+                      constraints,
+                      additionalInfo,
+                      providerComment,
+                      feedbackToConsumer
+                      );
 
               var response =
                   sqlConnection
