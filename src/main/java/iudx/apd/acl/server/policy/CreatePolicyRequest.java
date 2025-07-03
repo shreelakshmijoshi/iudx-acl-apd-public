@@ -21,6 +21,9 @@ public class CreatePolicyRequest {
   private ItemType itemType;
   private LocalDateTime expiryTime;
   private JsonObject constraints;
+  private JsonObject additionalInfo;
+  private String providerComment;
+  private String feedbackToConsumer;
 
   private static CreatePolicyRequest fromJsonToCreatePolicy(JsonObject jsonObject) {
 
@@ -28,6 +31,9 @@ public class CreatePolicyRequest {
     createPolicyRequest.setConstraints(jsonObject.getJsonObject("constraints"));
     createPolicyRequest.setUserEmail(jsonObject.getString("userEmail"));
     createPolicyRequest.setItemId(jsonObject.getString("itemId"));
+    createPolicyRequest.setAdditionalInfo(jsonObject.getJsonObject("additionalInfo", null));
+    createPolicyRequest.setProviderComment(jsonObject.getString("providerComment", null));
+    createPolicyRequest.setFeedbackToConsumer(jsonObject.getString("feedbackToConsumer", null));
     createPolicyRequest.setItemType(
         ItemType.valueOf(jsonObject.getString("itemType").toUpperCase()));
     createPolicyRequest.setExpiryTime(jsonObject.getString("expiryTime"));
@@ -113,20 +119,44 @@ public class CreatePolicyRequest {
     this.constraints = constraints;
   }
 
+  public String getFeedbackToConsumer() {
+    return feedbackToConsumer;
+  }
+
+  public CreatePolicyRequest setFeedbackToConsumer(String feedbackToConsumer) {
+    this.feedbackToConsumer = feedbackToConsumer;
+    return this;
+  }
+
+  public String getProviderComment() {
+    return providerComment;
+  }
+
+  public CreatePolicyRequest setProviderComment(String providerComment) {
+    this.providerComment = providerComment;
+    return this;
+  }
+
+  public JsonObject getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public CreatePolicyRequest setAdditionalInfo(JsonObject additionalInfo) {
+    this.additionalInfo = additionalInfo;
+    return this;
+  }
+
   @Override
   public String toString() {
-    return "userEmail="
-        + userEmail
-        + ", itemId='"
-        + itemId
-        + '\''
-        + ", itemType='"
-        + itemType
-        + '\''
-        + ", expiryTime='"
-        + expiryTime
-        + '\''
-        + ", constraints="
-        + constraints;
+    return "CreatePolicyRequest{" +
+        "userEmail='" + userEmail + '\'' +
+        ", itemId=" + itemId +
+        ", itemType=" + itemType +
+        ", expiryTime=" + expiryTime +
+        ", constraints=" + constraints +
+        ", additionalInfo=" + additionalInfo +
+        ", providerComment='" + providerComment + '\'' +
+        ", feedbackToConsumer='" + feedbackToConsumer + '\'' +
+        '}';
   }
 }

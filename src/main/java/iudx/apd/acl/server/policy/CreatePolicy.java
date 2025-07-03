@@ -2,6 +2,7 @@ package iudx.apd.acl.server.policy;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.*;
 import static iudx.apd.acl.server.common.HttpStatusCode.*;
+import static iudx.apd.acl.server.common.ResponseUrn.BAD_REQUEST_URN;
 import static iudx.apd.acl.server.policy.util.Constants.*;
 
 import io.vertx.core.Future;
@@ -36,6 +37,20 @@ public class CreatePolicy {
     Promise<JsonObject> promise = Promise.promise();
     JsonArray policyList = request.getJsonArray("request");
     UUID userId = UUID.fromString(user.getUserId());
+    boolean isAdditionalInfoPresent = request.containsKey("additionalInfo");
+    if (isAdditionalInfoPresent) {
+      boolean isAnyValueNull =
+          request.getJsonObject("additionalInfo").getMap().values().stream()
+              .anyMatch(Objects::isNull);
+      if (isAnyValueNull) {
+        JsonObject failureMessage =
+            new JsonObject()
+                .put(TYPE, BAD_REQUEST.getValue())
+                .put(TITLE, BAD_REQUEST_URN.getUrn())
+                .put(DETAIL,   "Policy cannot be created, as additionalInfo contains a null value");
+        return Future.failedFuture(failureMessage.encode());
+      }
+    }
     try {
       List<CreatePolicyRequest> createPolicyRequestList =
           CreatePolicyRequest.jsonArrayToList(policyList, request.getLong("defaultExpiryDays"));
@@ -308,7 +323,10 @@ public class CreatePolicy {
                         createPolicyRequest.getItemId(),
                         userId,
                         createPolicyRequest.getExpiryTime(),
-                        createPolicyRequest.getConstraints()))
+                        createPolicyRequest.getConstraints(),
+                        createPolicyRequest.getAdditionalInfo(),
+                        createPolicyRequest.getProviderComment(),
+                        createPolicyRequest.getFeedbackToConsumer()))
             .collect(Collectors.toList());
 
     postgresService
