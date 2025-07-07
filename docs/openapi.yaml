@@ -323,12 +323,16 @@ paths:
                           Comment from the provider regarding the resource
                           item, which can be used to provide additional
                           information about the resource
+                        minLength: 1
+                        maxLength: 4000
                       feedbackToConsumer:
                         type: string
                         description: >-
                           Feedback from the provider to the consumer regarding
                           the resource item, which can be used to provide
                           additional information about the resource
+                        maxLength: 4000
+                        minLength: 1
                     required:
                       - userEmail
                       - itemId
@@ -580,6 +584,8 @@ paths:
                             - api
                             - sub
                             - file
+                        providerComment: 'The resource is used for transportation data analysis'
+                        feedbackToConsumer: 'Access approved. Great power comes with great responsibility—ensure ethical use of this data!'
                         additionalInfo:
                           name: Miles Morales,
                           email: miles.morales@acmecorp.org,
@@ -869,12 +875,16 @@ paths:
                         Comment from the provider regarding the resource item,
                         which can be used to provide additional information
                         about the resource
+                      minLength: 1
+                      maxLength: 4000
                     feedbackToConsumer:
                         type: string
                         description: >-
                             Feedback from the provider to the consumer regarding
                             the resource item, which can be used to provide
                             additional information about the resource
+                        minLength: 1
+                        maxLength: 4000
                   required:
                     - requestId
                     - status
@@ -893,6 +903,22 @@ paths:
                       type: string
                       enum:
                       - rejected
+                    providerComment:
+                      type: string
+                      description: >-
+                        Comment from the provider regarding the resource item,
+                        which can be used to provide additional information
+                        about the resource
+                      minLength: 1
+                      maxLength: 4000
+                    feedbackToConsumer:
+                      type: string
+                      description: >-
+                        Feedback from the provider to the consumer regarding
+                        the resource item, which can be used to provide
+                        additional information about the resource
+                      minLength: 1
+                      maxLength: 4000
                   required:
                     - requestId
                     - status
@@ -924,6 +950,9 @@ paths:
                 value:
                   requestId: bca11712-f381-46a5-afa3-a29b00568ace
                   status: rejected
+                  providerComment: The resource is not available for access
+                  feedbackToConsumer: The resource is not available for access
+
       responses:
         '200':
           description: OK
@@ -1461,9 +1490,11 @@ components:
               providerComment:
                 type: string
                 minLength: 1
+                maxLength: 4000
               feedbackToConsumer:
                 type: string
                 minLength: 1
+                maxLength: 4000
               status:
                 type: string
                 enum: [ "ACTIVE","DELETED" ]
@@ -2012,6 +2043,14 @@ components:
                 minLength: 1
               constraints:
                 type: object
+              providerComment:
+                type: string
+                minLength: 1
+                maxLength: 4000
+              feedbackToConsumer:
+                type: string
+                minLength: 1
+                maxLength: 4000
               additionalInfo:
                 type: object
               updatedAt:

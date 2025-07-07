@@ -23,7 +23,7 @@ public class Constants {
 
 
   public static final String REJECT_NOTIFICATION =
-          "UPDATE request SET status='REJECTED' WHERE "
+          "UPDATE request SET status='REJECTED', provider_comment = $2, feedback_to_consumer = $3  WHERE "
           +
           "_id=$1::uuid AND expiry_at IS NULL RETURNING _id";
 
@@ -54,6 +54,8 @@ public class Constants {
           + "RE.resource_server_url AS \"resourceServerUrl\",\n"
           + "R.status AS \"status\", R.expiry_at AS \"expiryAt\", \n"
           + "R.constraints AS \"constraints\","
+          + "R.provider_comment AS \"providerComment\", "
+          + "R.feedback_to_consumer AS \"feedbackToConsumer\", "
           + " R.additional_info AS \"additionalInfo\", "
           + " R.user_id AS \"consumerId\",\n"
           + "R.owner_id AS \"ownerId\", U.first_name AS \"consumerFirstName\", \n"
@@ -94,6 +96,8 @@ public class Constants {
           + "RE.resource_server_url AS \"resourceServerUrl\",\n"
           + "R.status AS \"status\", R.expiry_at AS \"expiryAt\", \n"
           + "R.constraints AS \"constraints\",\n"
+          + "R.provider_comment AS \"providerComment\", "
+          + "R.feedback_to_consumer AS \"feedbackToConsumer\", "
           + " R.additional_info AS \"additionalInfo\", "
           + "R.user_id AS \"consumerId\", R.owner_id AS \"ownerId\",\n"
           + "U.first_name AS \"ownerFirstName\", \n"
