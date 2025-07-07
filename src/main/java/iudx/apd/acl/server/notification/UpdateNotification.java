@@ -75,7 +75,11 @@ public class UpdateNotification {
             checkNotificationFuture.compose(
                 isNotificationValid -> {
                   if (isNotificationValid) {
-                    return updateRejectedNotification(REJECT_NOTIFICATION, notificationId);
+                    String providerComment =
+                        notification.getString("providerComment", null);
+                    String feedbackToConsumer =
+                        notification.getString("feedbackToConsumer", null);
+                    return updateRejectedNotification(REJECT_NOTIFICATION, notificationId, providerComment, feedbackToConsumer);
                   }
                   return Future.failedFuture(checkNotificationFuture.cause().getMessage());
                 });
@@ -504,10 +508,10 @@ public class UpdateNotification {
    * @param notification requestId to work on of type UUID
    * @return JsonObject of type Future to associate success and failure response
    */
-  public Future<JsonObject> updateRejectedNotification(String query, UUID notification) {
+  public Future<JsonObject> updateRejectedNotification(String query, UUID notification, String providerComment, String feedbackToConsumer) {
     LOG.trace("inside updateRejectedNotification method");
     Promise<JsonObject> promise = Promise.promise();
-    Tuple tuple = Tuple.of(notification);
+    Tuple tuple = Tuple.of(notification, providerComment, feedbackToConsumer);
     executeQuery(
         query,
         tuple,

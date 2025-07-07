@@ -2819,7 +2819,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"requestId\": \"{{requestId}}\",\n    \"status\": \"rejected\"\n}",
+							"raw": "{\n    \"requestId\": \"{{requestId}}\",\n    \"status\": \"rejected\",\n    \"providerComment\": \"The resource is used for transportation data analysis\",\n    \"feedbackToConsumer\": \"This resource can be used for testing purposes\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
