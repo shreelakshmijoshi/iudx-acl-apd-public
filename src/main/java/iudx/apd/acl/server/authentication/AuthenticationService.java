@@ -6,6 +6,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import iudx.apd.acl.server.authentication.model.JwtData;
 
 /**
  * The Authentication Service.
@@ -41,16 +42,8 @@ public interface AuthenticationService {
    * APIs. It caches the result of the TIP from the auth server for a duration specified by the
    * Constants TIP_CACHE_TIMEOUT_AMOUNT and TIP_CACHE_TIMEOUT_UNIT.
    *
-   * @param authenticationInfo which is a JsonObject containing token: String and apiEndpoint:
+   * @param token which is a header token
    * @return Future of JsonObject containing information from the decoded token
    */
-  Future<JsonObject> tokenIntrospect(JsonObject authenticationInfo);
-
-  /**
-   * The tokenIntrospectForVerify method implements the authentication module for IUDX Verify APIs.
-   *
-   * @param authenticationInfo which is a JsonObject containing token: String and apiEndpoint:
-   * @return Future of Void.
-   */
-  Future<Void> tokenIntrospectForVerify(JsonObject authenticationInfo);
+  Future<JwtData> decodeToken(String token);
 }

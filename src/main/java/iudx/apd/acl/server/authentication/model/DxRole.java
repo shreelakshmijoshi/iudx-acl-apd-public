@@ -1,14 +1,14 @@
-package iudx.apd.acl.server.authentication.authorization;
+package iudx.apd.acl.server.authentication.model;
 
 import iudx.apd.acl.server.authentication.model.JwtData;
 import java.util.stream.Stream;
 
-public enum IudxRole {
+public enum DxRole {
   CONSUMER("consumer"), PROVIDER("provider"), DELEGATE("delegate");
 
   private final String role;
 
-  IudxRole(String role) {
+  DxRole(String role) {
     this.role = role;
   }
 
@@ -16,7 +16,7 @@ public enum IudxRole {
     return this.role;
   }
 
-  public static IudxRole fromRole(final JwtData jwtData) {
+  public static DxRole fromRole(final JwtData jwtData) {
     String role = jwtData.getRole().equalsIgnoreCase(DELEGATE.getRole()) ? jwtData.getDrl() : jwtData.getRole();
     return Stream.of(values())
       .filter(v -> v.role.equalsIgnoreCase(role))

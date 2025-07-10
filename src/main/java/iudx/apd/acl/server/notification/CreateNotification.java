@@ -2,13 +2,9 @@ package iudx.apd.acl.server.notification;
 
 import static iudx.apd.acl.server.apiserver.util.Constants.DETAIL;
 import static iudx.apd.acl.server.apiserver.util.Constants.RESULT;
-import static iudx.apd.acl.server.apiserver.util.Constants.ROLE;
 import static iudx.apd.acl.server.apiserver.util.Constants.STATUS_CODE;
 import static iudx.apd.acl.server.apiserver.util.Constants.TITLE;
 import static iudx.apd.acl.server.apiserver.util.Constants.TYPE;
-import static iudx.apd.acl.server.apiserver.util.Constants.USER_ID;
-import static iudx.apd.acl.server.authentication.Constants.AUD;
-import static iudx.apd.acl.server.authentication.Constants.IS_DELEGATE;
 import static iudx.apd.acl.server.common.HttpStatusCode.BAD_REQUEST;
 import static iudx.apd.acl.server.common.HttpStatusCode.INTERNAL_SERVER_ERROR;
 import static iudx.apd.acl.server.common.ResponseUrn.BAD_REQUEST_URN;
@@ -24,9 +20,11 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
+import iudx.apd.acl.server.aaaService.AuthClient;
 import iudx.apd.acl.server.apiserver.util.ResourceObj;
 import iudx.apd.acl.server.apiserver.util.User;
-import iudx.apd.acl.server.authentication.AuthClient;
+import iudx.apd.acl.server.authentication.model.DxRole;
+import iudx.apd.acl.server.authentication.model.UserInfo;
 import iudx.apd.acl.server.common.HttpStatusCode;
 import iudx.apd.acl.server.common.ResponseUrn;
 import iudx.apd.acl.server.policy.CatalogueClient;
@@ -95,25 +93,11 @@ public class CreateNotification {
 
     /* check if the resource exists in CAT */
     Future<Boolean> getItemFromCatFuture = isItemPresentInCatalogue(resourceId, itemType);
-    Future<Boolean> providerInsertionFuture =
+
+    Future<Boolean> resourceInsertionFuture =
         getItemFromCatFuture.compose(
             resourceExistsInCatalogue -> {
               if (resourceExistsInCatalogue) {
-                /* add the provider information if not already present in user_table */
-                return addProviderInDb(
-                    INSERT_USER_INFO_QUERY,
-                    UUID.fromString(getProviderInfo().getUserId()),
-                    getProviderInfo().getFirstName(),
-                    getProviderInfo().getLastName(),
-                    getProviderInfo().getEmailId());
-              }
-              return Future.failedFuture(getItemFromCatFuture.cause().getMessage());
-            });
-
-    Future<Boolean> resourceInsertionFuture =
-        providerInsertionFuture.compose(
-            isProviderAddedSuccessfully -> {
-              if (isProviderAddedSuccessfully) {
                 /* add the resource in resource_entity table if not already present*/
                 return addResourceInDb(
                     INSERT_RESOURCE_INFO_QUERY,
@@ -164,35 +148,6 @@ public class CreateNotification {
             });
 
     return createNotificationFuture;
-  }
-
-  /**
-   * Inserts provider information in the user_table if it is not already present
-   *
-   * @param query An insert query
-   * @param providerId id of the owner of the resource with type UUID
-   * @param firstName First name of the provider
-   * @param lastName Last name of the provider
-   * @param emailId Email id of the provider
-   * @return True if the insertion is successfully done, failure if any
-   */
-  public Future<Boolean> addProviderInDb(
-      String query, UUID providerId, String firstName, String lastName, String emailId) {
-    Promise<Boolean> promise = Promise.promise();
-    LOG.trace("inside addProviderInDb method");
-    Tuple tuple = Tuple.of(providerId, emailId, firstName, lastName);
-    executeQuery(
-        query,
-        tuple,
-        handler -> {
-          if (handler.succeeded()) {
-            /* inserted provider successfully if not already present */
-            promise.complete(true);
-          } else {
-            promise.fail(handler.cause().getMessage());
-          }
-        });
-    return promise.future();
   }
 
   /**
@@ -405,12 +360,12 @@ public class CreateNotification {
                   setResourceGroupId(resourceGroupIdValue);
 
                   /* get information about the provider of the resource from Auth*/
-                  JsonObject provider =
-                      new JsonObject()
-                          .put(USER_ID, ownerId)
-                          .put(ROLE, "provider")
-                          .put(AUD, url)
-                          .put(IS_DELEGATE, false);
+                  UserInfo provider =
+                      new UserInfo()
+                          .setUserId(ownerId)
+                          .setRole(DxRole.PROVIDER)
+                          .setAudience(url)
+                          .setDelegate(false);
 
                   /* check if the resource server url of the user matches with the resource */
                   boolean isConsumerBelongingToSameServerAsItem = url.equals(getConsumerRsUrl());
@@ -430,7 +385,7 @@ public class CreateNotification {
                                 JsonObject failureMessage =
                                     new JsonObject()
                                         .put(TYPE, INTERNAL_SERVER_ERROR.getValue())
-                                        .put(TITLE, ResponseUrn.INTERNAL_SERVER_ERROR.getUrn())
+                                        .put(TITLE, INTERNAL_SERVER_ERROR.getUrn())
                                         .put(DETAIL, FAILURE_MESSAGE);
                                 promise.fail(failureMessage.encode());
                               }
@@ -457,7 +412,7 @@ public class CreateNotification {
                   JsonObject failureMessage =
                       new JsonObject()
                           .put(TYPE, BAD_REQUEST.getValue())
-                          .put(TITLE, ResponseUrn.BAD_REQUEST_URN.getUrn())
+                          .put(TITLE, BAD_REQUEST_URN.getUrn())
                           .put(DETAIL, FAILURE_MESSAGE + ", as the item type is invalid");
                   promise.fail(failureMessage.encode());
                 }
@@ -488,7 +443,7 @@ public class CreateNotification {
                   JsonObject failureMessage =
                       new JsonObject()
                           .put(TYPE, INTERNAL_SERVER_ERROR.getValue())
-                          .put(TITLE, ResponseUrn.INTERNAL_SERVER_ERROR.getUrn())
+                          .put(TITLE, INTERNAL_SERVER_ERROR.getUrn())
                           .put(DETAIL, FAILURE_MESSAGE);
                   promise.fail(failureMessage.encode());
                 }

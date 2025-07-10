@@ -382,7 +382,7 @@ public class UpdateNotification {
               JsonObject failureMessage =
                   new JsonObject()
                       .put(TYPE, INTERNAL_SERVER_ERROR.getValue())
-                      .put(TITLE, ResponseUrn.INTERNAL_SERVER_ERROR.getUrn())
+                      .put(TITLE, INTERNAL_SERVER_ERROR.getUrn())
                       .put(DETAIL, "Request cannot be approved as, consumer is not found");
               promise.fail(failureMessage.encode());
             } else {
@@ -577,7 +577,7 @@ public class UpdateNotification {
                   "Failure while executing the query : {},{}", failureHandler.getMessage(), query);
               JsonObject response =
                   new JsonObject()
-                      .put(TYPE, HttpStatusCode.INTERNAL_SERVER_ERROR.getValue())
+                      .put(TYPE, INTERNAL_SERVER_ERROR.getValue())
                       .put(TITLE, ResponseUrn.DB_ERROR_URN.getUrn())
                       .put(DETAIL, "Failure while executing query");
               handler.handle(Future.failedFuture(response.encode()));
