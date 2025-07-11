@@ -75,7 +75,11 @@ public class UpdateNotification {
             checkNotificationFuture.compose(
                 isNotificationValid -> {
                   if (isNotificationValid) {
-                    return updateRejectedNotification(REJECT_NOTIFICATION, notificationId);
+                    String providerComment =
+                        notification.getString("providerComment", null);
+                    String feedbackToConsumer =
+                        notification.getString("feedbackToConsumer", null);
+                    return updateRejectedNotification(REJECT_NOTIFICATION, notificationId, providerComment, feedbackToConsumer);
                   }
                   return Future.failedFuture(checkNotificationFuture.cause().getMessage());
                 });
@@ -109,13 +113,26 @@ public class UpdateNotification {
                   }
                   return checkOwner4GivenResource(OWNERSHIP_CHECK_QUERY);
                 });
-        Future<JsonObject> approvedRequestFuture =
+
+        /* Get additionalInfo from request for the given notification ID */
+        Future<JsonObject> additionalInfoFetchFuture =
             ownershipCheckFuture.compose(
                 ownerOwningTheResource -> {
                   if (ownerOwningTheResource) {
-                    return initiateTransactions(notification);
+                    return getAdditionalInfoFromRequest(notificationId);
                   }
                   return Future.failedFuture(ownershipCheckFuture.cause().getMessage());
+                });
+
+        Future<JsonObject> approvedRequestFuture =
+            additionalInfoFetchFuture.compose(
+                additionalInfo -> {
+                  if (additionalInfo != null) {
+                    notification.put("additionalInfo", additionalInfo);
+                  } else {
+                    LOG.warn("No additional info found for notification ID: {}", notificationId);
+                  }
+                  return initiateTransactions(notification);
                 });
 
         return approvedRequestFuture;
@@ -127,6 +144,34 @@ public class UpdateNotification {
                 .put(DETAIL, "Invalid request status, request can be either rejected or granted");
         return Future.failedFuture(failureMessage.encode());
     }
+  }
+
+  public Future<JsonObject> getAdditionalInfoFromRequest(UUID notificationId){
+    LOG.debug("inside getAdditionalInfoFromRequest method");
+    Promise<JsonObject> promise = Promise.promise();
+    Tuple tuple = Tuple.of(notificationId);
+    executeQuery(
+        GET_REQUEST,
+        tuple,
+        handler -> {
+          if (handler.succeeded()) {
+            JsonArray result = handler.result().getJsonArray(RESULT);
+            if (!result.isEmpty()) {
+              JsonObject additionalInfo = result.getJsonObject(0).getJsonObject("additional_info", null);
+              promise.complete(additionalInfo);
+            } else {
+              JsonObject failureMessage =
+                  new JsonObject()
+                      .put(TYPE, NOT_FOUND.getValue())
+                      .put(TITLE, RESOURCE_NOT_FOUND_URN.getUrn())
+                      .put(DETAIL, "Request not found for the given notification ID");
+              promise.fail(failureMessage.encode());
+            }
+          } else {
+            promise.fail(handler.cause().getMessage());
+          }
+        });
+    return promise.future();
   }
 
   /**
@@ -150,6 +195,12 @@ public class UpdateNotification {
         pool.withTransaction(
             sqlConnection -> {
               JsonObject constraints = notification.getJsonObject("constraints", new JsonObject());
+              /* additional query parameters for creating the policy like
+              additionalInfo, providerComment, feedbackToConsumer*/
+              String providerComment = notification.getString("providerComment", null);
+              String feedbackToConsumer = notification.getString("feedbackToConsumer", null);
+              JsonObject additionalInfo =
+                  notification.getJsonObject("additionalInfo", null);
 
               Tuple createPolicyTuple =
                   Tuple.of(
@@ -158,7 +209,11 @@ public class UpdateNotification {
                       getOwnerId(),
                       "ACTIVE",
                       getExpiryAt(),
-                      constraints);
+                      constraints,
+                      additionalInfo,
+                      providerComment,
+                      feedbackToConsumer
+                      );
 
               var response =
                   sqlConnection
@@ -453,10 +508,10 @@ public class UpdateNotification {
    * @param notification requestId to work on of type UUID
    * @return JsonObject of type Future to associate success and failure response
    */
-  public Future<JsonObject> updateRejectedNotification(String query, UUID notification) {
+  public Future<JsonObject> updateRejectedNotification(String query, UUID notification, String providerComment, String feedbackToConsumer) {
     LOG.trace("inside updateRejectedNotification method");
     Promise<JsonObject> promise = Promise.promise();
-    Tuple tuple = Tuple.of(notification);
+    Tuple tuple = Tuple.of(notification, providerComment, feedbackToConsumer);
     executeQuery(
         query,
         tuple,

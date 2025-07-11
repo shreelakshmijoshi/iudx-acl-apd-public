@@ -89,9 +89,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/getPolicySuccessResponseWithResourceGroup'
-                  - $ref: '#/components/schemas/getPolicySuccessResponseWithResourceType'
+                $ref: '#/components/schemas/getPolicySuccessResponseWithResourceType'
           headers:
             Content-Type:
               schema:
@@ -287,38 +285,59 @@ paths:
                   uniqueItems: true
                   items:
                     type: object
-                    anyOf:
-                      - type: object
-                        additionalProperties: false
-                        properties:
-                          userEmail:
-                            type: string
-                            pattern: >-
-                              ^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$
-                            minLength: 1
+                    additionalProperties: false
+                    properties:
+                      userEmail:
+                        type: string
+                        pattern: >-
+                          ^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$
+                        minLength: 1
 
-                          itemId:
-                            type: string
-                            pattern: '^[a-zA-Z0-9_*\-*\.\/]+$'
-                            minLength: 1
-                            maxLength: 512
-                          itemType:
-                            enum:
-                              - RESOURCE
-                              - RESOURCE_GROUP
-                            minLength: 1
-                          expiryTime:
-                            type: string
-                            pattern: >-
-                              ^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$
-                            minLength: 1
-                          constraints:
-                            type: object
-                        required:
-                          - userEmail
-                          - itemId
-                          - itemType
-                          - constraints
+                      itemId:
+                        type: string
+                        pattern: '^[a-zA-Z0-9_*\-*\.\/]+$'
+                        minLength: 1
+                        maxLength: 512
+                      itemType:
+                        enum:
+                          - RESOURCE
+                          - RESOURCE_GROUP
+                        minLength: 1
+                      expiryTime:
+                        type: string
+                        pattern: >-
+                          ^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$
+                        minLength: 1
+                      constraints:
+                        type: object
+                      additionalInfo:
+                        type: object
+                        description: >-
+                          Additional information to access data for educational,
+                          research or testing, non-commercial, academia purposes
+                        minProperties: 0
+                        maxProperties: 10
+                      providerComment:
+                        type: string
+                        description: >-
+                          Comment from the provider regarding the resource
+                          item, which can be used to provide additional
+                          information about the resource
+                        minLength: 1
+                        maxLength: 4000
+                      feedbackToConsumer:
+                        type: string
+                        description: >-
+                          Feedback from the provider to the consumer regarding
+                          the resource item, which can be used to provide
+                          additional information about the resource
+                        maxLength: 4000
+                        minLength: 1
+                    required:
+                      - userEmail
+                      - itemId
+                      - itemType
+                      - constraints
               required:
                 - request
               x-examples:
@@ -335,7 +354,7 @@ paths:
                       expiryTime: '2023-08-30T21:10:06'
                       constraints: { }
             examples:
-              Request for resource group user policy:
+              Request for resource with additionalInfo:
                 value:
                   request:
                     - userEmail: abc@xyz.com
@@ -345,6 +364,10 @@ paths:
                       constraints:
                         access:
                           - sub
+                      additionalInfo:
+                        name: Miles Davis
+                      providerComment: The resource is used for transportation data analysis
+                      feedbackToConsumer: This resource can be used for testing purposes
               Request for resource user policy:
                 value:
                   request:
@@ -561,6 +584,8 @@ paths:
                             - api
                             - sub
                             - file
+                        providerComment: 'The resource is used for transportation data analysis'
+                        feedbackToConsumer: 'Access approved. Great power comes with great responsibility—ensure ethical use of this data!'
                         additionalInfo:
                           name: Miles Morales,
                           email: miles.morales@acmecorp.org,
@@ -844,6 +869,22 @@ paths:
                       type: string
                     constraints:
                       type: object
+                    providerComment:
+                      type: string
+                      description: >-
+                        Comment from the provider regarding the resource item,
+                        which can be used to provide additional information
+                        about the resource
+                      minLength: 1
+                      maxLength: 4000
+                    feedbackToConsumer:
+                        type: string
+                        description: >-
+                            Feedback from the provider to the consumer regarding
+                            the resource item, which can be used to provide
+                            additional information about the resource
+                        minLength: 1
+                        maxLength: 4000
                   required:
                     - requestId
                     - status
@@ -861,7 +902,23 @@ paths:
                     status:
                       type: string
                       enum:
-                        - rejected
+                      - rejected
+                    providerComment:
+                      type: string
+                      description: >-
+                        Comment from the provider regarding the resource item,
+                        which can be used to provide additional information
+                        about the resource
+                      minLength: 1
+                      maxLength: 4000
+                    feedbackToConsumer:
+                      type: string
+                      description: >-
+                        Feedback from the provider to the consumer regarding
+                        the resource item, which can be used to provide
+                        additional information about the resource
+                      minLength: 1
+                      maxLength: 4000
                   required:
                     - requestId
                     - status
@@ -887,10 +944,15 @@ paths:
                       - api
                       - sub
                       - file
+                  providerComment: The resource is used for transportation data analysis
+                  feedbackToConsumer: This resource can be used for testing purposes
               Update Rejected access request:
                 value:
                   requestId: bca11712-f381-46a5-afa3-a29b00568ace
                   status: rejected
+                  providerComment: The resource is not available for access
+                  feedbackToConsumer: The resource is not available for access
+
       responses:
         '200':
           description: OK
@@ -1412,6 +1474,27 @@ components:
                                   type: string
                           id:
                             type: string
+              additionalInfo:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  phoneNo:
+                    type: string
+                  purpose:
+                    type: string
+                  description:
+                    type: string
+              providerComment:
+                type: string
+                minLength: 1
+                maxLength: 4000
+              feedbackToConsumer:
+                type: string
+                minLength: 1
+                maxLength: 4000
               status:
                 type: string
                 enum: [ "ACTIVE","DELETED" ]
@@ -1433,6 +1516,10 @@ components:
                                 "resourceServerUrl": "dummy.resource.server.url",
                                 "expiryAt": "2024-03-05T20:00:19",
                                 "constraints": { access: [ sub ] },
+                                "additionalInfo": { "name": "Some Consumer",
+                                                  "email": "dummyEmail@gmail.com"},
+                                "providerComment": "This is dummy comment from the provider",
+                                "feedbackToConsumer": "This is dummy feedback to the consumer",
                                 "status": "ACTIVE",
                                 "updatedAt": "2023-11-07T09:12:44.144204",
                                 "createdAt": "2023-09-26T11:17:58.473452",
@@ -1956,6 +2043,14 @@ components:
                 minLength: 1
               constraints:
                 type: object
+              providerComment:
+                type: string
+                minLength: 1
+                maxLength: 4000
+              feedbackToConsumer:
+                type: string
+                minLength: 1
+                maxLength: 4000
               additionalInfo:
                 type: object
               updatedAt:

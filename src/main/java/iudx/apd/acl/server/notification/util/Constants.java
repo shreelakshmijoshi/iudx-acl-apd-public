@@ -23,7 +23,7 @@ public class Constants {
 
 
   public static final String REJECT_NOTIFICATION =
-          "UPDATE request SET status='REJECTED' WHERE "
+          "UPDATE request SET status='REJECTED', provider_comment = $2, feedback_to_consumer = $3  WHERE "
           +
           "_id=$1::uuid AND expiry_at IS NULL RETURNING _id";
 
@@ -35,8 +35,8 @@ public class Constants {
   public static final String OWNERSHIP_CHECK_QUERY =
           "SELECT * FROM resource_entity WHERE _id = $1::uuid AND provider_id = $2::uuid";
   public static final String CREATE_POLICY_QUERY = "INSERT INTO policy"
-          + "(user_emailid, item_id, owner_id, status, expiry_at, constraints)"
-          + " VALUES ($1, $2, $3, $4, $5,$6) RETURNING _id;";
+          + "(user_emailid, item_id, owner_id, status, expiry_at, constraints, additional_info, provider_comment, feedback_to_consumer)"
+          + " VALUES ($1, $2, $3, $4, $5,$6, $7, $8, $9) RETURNING _id;";
   public static final String INSERT_IN_APPROVED_ACCESS_REQUESTS_QUERY =
           "INSERT INTO approved_access_requests(request_id, policy_id) VALUES ($1, $2) RETURNING _id";
   public static final String APPROVE_REQUEST_QUERY = "UPDATE request SET status = 'GRANTED', expiry_at = $1,"
@@ -54,6 +54,8 @@ public class Constants {
           + "RE.resource_server_url AS \"resourceServerUrl\",\n"
           + "R.status AS \"status\", R.expiry_at AS \"expiryAt\", \n"
           + "R.constraints AS \"constraints\","
+          + "R.provider_comment AS \"providerComment\", "
+          + "R.feedback_to_consumer AS \"feedbackToConsumer\", "
           + " R.additional_info AS \"additionalInfo\", "
           + " R.user_id AS \"consumerId\",\n"
           + "R.owner_id AS \"ownerId\", U.first_name AS \"consumerFirstName\", \n"
@@ -94,6 +96,8 @@ public class Constants {
           + "RE.resource_server_url AS \"resourceServerUrl\",\n"
           + "R.status AS \"status\", R.expiry_at AS \"expiryAt\", \n"
           + "R.constraints AS \"constraints\",\n"
+          + "R.provider_comment AS \"providerComment\", "
+          + "R.feedback_to_consumer AS \"feedbackToConsumer\", "
           + " R.additional_info AS \"additionalInfo\", "
           + "R.user_id AS \"consumerId\", R.owner_id AS \"ownerId\",\n"
           + "U.first_name AS \"ownerFirstName\", \n"

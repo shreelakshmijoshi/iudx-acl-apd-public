@@ -15,8 +15,9 @@ public class Constants {
           + " values ($1,$2,$3,$4,$5);";
 
   public static final String CREATE_POLICY_QUERY =
-      "insert into policy (user_emailid, item_id, owner_id,expiry_at, constraints,status) "
-          + "values ($1, $2, $3, $4, $5,'ACTIVE') returning *;";
+      "insert into policy (user_emailid, item_id, owner_id,expiry_at, constraints,status, additional_info, " +
+          "provider_comment, feedback_to_consumer ) "
+          + "values ($1, $2, $3, $4, $5,'ACTIVE', $6, $7, $8) returning *;";
   public static final String GET_POLICY_4_PROVIDER_QUERY =
       "SELECT P._id AS \"policyId\", P.item_id AS \"itemId\",\n"
           + "RE.item_type AS \"itemType\",\n"
@@ -24,7 +25,11 @@ public class Constants {
           + "P.user_emailid AS \"consumerEmailId\",\n"
           + "U.first_name AS \"consumerFirstName\",\n"
           + "U.last_name AS \"consumerLastName\", U._id AS \"consumerId\",\n"
-          + "P.status AS \"status\", P.expiry_at AS \"expiryAt\",\n"
+          + "P.status AS \"status\","
+          + "P.additional_info AS \"additionalInfo\",\n"
+          + "P.provider_comment AS \"providerComment\",\n"
+          + "P.feedback_to_consumer AS \"feedbackToConsumer\"\n"
+          + ", P.expiry_at AS \"expiryAt\",\n"
           + " P.constraints AS \"constraints\" "
           + ", P.updated_at AS \"updatedAt\" "
           + ", P.created_at AS \"createdAt\" "
@@ -43,7 +48,11 @@ public class Constants {
           + "RE.resource_server_url AS \"resourceServerUrl\",\n"
           + "P.owner_id AS \"ownerId\", U.first_name AS \"ownerFirstName\",\n"
           + "U.last_name AS \"ownerLastName\", U.email_id AS \"ownerEmailId\",\n"
-          + "U._id AS \"ownerId\", P.status as \"status\", P.expiry_at AS \"expiryAt\",\n"
+          + "U._id AS \"ownerId\", P.status as \"status\"," +
+           "P.additional_info AS \"additionalInfo\",\n"
+          + "P.provider_comment AS \"providerComment\",\n"
+          + "P.feedback_to_consumer AS \"feedbackToConsumer\"\n"
+          + ", P.expiry_at AS \"expiryAt\",\n"
           + "P.constraints AS \"constraints\" \n"
           + ", P.updated_at AS \"updatedAt\" "
           + ", P.created_at AS \"createdAt\" "
@@ -55,6 +64,7 @@ public class Constants {
           + "AND P.user_emailid = $1 "
           + "AND RE.resource_server_url = $2 "
           + " ORDER BY P.updated_at DESC";
+
   public static final String DELETE_POLICY_QUERY =
       "UPDATE policy SET status='DELETED' "
           + "WHERE _id = $1::uuid AND expiry_at > NOW() RETURNING _id";
